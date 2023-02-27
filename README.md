@@ -1,4 +1,4 @@
-# Final-Project
+# TL-Quadruped
 Quadruped Robot based upon similar to that of the boston dynamic's spot
 Inspriation for the current design is take from the Spot Mirco Project as well as some of James Bruton's designs
 
