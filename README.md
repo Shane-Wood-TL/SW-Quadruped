@@ -11,7 +11,8 @@ Current Changes: New PCB
 
 The Design has went through 5 major revisions, starting with the newest is 
 # Version 5
-![20230208_222907](https://user-images.githubusercontent.com/15756211/221729561-b2a82261-09f3-4edc-aeb9-418155627bf8.jpg)
+![20230208_222907](https://user-images.githubusercontent.com/15756211/221731168-f6a6e609-83d0-4232-abb2-ad7591a1b5c8.jpg)
+
 
 # Version 4
 ![20220828_210802](https://user-images.githubusercontent.com/15756211/221730226-4fbdf62b-3c94-46ec-b05f-481931281b5a.jpg)
