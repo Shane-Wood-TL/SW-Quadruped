@@ -8,8 +8,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 
-
-
+#include <QuickPID.h>
 
 
 float pytherm(float sidea, float sideb); //returns hypotenuse c
@@ -68,7 +67,7 @@ float zAngle;
 
 
 
-float testHeight = 100;
+float testHeight = 150;
 float testLR = 0;
 float testFB = 0;
 
@@ -77,7 +76,7 @@ float testFB = 0;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-   Wire.begin(10,8); //SDA, SCL
+   Wire.begin(17,15); //SDA, SCL
    //Wire.begin();
    
 
@@ -131,10 +130,10 @@ mainKinematics(testHeight, testFB, testLR, aHip,0,yRot,zRot);
 mainKinematics(testHeight, testFB, testLR, bHip,0,yRot,zRot);
 mainKinematics(testHeight, testFB, testLR, cHip,0,yRot,zRot);
 mainKinematics(testHeight, testFB, testLR, dHip,0,yRot,zRot);
-delay(100);
+delay(1000);
 
 
-
+//selfLevel();
   // mainKinematics(testHeight, testFB, testLR, aHip,0,-(event.orientation.y),event.orientation.z);
   //   mainKinematics(testHeight, testFB, testLR, bHip,0,event.orientation.y,event.orientation.z);
   //   mainKinematics(testHeight, testFB, testLR, cHip,0,event.orientation.y,-(event.orientation.z));
@@ -308,21 +307,22 @@ if((-5 > zRot)&& (zRot <5) ){
     //Serial.println(kneeAngle);
     //everything looks fine within the code, however i think something is still broken
   
-     float aHipOffset =-22; //higher value = more out
-    float aKneeOffset = 20; //higer value = cc
-    float aAnkleOffset = -20; //higer value = larger angle
+    float aHipOffset =-12; //higher value = more out
+    float aKneeOffset = 12; //higer value = cc
+    float aAnkleOffset = 0; //higer value = larger angle
 
-    float bHipOffset = -10; //higher value = more in
-    float bKneeOffset = -20;
-    float bAnkleOffset = 20;
+    float bHipOffset = -8; //higher value = more in
+    float bKneeOffset = -0;
+    float bAnkleOffset = 15;
 
-    float cHipOffset = -3;//higher value = more in
-    float cKneeOffset = -18;
-    float cAnkleOffset = 14;
+    float cHipOffset = -5;//higher value = more in
+    float cKneeOffset = -0;
+    float cAnkleOffset = 5;
 
-    float dHipOffset = -7;//higher value = more out
-    float dKneeOffset = 20;//higer value = cc
-    float dAnkleOffset = -25;//higer value = larger angle
+    float dHipOffset = 0;//higher value = more out
+    float dKneeOffset = 12;//higer value = cc
+    float dAnkleOffset = -20;//higer value = larger angle
+          //offsets for a
     if(hipMotor == 0){
           //offsets for a
           
@@ -424,21 +424,21 @@ if((-5 > zRot)&& (zRot <5) ){
   
 
     
-    float aHipOffset =-22; //higher value = more out
-    float aKneeOffset = 20; //higer value = cc
-    float aAnkleOffset = -20; //higer value = larger angle
+    float aHipOffset =-12; //higher value = more out
+    float aKneeOffset = 12; //higer value = cc
+    float aAnkleOffset = 0; //higer value = larger angle
 
-    float bHipOffset = -10; //higher value = more in
-    float bKneeOffset = -20;
-    float bAnkleOffset = 20;
+    float bHipOffset = -8; //higher value = more in
+    float bKneeOffset = -0;
+    float bAnkleOffset = 15;
 
-    float cHipOffset = -3;//higher value = more in
-    float cKneeOffset = -18;
-    float cAnkleOffset = 14;
+    float cHipOffset = -5;//higher value = more in
+    float cKneeOffset = -0;
+    float cAnkleOffset = 5;
 
-    float dHipOffset = -7;//higher value = more out
-    float dKneeOffset = 20;//higer value = cc
-    float dAnkleOffset = -25;//higer value = larger angle
+    float dHipOffset = 0;//higher value = more out
+    float dKneeOffset = 12;//higer value = cc
+    float dAnkleOffset = -20;//higer value = larger angle
           //offsets for a
           
           pwm.writeMicroseconds(aHip, map((innerAngleA+innerAngleB)+aHipOffset, 0, 180, USMIN, USMAX));
