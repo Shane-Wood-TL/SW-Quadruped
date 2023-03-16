@@ -6,6 +6,13 @@ Uses 12x MG996R motors controlled by a PCA9685
 The mircocontroller it is designed around is a ESP32-S3
 Gyro: BNO055
 
+Power:
+20V in from USB C PD board (max 3.25A)
+20V into buck converter (20V - 6.4V)
+6.4V Powers servos
+6.4V into buck converter (6.4V - 5V)
+5V powers ESP32-S3 as well as everything else
+
 Current Changes: New PCB
 
 
