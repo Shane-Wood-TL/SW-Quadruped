@@ -15,6 +15,7 @@
 #include<externFunctions.h>
 
 
+void walk(int& Cycle, ramp &FB, ramp &Height, float timee, float backDistance, float upDistance);
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
@@ -27,7 +28,8 @@ const int cHip = 6; //
 const int dHip = 9; //
 
 
-float testHeight = 136;
+float testHeight = 120;
+float testHeightBACK = 120;
 float testLR = 0;
 float testFB = 0;
 
@@ -43,24 +45,39 @@ ramp dFB;
 
 //where in the walk cycle the robot is at
 int aCycle = 0;
-int bCycle = 2;
+int bCycle = 3;
 int cCycle = 0;
-int dCycle = 2;
+int dCycle = 3;
+
+//6, 4, 1, 3
 
 //angle variables
 double yPreRot= 0, zPreRot = 0;
 double yRot= 0, zRot = 0;
-double Kp=2, Ki=5, Kd =1;
+double Kp= .05, Ki=0, Kd =0;
 double angleGoal = 0;
+
 PID yPID(&yPreRot, &yRot, &angleGoal, Kp, Ki, Kd, DIRECT);
 PID zPID(&zPreRot, &zRot, &angleGoal, Kp, Ki, Kd, DIRECT);
 
+
+  // float timee = 250;
+  // float backDistance = 50;
+  // float upDistance = 30;
+
+  float timee = 50;
+  float backDistance = 40;
+  float upDistance = 20;
+
+
 //enables or disables the use of the gyro
-bool useGyro = true;
-  
+bool useGyro = false;
+
+
+
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   Wire.begin(17,15); //SDA, SCL
 
   //Set up PCA9685
@@ -69,7 +86,12 @@ void setup() {
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
   delay(10);  
 
-  
+  mainKinematics(120, 0, 0, aHip,0,0,0);
+  mainKinematics(120, 0, 0, cHip,0,0,0);
+  mainKinematics(120, 0, 0, bHip,0,0,0);
+  mainKinematics(120, 0, 0, dHip,0,0,0);
+  delay(2000);
+
   if (useGyro == true){
     bno.begin();
     //set up gyro
@@ -81,10 +103,11 @@ void setup() {
     }
     bno.setExtCrystalUse(true);
     delay(1000); 
-  }
-   
-
+    yPID.SetOutputLimits(-45.0,45.0);
+    zPID.SetOutputLimits(-45.0,45.0);
+    }
   //give the ramps some inital values
+
   aHeight.go(0,0);
   aFB.go(0,0);
 
@@ -100,124 +123,107 @@ void setup() {
   //set the pid mode
   yPID.SetMode(AUTOMATIC);
   zPID.SetMode(AUTOMATIC);
+
 }
 
 void loop() {
-  
 
+  
   if(useGyro){
     sensors_event_t event;
     bno.getEvent(&event);
     yPreRot = event.orientation.y;
     zPreRot = event.orientation.z;
-  
+
+    //yRot = event.orientation.y;
+    //zRot = event.orientation.z;
+
+    //angleGoaly = yPreRot;
+    //angleGoalz = zPreRot;
+
     yPID.Compute();
     zPID.Compute();
+
+    // Serial.print("Goal: ");
+    // Serial.print(yPreRot);
+    // Serial.print(" At: ");
+    // Serial.println(yRot);
   }else{
     yRot =0;
     zRot = 0;
   }
+  
+  Serial.print("/*");
+  Serial.print(0);
+  Serial.print(",");
+  Serial.print(yRot);
+  Serial.print(",");
+  Serial.print(zRot);
+  Serial.print(",");
+  Serial.print(aCycle);
+  Serial.print(",");
+  Serial.print(bCycle);
+  Serial.print(",");
+  Serial.print(cCycle);
+  Serial.print(",");
+  Serial.print(dCycle);
+  Serial.print(",");
+// mainKinematics(75, 0, testLR, aHip,0,0,0);
+// mainKinematics(testHeight, 0, testLR, bHip,0,yRot,zRot);
+// mainKinematics(75, 0, testLR, cHip,0,0,0);
+// mainKinematics(testHeight, 0, testLR, dHip,0,yRot,zRot);
    
-  float time = 200;
-  float backDistance = 20;
-  float upDistance = 30;
 
-  if(aCycle == 0 && (!aFB.isRunning())){
-    aFB.go(backDistance,time);
-    aCycle = 1;
-  }else if (aCycle == 1 && aFB.isFinished())
-  {
-    aHeight.go(upDistance,time);
-    aFB.go(0,time);
-    aCycle = 2;
-  }else if (aCycle == 2 && aFB.isFinished())
-  {
-    aHeight.go(0,time);
-    aFB.go(0,time);
-    aCycle = 0;
+  //void walk(int &Cycle, ramp &FB, ramp &Height, float time, float backDistance, float upDistance);
+  if(aFB.isFinished() && bFB.isFinished() && cFB.isFinished() && dFB.isFinished()){
+    walk(bCycle, bFB, bHeight, timee, backDistance, upDistance);
+    walk(cCycle, cFB, cHeight, timee, backDistance, upDistance);
+    walk(dCycle, dFB, dHeight, timee, backDistance, upDistance);
+    walk(aCycle, aFB, aHeight, timee, backDistance, upDistance);
   }
-
-  if(cCycle == 0 && (!cFB.isRunning())){
-    cFB.go(backDistance,time);
-    cCycle = 1;
-  }else if (cCycle == 1 && cFB.isFinished())
-  {
-    cHeight.go(upDistance,time);
-    cFB.go(0,time);
-    cCycle = 2;
-  }else if (cCycle == 2 && cFB.isFinished())
-  {
-    cHeight.go(0,time);
-    cFB.go(0,time);
-    cCycle = 0;
-  }
-
-  if(bCycle == 0 && (!bFB.isRunning())){
-    bFB.go(backDistance,time);
-    bCycle = 1;
-  }else if (bCycle == 1 && bFB.isFinished())
-  {
-    bHeight.go(upDistance,time);
-    bFB.go(0,time);
-    bCycle = 2;
-  }else if (bCycle == 2 && bFB.isFinished())
-  {
-    bHeight.go(0,time);
-    bFB.go(0,time);
-    bCycle = 0;
-  }
-
-  if(dCycle == 0 && (!dFB.isRunning())){
-    dFB.go(backDistance,time);
-    dCycle = 1;
-  }else if (dCycle == 1 && dFB.isFinished())
-  {
-    dHeight.go(upDistance,time);
-    dFB.go(0,time);
-    dCycle = 2;
-  }else if (dCycle == 2 && dFB.isFinished())
-{
-  dHeight.go(0,time);
-  dFB.go(0,time);
-  dCycle = 0;
-}
-
+// // aHeight.go(upDistance,0);
+// // dHeight.go(upDistance,0);
 
 
   aFB.update();
   aHeight.update();
-  mainKinematics(testHeight-aHeight.getValue(), -aFB.getValue(), testLR, aHip,0,yRot,zRot);
+  if(aCycle == 4 || aCycle == 5 || aCycle == 6){
+    mainKinematics(testHeight-aHeight.getValue(), -aFB.getValue(), testLR, aHip,0,0,0);
+  }else{
+    mainKinematics(testHeight-aHeight.getValue(), -aFB.getValue(), testLR, aHip,0,yRot,zRot);
+  }
+  
 
   cFB.update();
   cHeight.update();
-  mainKinematics(testHeight-cHeight.getValue(), -cFB.getValue(), testLR, cHip,0,yRot,zRot);
+  if(cCycle == 4 || cCycle == 5 || cCycle == 6){
+    mainKinematics(testHeightBACK-cHeight.getValue(), -cFB.getValue(), testLR, cHip,0,0, 0);
+  }else{
+    mainKinematics(testHeightBACK-cHeight.getValue(), -cFB.getValue(), testLR, cHip,0,yRot,zRot);
+  }
+  
 
   bFB.update();
   bHeight.update();
-  mainKinematics(testHeight-bHeight.getValue(), -bFB.getValue(), testLR, bHip,0,yRot,zRot);
+    if(bCycle == 4 || bCycle == 5 || bCycle == 6){
+    mainKinematics(testHeight-bHeight.getValue(), -bFB.getValue(), testLR, bHip,0,0,0);
+  }else{
+    mainKinematics(testHeight-bHeight.getValue(), -bFB.getValue(), testLR, bHip,0,yRot,zRot);
+  }
+
 
   dFB.update();
   dHeight.update();
-  mainKinematics(testHeight-dHeight.getValue(), -dFB.getValue(), testLR, dHip,0,yRot,zRot);
-
-
-  delay(10);
-  bool endWalkCycle = false;
-  if(endWalkCycle){
-    aHeight.go(0, time);
-    bHeight.go(0, time);
-    cHeight.go(0, time);
-    dHeight.go(0, time);
-
-    aFB.go(0,time);
-    bFB.go(0,time);
-    cFB.go(0,time);
-    dFB.go(0,time);
+    if(dCycle == 6 || dCycle == 4 || dCycle == 5){
+    mainKinematics(testHeightBACK-dHeight.getValue(), -dFB.getValue(), testLR, dHip,0,0,0);
+  }else{
+   mainKinematics(testHeightBACK-dHeight.getValue(), -dFB.getValue(), testLR, dHip,0,yRot,zRot);
   }
 
+  // if (Serial.available()){
+  //   upDistance = Serial.parseFloat();
+  //   backDistance = Serial.parseFloat();
+  //   timee = Serial.parseFloat();
+  // }
+  Serial.println("*/");
 }
-   
-   
-
-
-
