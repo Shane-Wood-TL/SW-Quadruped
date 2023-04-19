@@ -2,6 +2,10 @@
 Quadruped Robot based upon similar to that of the boston dynamic's spot
 Inspriation for the current design is take from the Spot Mirco Project as well as some of James Bruton's designs
 
+# Version 5
+![yeet](https://user-images.githubusercontent.com/15756211/226653216-69dbfabc-1a9a-4a78-b281-26a315f22245.jpg)
+
+
 Uses 12x MG996R motors controlled by a PCA9685
 The mircocontroller it is designed around is a ESP32-S3
 Gyro: BNO055
@@ -16,15 +20,6 @@ Power:
 6.4V into buck converter (6.4V - 5V),
 
 5V powers ESP32-S3 as well as everything else
-
-Current Changes: New PCB
-
-
-The Design has went through 5 major revisions, starting with the newest is 
-# Version 5
-![yeet](https://user-images.githubusercontent.com/15756211/226653216-69dbfabc-1a9a-4a78-b281-26a315f22245.jpg)
-
-
 
 
 # Version 4
