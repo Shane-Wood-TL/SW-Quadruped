@@ -2,6 +2,16 @@
 Quadruped Robot based upon similar to that of the boston dynamic's spot
 Inspriation for the current design is take from the Spot Mirco Project as well as some of James Bruton's designs
 
+# Version 6
+
+Similar to V5
+Main goal is to reduce tolerance issues within V5 as well as making maitence easier
+Increase mobility range of legs which was reduced in the in/out direction due to the squre nature of v5
+Switch from a single PCB to 3, 1 main controller board with 2 servo driver boards, which communicate over a custom protocol that consists of I2C and some digital pins
+Instead of using wires to connect these boards ethernet wires will be used instead, this is also the main way the controller will have access to other devices, it features 4 ethernet jacks
+Given the digital pins that now go to the servo boards, a way to detect if the robots leg is on the ground is also planned with the help of keyboard switches in the robot's foot
+
+
 # Version 5
 ![yeet](https://user-images.githubusercontent.com/15756211/226653216-69dbfabc-1a9a-4a78-b281-26a315f22245.jpg)
 
