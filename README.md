@@ -1,15 +1,18 @@
 # TL-Quadruped
-Quadruped Robot based upon similar to that of the boston dynamic's spot
-Inspriation for the current design is take from the Spot Mirco Project as well as some of James Bruton's designs
+Quadruped Robot similar to the boston dynamic's spot
+Inspiration for the current design is taken from the Spot Mirco Project as well as some of James Bruton's designs
+
+$ Version 7
+Fixed the body issues of v6 with the use of carbon fiber tubes, similar to v6 otherwise.
 
 # Version 6
 
 Similar to V5
-Main goal is to reduce tolerance issues within V5 as well as making maitence easier
-Increase mobility range of legs which was reduced in the in/out direction due to the squre nature of v5
+The main goal is to reduce tolerance issues within V5 as well as make maintenance easier
+Increase mobility range of legs which was reduced in the in/out direction due to the square nature of v5
 Switch from a single PCB to 3, 1 main controller board with 2 servo driver boards, which communicate over a custom protocol that consists of I2C and some digital pins
 Instead of using wires to connect these boards ethernet wires will be used instead, this is also the main way the controller will have access to other devices, it features 4 ethernet jacks
-Given the digital pins that now go to the servo boards, a way to detect if the robots leg is on the ground is also planned with the help of keyboard switches in the robot's foot
+Given the digital pins that now go to the servo boards, a way to detect if the robot's leg is on the ground is also planned with the help of keyboard switches in the robot's foot
 
 
 # Version 5
@@ -17,7 +20,7 @@ Given the digital pins that now go to the servo boards, a way to detect if the r
 
 
 Uses 12x MG996R motors controlled by a PCA9685
-The mircocontroller it is designed around is a ESP32-S3
+The microcontroller it is designed around is a ESP32-S3
 Gyro: BNO055
 
 Power:
@@ -45,7 +48,7 @@ wires being consumed by the design
 ![20220517_001230](https://user-images.githubusercontent.com/15756211/221730566-71d9c5f6-14c3-4a44-a9af-61d5357af755.jpg)
 
 ## Issues
-awful way for the motor's outputs to be connected
+an awful way for the motor's outputs to be connected
 
 # Version 2
 ![20220221_223218](https://user-images.githubusercontent.com/15756211/221730659-7e29562d-d5d2-4009-89f7-66db6911ea2f.jpg)
@@ -61,6 +64,6 @@ Too large and unstable to do anything
 ## Issues
 Mirco Controller struggling to perform enough trig in a quick manner (could have been a motor issue)
 Way too weak of motors (sg90s)
-similar issues in stabilty and body strength as the version that follows
+similar issues in stability and body strength as the version that follows
 
 
