@@ -40,7 +40,7 @@ const float aKneeOffset = 0; // higer value = cc
 const float aAnkleOffset = 0; // higer value = smaller angle
 
 const float bHipOffset = 0; // higher value = more in
-const float bKneeOffset = 0;
+const float bKneeOffset = 70;
 const float bAnkleOffset = 0;
 
 const float cHipOffset = 0; // higher value = more in
@@ -48,8 +48,8 @@ const float cKneeOffset = 0;
 const float cAnkleOffset = 0;
 
 const float dHipOffset = 0;     // higher value = more out
-const float dKneeOffset = 0;   // higer value = cc
-const float dAnkleOffset = 0; // higer value = larger angle
+const float dKneeOffset = 70;   // higer value = cc
+const float dAnkleOffset = -20; // higer value = larger angle
 
 
 float pytherm(float sidea, float sideb);     // returns hypotenuse c
@@ -57,6 +57,7 @@ float raddec(float rad);                     // radians to degress
 float loc(float a, float b, float c);        // law of cosines, returns angle c in degress
 float pythermhypt(float sidea, float sidec); // returns side b
 float decrad(float deg);                     // degrees to radians
+void all_90s();
 
 
 extern ramp aHeight;
@@ -212,8 +213,8 @@ void mainKinematics(float xH, float xFB, float xLR, int hipMotor, float xRot, fl
     {
       // offsets for a
 
-      pwm.writeMicroseconds(aHip, map((innerAngleA + innerAngleB) + aHipOffset, 0, 180, USMIN, USMAX));
-      pwm.writeMicroseconds(aKnee, map((outerAngleKneeB + innerAngleKneeA) + aKneeOffset, 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(aHip, map((innerAngleA + innerAngleB + aHipOffset), 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(aKnee, map(90-(outerAngleKneeB + innerAngleKneeA + aKneeOffset), 0, 180, USMIN, USMAX));
       pwm.writeMicroseconds(aAnkle, (map(180-(kneeAngle + aAnkleOffset), 0, 180, USMIN, USMAX)));
       //Serial.print(map((innerAngleA + innerAngleB) + aHipOffset, 0, 180, USMIN, USMAX));
       //Serial.print(",");
@@ -227,8 +228,8 @@ void mainKinematics(float xH, float xFB, float xLR, int hipMotor, float xRot, fl
     {
       // offsets for b
       pwm.writeMicroseconds(bHip, map(180-(innerAngleA + innerAngleB + bHipOffset), 0, 180, USMIN, USMAX));
-      pwm.writeMicroseconds(bKnee, map((outerAngleKneeB + innerAngleKneeA) + bKneeOffset, 0, 180, USMIN, USMAX));
-      pwm.writeMicroseconds(bAnkle, map(180-(kneeAngle + bAnkleOffset), 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(bKnee, map((outerAngleKneeB + innerAngleKneeA + bKneeOffset), 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(bAnkle, map((kneeAngle + bAnkleOffset), 0, 180, USMIN, USMAX));
 
       
      // Serial.print(map((180 - (innerAngleA + innerAngleB)) + bHipOffset, 0, 180, USMIN, USMAX));
@@ -241,8 +242,8 @@ void mainKinematics(float xH, float xFB, float xLR, int hipMotor, float xRot, fl
     else if (hipMotor == 6)
     {
       // offsets for c
-      pwm1.writeMicroseconds(cHip, map(((innerAngleA + innerAngleB)) + cHipOffset, 0, 180, USMIN, USMAX));
-      pwm1.writeMicroseconds(cKnee, map(((outerAngleKneeB + innerAngleKneeA)) + cKneeOffset, 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(cHip, map(180-(innerAngleA + innerAngleB + cHipOffset), 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(cKnee, map(90-(outerAngleKneeB + innerAngleKneeA) + cKneeOffset, 0, 180, USMIN, USMAX));
       pwm1.writeMicroseconds(cAnkle, map(180-(kneeAngle + cAnkleOffset), 0, 180, USMIN, USMAX));
 
      // Serial.print(map((180 - (innerAngleA + innerAngleB)) + cHipOffset, 0, 180, USMIN, USMAX));
@@ -255,9 +256,9 @@ void mainKinematics(float xH, float xFB, float xLR, int hipMotor, float xRot, fl
     else if (hipMotor == 9)
     {
       // offsets for d
-      pwm1.writeMicroseconds(dHip, map(180-(innerAngleA + innerAngleB + dHipOffset), 0, 180, USMIN, USMAX));
-      pwm1.writeMicroseconds(dKnee, map(outerAngleKneeB + innerAngleKneeA + dKneeOffset, 0, 180, USMIN, USMAX));
-      pwm1.writeMicroseconds(dAnkle, map(180-(kneeAngle + dAnkleOffset), 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(dHip, map((innerAngleA + innerAngleB + dHipOffset), 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(dKnee, map((outerAngleKneeB + innerAngleKneeA + dKneeOffset), 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(dAnkle, map((kneeAngle + dAnkleOffset), 0, 180, USMIN, USMAX));
 
      // Serial.print(map((innerAngleA + innerAngleB) + dHipOffset, 0, 180, USMIN, USMAX));
       //Serial.print(",");
@@ -421,4 +422,19 @@ void updateAll(){
   dLR.update();
   dHeight.update();
   dFB.update();
+}
+
+void all_90s(){
+      pwm.writeMicroseconds(aHip, map(90, 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(aKnee, map(90, 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(aAnkle, map(90, 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(bHip, map(90, 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(bKnee, map(90, 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(bAnkle, map(90, 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(cHip, map(90, 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(cKnee, map(90, 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(cAnkle, map(90, 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(dHip, map(90, 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(dKnee, map(90, 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(dAnkle, map(90, 0, 180, USMIN, USMAX));
 }

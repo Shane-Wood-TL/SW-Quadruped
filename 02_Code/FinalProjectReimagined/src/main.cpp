@@ -164,10 +164,12 @@ void loop() {
 
 
 
-  mainKinematics(150, 0, 0, cHip,0,0, 0);
-  mainKinematics(150, 0, 0, aHip,0,0, 0);
-  mainKinematics(150, 0, 0, dHip,0,0,0);
-  mainKinematics(150, 0, 0, bHip,0,0, 0);
+  // mainKinematics(150, 0, 0, cHip,0,0, 0);
+  // mainKinematics(150, 0, 0, aHip,0,0, 0);
+  // mainKinematics(150, 0, 0, dHip,0,0,0);
+  // mainKinematics(150, 0, 0, bHip,0,0, 0);
+
+  all_90s();
 
 
 
