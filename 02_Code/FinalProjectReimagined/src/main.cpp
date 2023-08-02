@@ -32,8 +32,8 @@ double Kp= 1, Ki=0, Kd =0;
 double angleGoal = 0;
 
 
-float testHeight = 100;
-float testHeightBACK = 100;
+float testHeight = 150;
+float testHeightBACK = 150;
 float testLR = 0;
 float testFB = 0;
 
@@ -71,9 +71,9 @@ PID zPID(&zPreRot, &zRot, &angleGoal, Kp, Ki, Kd, DIRECT);
 
 sensors_event_t event;
 
-float timee = 1;
-float backDistance = 0;
-float upDistance = 0;
+float timee = 125;
+float backDistance = 60;
+float upDistance = 25;
 float LRDistance = 0;
 
 void setup() {
@@ -117,12 +117,12 @@ pwm1.begin();
   pwm1.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 
 
-  mainKinematics(150, 0, 0, aHip,0,0,0);
+  mainKinematics(120, 0, 0, aHip,0,0,0);
   delay(200);
-  mainKinematics(150, 0, 0, cHip,0,0,0);
-  mainKinematics(150, 0, 0, bHip,0,0,0);
+  mainKinematics(120, 0, 0, cHip,0,0,0);
+  mainKinematics(120, 0, 0, bHip,0,0,0);
   delay(200);
-  mainKinematics(150, 0, 0, dHip,0,0,0);
+  mainKinematics(120, 0, 0, dHip,0,0,0);
 
   
   //give the ramps some inital values
@@ -159,17 +159,19 @@ void loop() {
   // mainKinematics(testHeightBACK, 0, 0, cHip,0,0, 0);
   // mainKinematics(testHeightBACK, 0, 0, dHip,0,0, 0);
 
-  //WalkF(yRot, zRot);
+  WalkF(0, 0);
 
 
 
+// float a = 150;
+// float c = 0;
+// float b = -50;
+//   mainKinematics(a, b, c, cHip,0,0, 0);
+//   mainKinematics(a, b, c, aHip,0,0, 0);
+// mainKinematics(a, b, c, dHip,0,0,0);
+//  mainKinematics(a, b, c, bHip,0,0, 0);
 
-  // mainKinematics(150, 0, 0, cHip,0,0, 0);
-  // mainKinematics(150, 0, 0, aHip,0,0, 0);
-  // mainKinematics(150, 0, 0, dHip,0,0,0);
-  // mainKinematics(150, 0, 0, bHip,0,0, 0);
-
-  all_90s();
+  //all_90s();
 
 
 

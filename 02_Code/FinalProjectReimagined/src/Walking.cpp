@@ -31,7 +31,6 @@ extern float testHeight;
 extern float testLR;
 
 extern float testHeightBACK;
-extern float testHeight;
 
 //motor definitions
 extern int aHip; //
