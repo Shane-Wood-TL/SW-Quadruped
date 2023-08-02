@@ -12,15 +12,17 @@
 
 #include<externFunctions.h>
 
-
+#define gyro
 
 
 #define SERVO_FREQ 50
 
-#define gyro
+
 
 //motor definitions
-int aHip = 0; //do not update (not correct, but change is not needed)
+// old way to desinate each leg, legacy, but the kinematic model depends on these values.
+// DO NOT CHANGE
+int aHip = 0; //
 int bHip = 3; //
 int cHip = 6; //
 int dHip = 9; //
@@ -28,15 +30,12 @@ int dHip = 9; //
 //angle variables
 double yPreRot= 0, zPreRot = 0;
 double yRot= 0, zRot = 0;
+
+//PID setup for gyro
 double Kp= 1, Ki=0, Kd =0;
 double angleGoal = 0;
 
-
-float testHeight = 150;
-float testHeightBACK = 150;
-float testLR = 0;
-float testFB = 0;
-
+//Objects that control interpolation
 ramp aHeight;
 ramp bHeight;
 ramp cHeight;
@@ -52,7 +51,7 @@ ramp bLR;
 ramp cLR;
 ramp dLR;
 
-//where in the walk cycle the robot is at
+//where in the walk cycle the robot is at. Way to share state across all movements
 int aCycle = 0;
 int bCycle = 3;
 int cCycle = 3;
@@ -71,10 +70,21 @@ PID zPID(&zPreRot, &zRot, &angleGoal, Kp, Ki, Kd, DIRECT);
 
 sensors_event_t event;
 
+
+//values for movement
+//current /default values 
+float testHeight = 150;
+float testHeightBACK = 150;
+float testLR = 0;
+float testFB = 0;
+
+//time for a cycle (in ms)
 float timee = 125;
-float backDistance = 60;
-float upDistance = 25;
-float LRDistance = 0;
+
+//amount to change values by in a cycle
+float backDistance = 60; //(FB)
+float upDistance = 25; //xH
+float LRDistance = 0; //xLR
 
 void setup() {
 
