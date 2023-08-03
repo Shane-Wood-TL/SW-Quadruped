@@ -49,7 +49,7 @@ const float cKneeOffset = -10;
 const float cAnkleOffset = -35;
 
 const float dHipOffset = -4;     // higher value = more out
-const float dKneeOffset = 20;   // higer value = cc
+const float dKneeOffset = 70;   // higer value = cc
 const float dAnkleOffset = 35; // higer value = larger angl
 
 //External Functions
@@ -229,7 +229,7 @@ if (true) {
     {
       // offsets for a
       pwm.writeMicroseconds(aHip, map((innerAngleA + innerAngleB + aHipOffset), 0, 180, USMIN, USMAX));
-      pwm.writeMicroseconds(aKnee, map((innerAngleKneeA+ aKneeOffset), 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(aKnee, map(90+(innerAngleKneeA+ aKneeOffset-innerAngleB), 0, 180, USMIN, USMAX));
       pwm.writeMicroseconds(aAnkle, map((kneeAngle +aAnkleOffset), 0, 180, USMIN, USMAX));
 
       // Serial.println(innerAngleKneeA+outerAngleKneeB);
@@ -238,21 +238,21 @@ if (true) {
     {
       // offsets for b
       pwm.writeMicroseconds(bHip, map(180-(innerAngleA + innerAngleB+bHipOffset), 0, 180, USMIN, USMAX));
-      pwm.writeMicroseconds(bKnee, map(180-(innerAngleKneeA+bKneeOffset), 0, 180, USMIN, USMAX));
+      pwm.writeMicroseconds(bKnee, map(90-(innerAngleKneeA+bKneeOffset-innerAngleB), 0, 180, USMIN, USMAX));
       pwm.writeMicroseconds(bAnkle, map(180-(kneeAngle + bAnkleOffset), 0, 180, USMIN, USMAX));
     }
     else if (hipMotor == 6)
     {
       // offsets for c
       pwm1.writeMicroseconds(cHip, map(180-(innerAngleA + innerAngleB+cHipOffset), 0, 180, USMIN, USMAX));
-      pwm1.writeMicroseconds(cKnee, map((innerAngleKneeA+cKneeOffset), 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(cKnee, map(90+(innerAngleKneeA+cKneeOffset-innerAngleB), 0, 180, USMIN, USMAX));
       pwm1.writeMicroseconds(cAnkle, map((kneeAngle + cAnkleOffset), 0, 180, USMIN, USMAX));
     }
     else if (hipMotor == 9)
     {
       // offsets for d
       pwm1.writeMicroseconds(dHip, map((innerAngleA + innerAngleB +dHipOffset), 0, 180, USMIN, USMAX));
-      pwm1.writeMicroseconds(dKnee, map(180-(innerAngleKneeA + dKneeOffset), 0, 180, USMIN, USMAX));
+      pwm1.writeMicroseconds(dKnee, map(90-(innerAngleKneeA + dKneeOffset-innerAngleB), 0, 180, USMIN, USMAX));
       pwm1.writeMicroseconds(dAnkle, map(180-(kneeAngle + dAnkleOffset), 0, 180, USMIN, USMAX));
     }
   }

@@ -12,7 +12,7 @@
 
 #include<externFunctions.h>
 
-#define gyro
+//#define gyro
 
 
 #define SERVO_FREQ 50
@@ -79,11 +79,11 @@ float testLR = 0;
 float testFB = 0;
 
 //time for a cycle (in ms)
-float timee = 125;
+float timee = 60;
 
 //amount to change values by in a cycle
-float backDistance = 60; //(FB)
-float upDistance = 25; //xH
+float backDistance = 80; //(FB)
+float upDistance = 30; //xH
 float LRDistance = 0; //xLR
 
 void setup() {
@@ -161,15 +161,15 @@ void loop() {
   Serial.println(zRot);
 
   //turner(yRot, zRot);
-  //WalkF(yRot, zRot);
+  WalkF(-yRot, -zRot);
   //WalkLR(yRot, zRot, false);
 
-  // mainKinematics(testHeightBACK, 0, 0, aHip,0,0, 0);
-  // mainKinematics(testHeightBACK, 0, 0, bHip,0,0, 0);
-  // mainKinematics(testHeightBACK, 0, 0, cHip,0,0, 0);
-  // mainKinematics(testHeightBACK, 0, 0, dHip,0,0, 0);
+  // mainKinematics(testHeightBACK, 0, 0, aHip,0,-yRot, -zRot);
+  // mainKinematics(testHeightBACK, 0, 0, bHip,0,-yRot, -zRot);
+  // mainKinematics(testHeightBACK, 0, 0, cHip,0,-yRot, -zRot);
+  // mainKinematics(testHeightBACK, 0, 0, dHip,0,-yRot, -zRot);
 
-  WalkF(0, 0);
+  // WalkF(0, 0);
 
 
 
