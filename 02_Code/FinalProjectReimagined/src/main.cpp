@@ -12,7 +12,7 @@
 
 #include<externFunctions.h>
 
-//#define gyro
+#define gyro
 
 
 #define SERVO_FREQ 50
@@ -35,21 +35,59 @@ double yRot= 0, zRot = 0;
 double Kp= 1, Ki=0, Kd =0;
 double angleGoal = 0;
 
-//Objects that control interpolation
-ramp aHeight;
-ramp bHeight;
-ramp cHeight;
-ramp dHeight;
 
-ramp aFB;
-ramp bFB;
-ramp cFB;
-ramp dFB;
+class rampLeg{
+  private:
+  int mhip;
+  public:
+    ramp hip;
+    ramp knee;
+    ramp ankle;
+    int cycle;
 
-ramp aLR;
-ramp bLR;
-ramp cLR;
-ramp dLR;
+    rampLeg(int mhip){
+        hip = mhip;
+    }
+    bool allDone(){
+      if(hip.isFinished() && knee.isFinished() && ankle.isFinished()){
+        return true;
+      }else{
+        return false;
+      }
+    }
+    void setPositions(float Vhip, float Vknee, float Vankle, float timee){
+      hip.go(Vhip, timee);
+      knee.go(Vknee, timee);
+      ankle.go(Vknee, timee);
+    }
+    void reset(){
+      hip.go(0, 250);
+      knee.go(0, 250);
+      ankle.go(0, 250);
+      if (mhip ==0 || mhip == 6){
+        cycle = 0;
+      }else{
+        cycle = 3;
+      }
+    }
+    void update(){
+      hip.update();
+      knee.update();
+      ankle.update();
+    }
+    void incCycle(){
+      cycle++;
+      if (cycle > 6){
+        cycle = 0;
+      }
+    }
+
+};
+
+rampLeg a = rampLeg(aHip);
+rampLeg b = rampLeg(bHip);
+rampLeg c = rampLeg(cHip);
+rampLeg d = rampLeg(dHip);
 
 //where in the walk cycle the robot is at. Way to share state across all movements
 int aCycle = 0;
@@ -79,12 +117,12 @@ float testLR = 0;
 float testFB = 0;
 
 //time for a cycle (in ms)
-float timee = 60;
+float timee = 200;
 
 //amount to change values by in a cycle
 float backDistance = 80; //(FB)
-float upDistance = 30; //xH
-float LRDistance = 0; //xLR
+float upDistance = 80; //xH
+float LRDistance = 80; //xLR
 
 void setup() {
 
@@ -161,8 +199,8 @@ void loop() {
   Serial.println(zRot);
 
   //turner(yRot, zRot);
-  WalkF(-yRot, -zRot);
-  //WalkLR(yRot, zRot, false);
+  //WalkF(-yRot, -zRot);
+  WalkLR(yRot, zRot, false);
 
   // mainKinematics(testHeightBACK, 0, 0, aHip,0,-yRot, -zRot);
   // mainKinematics(testHeightBACK, 0, 0, bHip,0,-yRot, -zRot);

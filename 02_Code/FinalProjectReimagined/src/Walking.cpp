@@ -26,6 +26,7 @@ extern int dCycle;
 
 extern float backDistance;
 extern float upDistance;
+extern float LRDistance;
 
 extern float testHeight;
 extern float testLR;
@@ -190,10 +191,10 @@ void WalkLR(float yRot, float zRot, bool d){
   if(aLR.isFinished() && bLR.isFinished() && cLR.isFinished() && dLR.isFinished()){
     Serial.println("yes");
     //void turning(int &Cycle, ramp &LR, ramp &Height, float timee, float LRDistance, float upDistance)
-    walk(bCycle, bLR, bHeight, timee, 20, upDistance,d);
-    walk(cCycle, cLR, cHeight, timee, 20, upDistance,d);
-    walk(dCycle, dLR, dHeight, timee, 20, upDistance,d);
-    walk(aCycle, aLR, aHeight, timee, 20, upDistance,d);
+    walk(bCycle, bLR, bHeight, timee, LRDistance, upDistance,d);
+    walk(cCycle, cLR, cHeight, timee, LRDistance, upDistance,d);
+    walk(dCycle, dLR, dHeight, timee, LRDistance, upDistance,d);
+    walk(aCycle, aLR, aHeight, timee, LRDistance, upDistance,d);
   }
 
 
