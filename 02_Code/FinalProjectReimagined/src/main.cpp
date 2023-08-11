@@ -36,67 +36,16 @@ double Kp= 1, Ki=0, Kd =0;
 double angleGoal = 0;
 
 
-class rampLeg{
-  private:
-  int mhip;
-  public:
-    ramp hip;
-    ramp knee;
-    ramp ankle;
-    int cycle;
 
-    rampLeg(int mhip){
-        hip = mhip;
-    }
-    bool allDone(){
-      if(hip.isFinished() && knee.isFinished() && ankle.isFinished()){
-        return true;
-      }else{
-        return false;
-      }
-    }
-    void setPositions(float Vhip, float Vknee, float Vankle, float timee){
-      hip.go(Vhip, timee);
-      knee.go(Vknee, timee);
-      ankle.go(Vknee, timee);
-    }
-    void reset(){
-      hip.go(0, 250);
-      knee.go(0, 250);
-      ankle.go(0, 250);
-      if (mhip ==0 || mhip == 6){
-        cycle = 0;
-      }else{
-        cycle = 3;
-      }
-    }
-    void update(){
-      hip.update();
-      knee.update();
-      ankle.update();
-    }
-    void incCycle(){
-      cycle++;
-      if (cycle > 6){
-        cycle = 0;
-      }
-    }
 
-};
+rampLeg aLeg(aHip);
+rampLeg bLeg(bHip);
+rampLeg cLeg(cHip);
+rampLeg dLeg(dHip);
 
-rampLeg a = rampLeg(aHip);
-rampLeg b = rampLeg(bHip);
-rampLeg c = rampLeg(cHip);
-rampLeg d = rampLeg(dHip);
-
-//where in the walk cycle the robot is at. Way to share state across all movements
-int aCycle = 0;
-int bCycle = 3;
-int cCycle = 3;
-int dCycle = 0;
 
 #ifdef gyro
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
+  Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
 #endif
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
@@ -160,22 +109,30 @@ void setup() {
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
   delay(10);  
 
-pwm1.begin();
+  pwm1.begin();
   pwm1.setOscillatorFrequency(27000000);
   pwm1.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 
-
-  mainKinematics(120, 0, 0, aHip,0,0,0);
-  delay(200);
-  mainKinematics(120, 0, 0, cHip,0,0,0);
-  mainKinematics(120, 0, 0, bHip,0,0,0);
-  delay(200);
-  mainKinematics(120, 0, 0, dHip,0,0,0);
+  //where in the walk cycle the robot is at. Way to share state across all movements
+  aLeg.setCycle(0);
+  bLeg.setCycle(3);
+  cLeg.setCycle(3);
+  dLeg.setCycle(0);
 
   
-  //give the ramps some inital values
 
-  resetAll();
+  mainKinematics(testHeight, aLeg.fbAt(), aLeg.lrAt(), aHip,0,0,0);
+  delay(200);
+  mainKinematics(testHeight, cLeg.fbAt(), cLeg.lrAt(), cHip,0,0,0);
+  mainKinematics(testHeight, bLeg.fbAt(), bLeg.lrAt(), bHip,0,0,0);
+  delay(200);
+  mainKinematics(testHeight, dLeg.fbAt(), dLeg.lrAt(), dHip,0,0,0);
+
+  
+  aLeg.reset();
+  bLeg.reset();
+  cLeg.reset();
+  dLeg.reset();
   
 
 
@@ -198,28 +155,7 @@ void loop() {
   Serial.print(yRot);
   Serial.println(zRot);
 
-  //turner(yRot, zRot);
-  //WalkF(-yRot, -zRot);
-  WalkLR(yRot, zRot, false);
 
-  // mainKinematics(testHeightBACK, 0, 0, aHip,0,-yRot, -zRot);
-  // mainKinematics(testHeightBACK, 0, 0, bHip,0,-yRot, -zRot);
-  // mainKinematics(testHeightBACK, 0, 0, cHip,0,-yRot, -zRot);
-  // mainKinematics(testHeightBACK, 0, 0, dHip,0,-yRot, -zRot);
-
-  // WalkF(0, 0);
-
-
-
-// float a = 150;
-// float c = 0;
-// float b = -50;
-//   mainKinematics(a, b, c, cHip,0,0, 0);
-//   mainKinematics(a, b, c, aHip,0,0, 0);
-// mainKinematics(a, b, c, dHip,0,0,0);
-//  mainKinematics(a, b, c, bHip,0,0, 0);
-
-  //all_90s();
 
 
 

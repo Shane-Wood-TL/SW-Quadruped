@@ -60,21 +60,7 @@ float pythermhypt(float sidea, float sidec); // returns side b
 float decrad(float deg);                     // degrees to radians
 void all_90s();
 
-//Ramps
-extern ramp aHeight;
-extern ramp bHeight;
-extern ramp cHeight;
-extern ramp dHeight;
 
-extern ramp aFB;
-extern ramp bFB;
-extern ramp cFB;
-extern ramp dFB;
-
-extern ramp aLR;
-extern ramp bLR;
-extern ramp cLR;
-extern ramp dLR;
 
 
 
@@ -256,45 +242,6 @@ if (true) {
       pwm1.writeMicroseconds(dAnkle, map(180-(kneeAngle + dAnkleOffset), 0, 180, USMIN, USMAX));
     }
   }
-}
-
-void resetAll(){
-  
-  aHeight.go(0,0);
-  aFB.go(0,0);
-
-  bHeight.go(0,0);
-  bFB.go(0,0);
-
-  cHeight.go(0,0);
-  cFB.go(0,0);
-
-  dHeight.go(0,0);
-  dFB.go(0,0);
-
-  aLR.go(0,0);
-  bLR.go(0,0);
-  cLR.go(0,0);
-  dLR.go(0,0);
-
-}
-
-void updateAll(){
-  aLR.update();
-  aHeight.update();
-  aFB.update();
-
-  bLR.update();
-  bHeight.update();
-  bFB.update();
-
-  cLR.update();
-  cHeight.update();
-  cFB.update();
-
-  dLR.update();
-  dHeight.update();
-  dFB.update();
 }
 
 void all_90s(){

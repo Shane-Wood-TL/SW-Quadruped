@@ -4,233 +4,102 @@
 
 extern float timee;
 
-extern ramp aHeight;
-extern ramp bHeight;
-extern ramp cHeight;
-extern ramp dHeight;
-
-extern ramp aFB;
-extern ramp bFB;
-extern ramp cFB;
-extern ramp dFB;
-
-extern ramp aLR;
-extern ramp bLR;
-extern ramp cLR;
-extern ramp dLR;
-
-extern int aCycle;
-extern int bCycle;
-extern int cCycle;
-extern int dCycle;
-
 extern float backDistance;
 extern float upDistance;
 extern float LRDistance;
 
 extern float testHeight;
-extern float testLR;
-
 extern float testHeightBACK;
 
-//motor definitions
-extern int aHip; //
-extern int bHip; //
-extern int cHip; //
-extern int dHip;
+extern rampLeg aLeg;
+extern rampLeg bLeg;
+extern rampLeg cLeg;
+extern rampLeg dLeg;
+
 
 void WalkF(float yRot, float zRot){
 
-
-
-
-  if(aFB.isFinished() && bFB.isFinished() && cFB.isFinished() && dFB.isFinished()){
-    walk(bCycle, bFB, bHeight, timee, backDistance, upDistance, true);
-    walk(cCycle, cFB, cHeight, timee, backDistance, upDistance, true);
-    walk(dCycle, dFB, dHeight, timee, backDistance, upDistance, true);
-    walk(aCycle, aFB, aHeight, timee, backDistance, upDistance, true);
+  if(aLeg.allDone() && bLeg.allDone() && cLeg.allDone() && dLeg.allDone()){
+    walk(bLeg, timee, backDistance, upDistance, LRDistance, true);
+    walk(cLeg, timee, backDistance, upDistance, LRDistance, true);
+    walk(dLeg, timee, backDistance, upDistance, LRDistance, true);
+    walk(aLeg, timee, backDistance, upDistance, LRDistance, true);
   }
 
-  aFB.update();
-  aHeight.update();
-  aLR.update();
-  if(aCycle == 4 || aCycle == 5 || aCycle == 6){
-    mainKinematics(testHeightBACK-aHeight.getValue(), -aFB.getValue(), testLR, aHip,0,0,0);
+  aLeg.update();
+  if(aLeg.cycleAt() == 4 || aLeg.cycleAt() == 5 || aLeg.cycleAt() == 6){
+    mainKinematics(testHeightBACK-aLeg.heightAt(), aLeg.fbAt(), aLeg.lrAt(), aLeg.getMotor(),0,0,0);
   }else{
-    mainKinematics(testHeightBACK-aHeight.getValue(), -aFB.getValue(), testLR, aHip,0,yRot,zRot);
+    mainKinematics(testHeightBACK-aLeg.heightAt(), aLeg.fbAt(), aLeg.lrAt(), aLeg.getMotor(),0,yRot,zRot);
   }
   
-
-  cFB.update();
-  cHeight.update();
-  cLR.update();
-  if(cCycle == 4 || cCycle == 5 || cCycle == 6){
-    mainKinematics(testHeight-cHeight.getValue(), -cFB.getValue(), testLR, cHip,0,0, 0);
+  cLeg.update();
+  if(cLeg.cycleAt() == 4 || cLeg.cycleAt() == 5 || cLeg.cycleAt() == 6){
+    mainKinematics(testHeight-cLeg.heightAt(), cLeg.fbAt(), cLeg.lrAt(), cLeg.getMotor(),0,0, 0);
   }else{
-    mainKinematics(testHeight-cHeight.getValue(), -cFB.getValue(), testLR, cHip,0,yRot,zRot);
+    mainKinematics(testHeight-cLeg.heightAt(), cLeg.fbAt(), cLeg.lrAt(), cLeg.getMotor(),0,yRot,zRot);
   }
 
-  
-
-  bFB.update();
-  bHeight.update();
-  bLR.update();
-  if(bCycle == 4 || bCycle == 5 || bCycle == 6){
-    mainKinematics(testHeightBACK-bHeight.getValue(), -bFB.getValue(), testLR, bHip,0,0,0);
+  bLeg.update();
+  if(bLeg.cycleAt() == 4 || bLeg.cycleAt() == 5 || bLeg.cycleAt() == 6){
+    mainKinematics(testHeightBACK-bLeg.heightAt(), bLeg.fbAt(), bLeg.lrAt(), bLeg.getMotor(),0,0,0);
   }else{
-    mainKinematics(testHeightBACK-bHeight.getValue(), -bFB.getValue(), testLR, bHip,0,yRot,zRot);
+    mainKinematics(testHeightBACK-bLeg.heightAt(), bLeg.fbAt(), bLeg.lrAt(), bLeg.getMotor(),0,yRot,zRot);
   }
 
-
-  dFB.update();
-  dHeight.update();
-  dLR.update();
-  if(dCycle == 6 || dCycle == 4 || dCycle == 5){
-    mainKinematics(testHeight-dHeight.getValue(), -dFB.getValue(), testLR, dHip,0,0,0);
+  dLeg.update();
+  if(dLeg.cycleAt() == 6 || dLeg.cycleAt() == 4 || dLeg.cycleAt() == 5){
+    mainKinematics(testHeight-dLeg.heightAt(), dLeg.fbAt(), dLeg.lrAt(), dLeg.getMotor(),0,0,0);
   }else{
-   mainKinematics(testHeight-dHeight.getValue(), -dFB.getValue(), testLR, dHip,0,yRot,zRot);
+   mainKinematics(testHeight-dLeg.heightAt(), dLeg.fbAt(), dLeg.lrAt(), dLeg.getMotor(),0,yRot,zRot);
   }
 }
 
-void walk(int &Cycle, ramp &FB, ramp &Height, float timee, float backDistance, float upDistance, bool d = true){
+void walk(rampLeg Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d = true){
   float offTime = timee/6.0;
-  //Serial.print(Cycle);
-  // Serial.println(FB.getTarget());
-  if(Cycle == 0 && (FB.isFinished())){
-    // Serial.print(Cycle);
-    // Serial.println(FB.isFinished());
 
-    FB.go((backDistance / 4.0), (timee + (3*offTime)));
+  if(Leg.cycleAt() == 0 && (Leg.allDone())){
+    Leg.fbGo((backDistance / 4.0), (timee + (3*offTime)));
+    Leg.lrGo((LRDistance / 4.0), (timee + (3*offTime)));
+  }else if (Leg.cycleAt() == 1 && Leg.allDone())
+  {
+    Leg.fbGo(((2*backDistance)/4.0), timee);
+    Leg.lrGo(((2*LRDistance)/4.0), timee);
+
+  }else if (Leg.cycleAt() == 2 && Leg.allDone())
+  {
+    Leg.fbGo((3*backDistance/4.0),timee);
+    Leg.lrGo((3*LRDistance/4.0),timee);
+    Leg.hGo(0, timee);
+
+  }else if (Leg.cycleAt() == 3 && Leg.allDone())
+  {
+    Leg.fbGo(backDistance, timee);
+    Leg.lrGo(LRDistance, timee);
+    Leg.hGo(0,timee);
+  }
+  else if(Leg.cycleAt() == 4 && Leg.allDone())
+  {
+    Leg.hGo(upDistance,offTime);
+    Leg.fbGo(((backDistance) /4.0), offTime);
+    Leg.lrGo(((LRDistance) /4.0), offTime);
+  }else if(Leg.cycleAt() == 5 && Leg.allDone())
+  {
+    Leg.hGo(upDistance,offTime);
+    Leg.fbGo((backDistance /4.0), offTime);
+    Leg.lrGo((LRDistance /4.0), offTime);
+  }else if(Leg.cycleAt() == 6 && Leg.allDone())
+  {
+    Leg.hGo(0,offTime);
+    Leg.fbGo(0, offTime);
+    Leg.lrGo(0, offTime);
+  }
+
+  if (Leg.allDone()){
     if (d){
-    Cycle = 1;
+     Leg.incCycle();
     }else{
-      Cycle = 6;
+      Leg.decCycle();
     }
-
-  }else if (Cycle == 1 && FB.isFinished())
-  {
-    // Serial.print(Cycle);
-    // Serial.println(FB.isFinished());
-    FB.go(((2*backDistance)/4.0), timee);
-    if(d){
-    Cycle = 2;
-    }else{
-      Cycle = 0;
-    }
-
-  }else if (Cycle == 2 && FB.isFinished())
-  {
-    // Serial.print(Cycle);
-    // Serial.println(FB.isFinished());
-    FB.go((3*backDistance/4.0),timee);
-    Height.go(0, timee);
-    if(d){
-    Cycle = 3;
-    }else{
-      Cycle = 1;
-    }
-
-  }else if (Cycle == 3 && FB.isFinished())
-  {
-    // Serial.print(Cycle);
-    // Serial.println(FB.isFinished());
-    FB.go(backDistance, timee);
-    Height.go(0,timee);
-    if(d){
-    Cycle = 4;
-    }else{
-      Cycle = 2;
-    }
-
-  }
-  else if(Cycle == 4 && FB.isFinished())
-  {
-    // Serial.print(Cycle);
-    // Serial.println(FB.isFinished());
-    Height.go(upDistance,offTime);
-    FB.go(((backDistance) /4.0), offTime);
-    if(d){
-    Cycle = 5;
-    }else{
-      Cycle = 3;
-    }
-
-  }else if(Cycle == 5 && FB.isFinished())
-  {
-    // Serial.print(Cycle);
-    // Serial.println(FB.isFinished());
-    Height.go(upDistance,offTime);
-    FB.go((backDistance /4.0), offTime);
-    if (d){
-    Cycle = 6;
-    }else{
-      Cycle = 4;
-    }
-  }  else if(Cycle == 6 && FB.isFinished())
-  {
-    // Serial.print(Cycle);
-    // Serial.println(FB.isFinished());
-    Height.go(0,offTime);
-    FB.go(0, offTime);
-    if (d){
-    Cycle = 0;
-    }else{
-      Cycle = 5;
-    }
-  }
-
-}
-
-
-
-
-
-
-
-void WalkLR(float yRot, float zRot, bool d){
-  if(aLR.isFinished() && bLR.isFinished() && cLR.isFinished() && dLR.isFinished()){
-    Serial.println("yes");
-    //void turning(int &Cycle, ramp &LR, ramp &Height, float timee, float LRDistance, float upDistance)
-    walk(bCycle, bLR, bHeight, timee, LRDistance, upDistance,d);
-    walk(cCycle, cLR, cHeight, timee, LRDistance, upDistance,d);
-    walk(dCycle, dLR, dHeight, timee, LRDistance, upDistance,d);
-    walk(aCycle, aLR, aHeight, timee, LRDistance, upDistance,d);
-  }
-
-
-  aFB.update();
-  aHeight.update();
-  aLR.update();
-  if(aCycle == 4 || aCycle == 5 || aCycle == 6){
-      mainKinematics(testHeightBACK-aHeight.getValue(), 0, -aLR.getValue(), aHip,0,0,0);
-  }else{
-      mainKinematics(testHeightBACK-aHeight.getValue(), 0, -aLR.getValue(), aHip,0,yRot,zRot);
-  }
-  
-  cFB.update();
-  cHeight.update();
-  cLR.update();
-  if(cCycle == 4 || cCycle == 5 || cCycle == 6){
-      mainKinematics(testHeight-cHeight.getValue(), 0, -cLR.getValue(), cHip,0,0, 0);
-  }else{
-      mainKinematics(testHeight-cHeight.getValue(), 0, -cLR.getValue(), cHip,0,yRot,zRot);
-  }
-  
-  bFB.update();
-  bHeight.update();
-  bLR.update();
-  if(bCycle == 4 || bCycle == 5 || bCycle == 6){
-      mainKinematics(testHeightBACK-bHeight.getValue(), 0, bLR.getValue(), bHip,0,0,0);
-  }else{
-      mainKinematics(testHeightBACK-bHeight.getValue(), 0, bLR.getValue(), bHip,0,yRot,zRot);
-  }
-
-  dFB.update();
-  dHeight.update();
-  dLR.update();
-  if(dCycle == 6 || dCycle == 4 || dCycle == 5){
-      mainKinematics(testHeight-dHeight.getValue(),0, dLR.getValue(), dHip,0,0,0);
-  }else{
-    mainKinematics(testHeight-dHeight.getValue(), 0, dLR.getValue(), dHip,0,yRot,zRot);
   }
 }
