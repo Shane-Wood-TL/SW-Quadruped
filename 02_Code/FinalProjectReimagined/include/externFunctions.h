@@ -76,6 +76,13 @@ class rampLeg{
     int cycleAt(){
       return cycle;
     }
+    bool isGrounded(){
+      if (xFB.getValue() == 0){
+        return true;
+      }else{
+        return false;
+      }
+    }
 };
 
 
@@ -86,6 +93,7 @@ void all_90s();
 //legCtrls
 void updateAll();
 void resetAll();
+bool allDone();
 
 //Extra Math
 float pytherm(float sidea, float sideb); //returns hypotenuse c
@@ -97,7 +105,7 @@ float decrad(float deg); //degrees to radians
 
 //walking
 void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
-void WalkF(float yRot, float zRot);
+void WalkF(float yRot, float zRot, bool direction);
 
 
 

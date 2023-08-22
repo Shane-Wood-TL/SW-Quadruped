@@ -21,3 +21,7 @@ void updateAll(){
  cLeg.update();
  dLeg.update();
 }
+
+bool allDone(){
+  return aLeg.allDone() && bLeg.allDone() && cLeg.allDone() && dLeg.allDone();
+}

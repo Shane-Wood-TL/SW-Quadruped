@@ -23,17 +23,14 @@ rampLeg* bLegAdd = &bLeg;
 rampLeg* cLegAdd = &cLeg;
 rampLeg* dLegAdd = &dLeg;
 
-void WalkF(float yRot, float zRot){
-  aLeg.update();
-  cLeg.update();
-  bLeg.update();
-  dLeg.update();
+void WalkF(float yRot, float zRot, bool direction){
+  updateAll();
 
-  if(aLeg.allDone() && bLeg.allDone() && cLeg.allDone() && dLeg.allDone()){
-    walk(*aLegAdd, timee, backDistance, upDistance, LRDistance, true);
-    walk(*cLegAdd, timee, backDistance, upDistance, LRDistance, true);
-    walk(*dLegAdd, timee, backDistance, upDistance, LRDistance, true);
-    walk(*bLegAdd, timee, backDistance, upDistance, LRDistance, true);
+  if(allDone()){
+    walk(*aLegAdd, timee, backDistance, upDistance, LRDistance, direction);
+    walk(*cLegAdd, timee, backDistance, upDistance, LRDistance, direction);
+    walk(*dLegAdd, timee, backDistance, upDistance, LRDistance, direction);
+    walk(*bLegAdd, timee, backDistance, upDistance, LRDistance, direction);
     //Serial.println("all done");
   }
 
@@ -66,7 +63,77 @@ void WalkF(float yRot, float zRot){
   }
 }
 
-void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d = true){
+
+void turn(float yRot, float zRot, bool clockwise){
+  updateAll();
+  if(allDone()){
+    walk(*aLegAdd, timee, backDistance, upDistance, LRDistance, true);
+    walk(*cLegAdd, timee, backDistance, upDistance, LRDistance, true);
+    walk(*dLegAdd, timee, backDistance, upDistance, LRDistance, true);
+    walk(*bLegAdd, timee, backDistance, upDistance, LRDistance, true);
+    }
+  if(clockwise){  
+    if(!aLeg.isGrounded()){
+      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR-aLeg.lrAt(), aLeg.getMotor(),0,0,0);
+    }else{
+      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR-aLeg.lrAt(), aLeg.getMotor(),0,yRot,zRot);
+    }
+    
+    
+    if(!cLeg.isGrounded()){
+      mainKinematics(testHeight+cLeg.heightAt(), testFB, testLR+cLeg.lrAt(), cLeg.getMotor(),0,0, 0);
+    }else{
+      mainKinematics(testHeight+cLeg.heightAt(), testFB, testLR+cLeg.lrAt(), cLeg.getMotor(),0,yRot,zRot);
+    }
+
+    
+    if(!bLeg.isGrounded()){
+      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB-bLeg.fbAt(), testLR, bLeg.getMotor(),0,0,0);
+    }else{
+      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB-bLeg.fbAt(), testLR, bLeg.getMotor(),0,yRot,zRot);
+    }
+
+    
+    if(!dLeg.isGrounded()){
+      mainKinematics(testHeight+dLeg.heightAt(), testFB+dLeg.fbAt(), testLR, dLeg.getMotor(),0,0,0);
+    }else{
+    mainKinematics(testHeight+dLeg.heightAt(), testFB+dLeg.fbAt(), testLR, dLeg.getMotor(),0,yRot,zRot);
+    }
+    
+  }else{
+
+    if(aLeg.cycleAt() == 4 || aLeg.cycleAt() == 5 || aLeg.cycleAt() == 6){
+      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR+aLeg.lrAt(), aLeg.getMotor(),0,0,0);
+    }else{
+      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR+aLeg.lrAt(), aLeg.getMotor(),0,yRot,zRot);
+    }
+    
+    
+    if(cLeg.cycleAt() == 4 || cLeg.cycleAt() == 5 || cLeg.cycleAt() == 6){
+      mainKinematics(testHeight+cLeg.heightAt(), testFB, testLR-cLeg.lrAt(), cLeg.getMotor(),0,0, 0);
+    }else{
+      mainKinematics(testHeight+cLeg.heightAt(), testFB, testLR-cLeg.lrAt(), cLeg.getMotor(),0,yRot,zRot);
+    }
+
+    
+    if(bLeg.cycleAt() == 4 || bLeg.cycleAt() == 5 || bLeg.cycleAt() == 6){
+      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR, bLeg.getMotor(),0,0,0);
+    }else{
+      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR, bLeg.getMotor(),0,yRot,zRot);
+    }
+
+    
+    if(dLeg.cycleAt() == 6 || dLeg.cycleAt() == 4 || dLeg.cycleAt() == 5){
+      mainKinematics(testHeight+dLeg.heightAt(), testFB-dLeg.fbAt(), testLR, dLeg.getMotor(),0,0,0);
+    }else{
+    mainKinematics(testHeight+dLeg.heightAt(), testFB-dLeg.fbAt(), testLR, dLeg.getMotor(),0,yRot,zRot);
+    }
+  }
+}
+
+
+
+void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d){
   float offTime = timee/6.0;
   if(Leg.cycleAt() == 0 && (Leg.allDone())){
     Leg.fbGo((backDistance / 4.0), (timee + (3*offTime)));
@@ -140,3 +207,4 @@ void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float
     }
   }
 }
+
