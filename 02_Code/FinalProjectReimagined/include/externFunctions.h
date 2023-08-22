@@ -6,9 +6,9 @@
 class rampLeg{
   private:
     int hip;
-    ramp xH;
-    ramp xFB;
-    ramp xLR;
+    rampLong  xH;
+    rampLong xFB;
+    rampLong xLR;
     int cycle;
   public:
     rampLeg(int mhip){
@@ -96,7 +96,7 @@ float decrad(float deg); //degrees to radians
 
 
 //walking
-void walk(rampLeg Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
+void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
 void WalkF(float yRot, float zRot);
 
 

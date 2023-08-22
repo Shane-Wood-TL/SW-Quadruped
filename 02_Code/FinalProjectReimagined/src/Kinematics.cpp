@@ -101,7 +101,7 @@ void mainKinematics(float xH, float xFB, float xLR, int hipMotor, float xRot, fl
 
   float zRotR = decrad((zRot));
   float zAddition = zHalfDis * tan(zRotR);
-  if ((hipMotor == 0 || hipMotor ==6))
+  if ((hipMotor == 0 || hipMotor ==3))
   {
     if (zRot < 0)
     {
@@ -109,10 +109,10 @@ void mainKinematics(float xH, float xFB, float xLR, int hipMotor, float xRot, fl
     }
     else
     {
-      xFB -= zAddition * zMultiplier;
+      xFB += zAddition * zMultiplier;
     }
   }
-  else if ((hipMotor ==  3|| hipMotor == 9))
+  else if ((hipMotor ==  6 || hipMotor == 9))
   {
     if (zRot < 0)
     {
