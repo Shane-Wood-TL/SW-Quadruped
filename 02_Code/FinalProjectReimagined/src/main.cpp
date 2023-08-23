@@ -26,9 +26,9 @@ float testFB = 0;
 float timee = 100;
 
 //amount to change values by in a cycle
-float backDistance = 0; //(FB)
+float backDistance = 50; //(FB)
 float upDistance = -50; //xH
-float LRDistance =50; //xLR
+float LRDistance =100; //xLR
 
 
 //motor definitions
@@ -142,7 +142,7 @@ void loop() {
  // WalkF(yPreRot,zPreRot);
   // // Serial.print(aLeg.cycleAt());
 
-
+turn(yRot, zRot, false);
 // mainKinematics(testHeight, 0, 0, aHip,0,yPreRot,zPreRot);
 //   delay(200);
 //   mainKinematics(testHeight, 0, 0, cHip,0,yPreRot,zPreRot);

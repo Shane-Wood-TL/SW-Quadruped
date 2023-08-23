@@ -81,9 +81,38 @@ void turn(float yRot, float zRot, bool clockwise){
     
     
     if(!cLeg.isGrounded()){
-      mainKinematics(testHeight+cLeg.heightAt(), testFB, testLR+cLeg.lrAt(), cLeg.getMotor(),0,0, 0);
+      mainKinematics(testHeight+cLeg.heightAt(), testFB-cLeg.fbAt(), testLR, cLeg.getMotor(),0,0, 0);
     }else{
-      mainKinematics(testHeight+cLeg.heightAt(), testFB, testLR+cLeg.lrAt(), cLeg.getMotor(),0,yRot,zRot);
+      mainKinematics(testHeight+cLeg.heightAt(), testFB-cLeg.fbAt(), testLR, cLeg.getMotor(),0,yRot,zRot);
+    }
+
+    
+    if(!bLeg.isGrounded()){
+      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR, bLeg.getMotor(),0,0,0);
+    }else{
+      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR, bLeg.getMotor(),0,yRot,zRot);
+    }
+
+    
+    if(!dLeg.isGrounded()){
+      mainKinematics(testHeight+dLeg.heightAt(), testFB, testLR-dLeg.lrAt(), dLeg.getMotor(),0,0,0);
+    }else{
+    mainKinematics(testHeight+dLeg.heightAt(), testFB, testLR-dLeg.lrAt(), dLeg.getMotor(),0,yRot,zRot);
+    }
+    
+  }else{
+
+   if(!aLeg.isGrounded()){
+      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR+aLeg.lrAt(), aLeg.getMotor(),0,0,0);
+    }else{
+      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR+aLeg.lrAt(), aLeg.getMotor(),0,yRot,zRot);
+    }
+    
+    
+    if(!cLeg.isGrounded()){
+      mainKinematics(testHeight+cLeg.heightAt(), testFB+cLeg.fbAt(), testLR, cLeg.getMotor(),0,0, 0);
+    }else{
+      mainKinematics(testHeight+cLeg.heightAt(), testFB+cLeg.fbAt(), testLR, cLeg.getMotor(),0,yRot,zRot);
     }
 
     
@@ -95,38 +124,9 @@ void turn(float yRot, float zRot, bool clockwise){
 
     
     if(!dLeg.isGrounded()){
-      mainKinematics(testHeight+dLeg.heightAt(), testFB+dLeg.fbAt(), testLR, dLeg.getMotor(),0,0,0);
+      mainKinematics(testHeight+dLeg.heightAt(), testFB, testLR+dLeg.lrAt(), dLeg.getMotor(),0,0,0);
     }else{
-    mainKinematics(testHeight+dLeg.heightAt(), testFB+dLeg.fbAt(), testLR, dLeg.getMotor(),0,yRot,zRot);
-    }
-    
-  }else{
-
-    if(aLeg.cycleAt() == 4 || aLeg.cycleAt() == 5 || aLeg.cycleAt() == 6){
-      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR+aLeg.lrAt(), aLeg.getMotor(),0,0,0);
-    }else{
-      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR+aLeg.lrAt(), aLeg.getMotor(),0,yRot,zRot);
-    }
-    
-    
-    if(cLeg.cycleAt() == 4 || cLeg.cycleAt() == 5 || cLeg.cycleAt() == 6){
-      mainKinematics(testHeight+cLeg.heightAt(), testFB, testLR-cLeg.lrAt(), cLeg.getMotor(),0,0, 0);
-    }else{
-      mainKinematics(testHeight+cLeg.heightAt(), testFB, testLR-cLeg.lrAt(), cLeg.getMotor(),0,yRot,zRot);
-    }
-
-    
-    if(bLeg.cycleAt() == 4 || bLeg.cycleAt() == 5 || bLeg.cycleAt() == 6){
-      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR, bLeg.getMotor(),0,0,0);
-    }else{
-      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR, bLeg.getMotor(),0,yRot,zRot);
-    }
-
-    
-    if(dLeg.cycleAt() == 6 || dLeg.cycleAt() == 4 || dLeg.cycleAt() == 5){
-      mainKinematics(testHeight+dLeg.heightAt(), testFB-dLeg.fbAt(), testLR, dLeg.getMotor(),0,0,0);
-    }else{
-    mainKinematics(testHeight+dLeg.heightAt(), testFB-dLeg.fbAt(), testLR, dLeg.getMotor(),0,yRot,zRot);
+    mainKinematics(testHeight+dLeg.heightAt(), testFB, testLR+dLeg.lrAt(), dLeg.getMotor(),0,yRot,zRot);
     }
   }
 }
