@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <Ramp.h>
 
-
 //class
 class rampLeg{
   private:
@@ -85,7 +84,6 @@ class rampLeg{
     }
 };
 
-
 //Kinematics
 void mainKinematics(float xH , float xFB, float xLR, int hipMotor, float xRot, float yRot, float zRot);
 void all_90s();
@@ -102,9 +100,7 @@ float loc(float a, float b, float c); // law of cosines, returns angle c in degr
 float pythermhypt(float sidea, float sidec); //returns side b
 float decrad(float deg); //degrees to radians
 
-
-//walking
+//Movement
 void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
 void WalkF(float yRot, float zRot, bool direction);
 void turn(float yRot, float zRot, bool clockwise);
-
