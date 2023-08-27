@@ -12,8 +12,8 @@
 
 #include<externFunctions.h>
 
-#define gyro
 
+//uint8_t controller[x]; // x = the amount of things being transferred (starting at 1)
 
 //values for movement
 //current /default values 
@@ -52,6 +52,9 @@ double yRot= 0, zRot = 0;
 double Kp= .25, Ki=.01, Kd =0;
 double angleGoal = 0;
 
+
+ //soon to be deprecated, as the gyro will need to be init everytime to
+ //allow switching of modes that have it enabled
 #ifdef gyro
   Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
 #endif
@@ -136,24 +139,64 @@ void loop() {
     yRot =0;
     zRot = 0;
   #endif
-  // Serial.print(yRot);
-  // Serial.println(zRot);
-
- // WalkF(yPreRot,zPreRot);
-  // // Serial.print(aLeg.cycleAt());
 
 turn(yRot, zRot, false);
-// mainKinematics(testHeight, 0, 0, aHip,0,yPreRot,zPreRot);
-//   delay(200);
-//   mainKinematics(testHeight, 0, 0, cHip,0,yPreRot,zPreRot);
-//   mainKinematics(testHeight, 0, 0, bHip,0,yPreRot,zPreRot);
-//   delay(200);
-//   mainKinematics(testHeight, 0, 0, dHip,0,yPreRot,zPreRot);
+//WalkF(yPreRot,zPreRot, true);
 
-  // mainKinematics(testHeight, 0, 0, aHip,0,0,0);
-  // delay(200);
-  // mainKinematics(testHeight, 0, 0, cHip,0,0,0);
-  // mainKinematics(testHeight, 0, 0, bHip,0,0,0);
-  // delay(200);
-  // mainKinematics(testHeight, 0, 0, dHip,0,0,0);
+
+int state = 0;
+
+
+//state 0: standing at 150mm, gyro off
+//state 1: standing at 150mm, gyro on
+//state 2: kinematic input, manual angle
+//state 3: kinematic input, gyro
+//state 4: walking forward with set measurement
+//state 5: turn in place with set measurement
+//state 6: user control, gyro off
+//state 7: user control gyro on
+//possible state 8: add a way to adjust the PID values to better tune it
+switch(state){
+  case(0):{
+    mainKinematics(150,0,0,aHip,0,0,0);
+    mainKinematics(150,0,0,bHip,0,0,0);
+    mainKinematics(150,0,0,cHip,0,0,0);
+    mainKinematics(150,0,0,dHip,0,0,0);
+  }
+  case(1):{
+    mainKinematics(150,0,0,aHip,0,yRot,zRot);
+    mainKinematics(150,0,0,bHip,0,yRot,zRot);
+    mainKinematics(150,0,0,cHip,0,yRot,zRot);
+    mainKinematics(150,0,0,dHip,0,yRot,zRot);
+
+  }
+  case(2):{
+    
+    // mainKinematics(,0,0,aHip,0,,);
+    // mainKinematics(,0,0,bHip,0,,);
+    // mainKinematics(,0,0,cHip,0,,);
+    // mainKinematics(,0,0,dHip,0,,);
+  }
+  case(3):{
+    // mainKinematics(,0,0,aHip,0,yRot,zRot);
+    // mainKinematics(,0,0,bHip,0,yRot,zRot);
+    // mainKinematics(,0,0,cHip,0,yRot,zRot);
+    // mainKinematics(,0,0,dHip,0,yRot,zRot);
+  }
+  case(4):{
+    WalkF(yRot,zRot, true);
+  }
+  case(5):{
+    turn(yRot, zRot, true);
+  }
+  case(6):{
+    //not sure how to implement this yet, as the cycles will need to break at times and then
+    //change back into "normal"
+  }
+  case(7):{
+    //same as above ^ not sure, however they will have gyro enabled
+  }
+
 }
+}
+
