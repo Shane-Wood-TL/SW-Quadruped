@@ -8,6 +8,8 @@ extern Adafruit_PWMServoDriver pwm1;
 #define USMIN 771  // min value given from arduino lib
 #define USMAX 2193 // max value given from arduino lib
 
+
+
 const int yHalfDis = 85;
 const int zHalfDis = 190;
 
@@ -33,12 +35,27 @@ const int dHip = 3;    //
 const int dKnee = 4;  //
 const int dAnkle = 5; //
 
+//mainKinematics(190,0,0,cHip,0,0,0);
+// mainKinematics(190,0,0,dHip,0,0,0);
+// mainKinematics(85,0,0,aHip,0,0,0);
+// mainKinematics(85,0,0,bHip,0,0,0);
+
+
 
 // DO NOT CHANGE, UNLESS MOTOR SWAP
+// B-----A
+// |     |
+// |     |
+// |     |
+// |     |
+// |     |
+// D-----C
+//  front
 
+// 
 const float aHipOffset = -5; // higher value = more out
 const float aKneeOffset = -30; // higer value = cc
-const float aAnkleOffset = 0; // higer value = smaller angle
+const float aAnkleOffset = -20; // higer value = smaller angle
 
 const float bHipOffset = 0; // higher value = more in
 const float bKneeOffset = 20;
@@ -49,7 +66,7 @@ const float cKneeOffset = -10;
 const float cAnkleOffset = -35;
 
 const float dHipOffset = -4;     // higher value = more out
-const float dKneeOffset = 70;   // higer value = cc
+const float dKneeOffset = 85;   // higer value = cc
 const float dAnkleOffset = 35; // higer value = larger angl
 
 //External Functions
