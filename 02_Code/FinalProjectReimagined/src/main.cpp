@@ -14,9 +14,40 @@
 
 
 //uint8_t controller[x]; // x = the amount of things being transferred (starting at 1)
+//2 or 3? joysticks
+//x joystick1
+//x joystick2
+//y joystick1
+//y joystick2
+//button j1
+//button j2
+//swtich (4?)
+  //1 for gyro
+  //2 to switch between turn and walk
+  //3 auton
+  //4 stop
+//buttons
+  //sit
+  //down
+
+//controller will have display with up/down and confirm buttons
+//only mode will be sent
+
+
+
+
+//state 0: standing at 150mm, gyro off
+//state 1: standing at 150mm, gyro on
+//state 2: kinematic input, manual angle
+//state 3: kinematic input, gyro
+//state 4: walking forward with set measurement
+//state 5: turn in place with set measurement
+//state 6: user control, gyro off
+//state 7: user control gyro on
+//possible state 8: add a way to adjust the PID values to better tune it
 
 //values for movement
-//current /default values 
+//current /default values
 float testHeight = 150;
 float testHeightBACK = 170;
 float testLR = 0;
