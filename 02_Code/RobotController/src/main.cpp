@@ -34,6 +34,7 @@ float j1_X_angle_s = 0, j1_Y_angle_s = 0, j2_X_angle_s = 0, j2_Y_angle_s = 0;
 int sw1V, sw2V, sw3V, sw4V, sw5V, j1_BV, j2_BV;
 const float smoothingFactor = 0.1; 
 int state;
+int maxStates =5;
 
 RF24 radio(10, 9);
 
@@ -79,7 +80,6 @@ void setup() {
     Serial.println(F("radio hardware is not responding!!"));
     while (1) {}  // hold in infinite loop
   }
-  Serial.println("uh");
    radio.setPALevel(RF24_PA_HIGH);
    radio.stopListening();
 }
@@ -110,17 +110,47 @@ void loop() {
   }
 
   //button on joystick = turn in place one or other direction
-  // sw1 = menu mode
-  // sw2 = move / estop (chanage)
+  // i sw1 = menu mode
+  // sw2 = move / estop
   // sw3 = gyro
-  // sw4 = sit
-  // sw5 = 
-
+  // sw4 = PID on / off
+  // sw5 = future / na 
   
+  while (sw1V != 1){
+      if(j1_X_angle_s >= 600){
+        state = decState(state);
+      }else if(j1_X_angle_s <= 300){
+        state = incState(state);
+        
+      }
+      if(sw3V != 1){
+        gyro = false;
+      }else{
+        gyro = true;
+      }
+      payload.gyro = gyro;
+      payload.state = state;
+      updateMenu(state, gyro);
+  }
+
 
 }
 
 
+int incState(int state){
+  state++;
+  if (state >= maxStates){
+    state = 0;
+  }
+  return state;
+}
+
+int decState(int state){
+  state--;
+  if (state < 0){
+    state = maxStates-1;
+  }
+}
 
 void updateMenu(int state, bool gyro){
   lcd.setCursor(0,0);
