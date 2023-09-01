@@ -4,52 +4,58 @@
 #include <RF24.h>
 #include <LiquidCrystal_I2C.h>
 
-void updateMenu(int state, bool gyro);
-const int j1_X = A0;
-const int j1_Y = A1;
-const int j2_X = A2;
-const int j2_Y = A3;
+//joystick pins
+#define j1_X A0
+#define j1_Y A1
+#define j2_X A2
+#define j2_Y A3
 
-const int CE = 9;
-const int CSN = 10;
-const int SCKP = 13;
-const int MOSIP = 11;
-const int MISOP = 12;
+//joystick button pins
+#define j1_B 7
+#define j2_B 8
 
-const int sw1 = 2;
-const int sw2 = 3;
-const int sw3 = 4;
-const int sw4 = 5;
-const int sw5 = 6;
 
-const int j1_B = 7;
-const int j2_B = 8;
+//swtich pins
+#define sw1 2
+#define sw2 3
+#define sw3 4
+#define sw4 5
+#define sw5 6
 
+//fucntions
+void updateMenu(int state);
+int incState(int state);
+int decState(int state);
+float rationalizeJoystick(float value);
+
+//display
 LiquidCrystal_I2C lcd(0x27,20,4);
 
+//radio setup
+RF24 radio(10, 9);
+uint8_t address[][6] = { "1Node", "2Node" };
+bool radioNumber = 0;  // 0 uses address[0] to transmit, 1 uses address[1] to transmit
+// Used to control whether this node is sending or receiving
+bool role = true;  // true = TX role, false = RX role
 
+
+//joystick inputs
 float j1_X_angle, j1_Y_angle, j2_X_angle, j2_Y_angle;
-float j1_X_angle_s = 0, j1_Y_angle_s = 0, j2_X_angle_s = 0, j2_Y_angle_s = 0;
+float j1_X_angle_r = 0, j1_Y_angle_r = 0, j2_X_angle_r = 0, j2_Y_angle_r = 0;
 
+//switch / button inputs
 int sw1V, sw2V, sw3V, sw4V, sw5V, j1_BV, j2_BV;
-const float smoothingFactor = 0.1; 
+
+//amount of states on the controller (must match robot)
 int state;
 int maxStates =5;
 
-RF24 radio(10, 9);
-
-uint8_t address[][6] = { "1Node", "2Node" };
-
-bool radioNumber = 0;  // 0 uses address[0] to transmit, 1 uses address[1] to transmit
-
-// Used to control whether this node is sending or receiving
-bool role = true;  // true = TX role, false = RX role
-bool gyro = true;
-
+//the data sent with the radio
 struct PayloadStruct {
   bool eStop; //sw2
   int state;
   bool gyro;
+  bool PID;
   float j1_x;
   float j1_y;
   float j2_x;
@@ -61,21 +67,22 @@ PayloadStruct payload;
 void setup() {
   Serial.begin(9600);
 
-
-  lcd.init();                      // initialize the lcd 
+  //set up display
+  lcd.init();           
   lcd.backlight();
+  lcd.clear();
 
-
+  //set all button/switches as input pullup (no resistor is used, buttons are tied to gnd)
   pinMode(sw1, INPUT_PULLUP);
   pinMode(sw2, INPUT_PULLUP);
   pinMode(sw3, INPUT_PULLUP);
   pinMode(sw4, INPUT_PULLUP);
-   pinMode(sw5, INPUT_PULLUP);
-
+  pinMode(sw5, INPUT_PULLUP);
   pinMode(j1_B, INPUT_PULLUP);
   pinMode(j2_B, INPUT_PULLUP);
 
 
+  //begin radio
   if (!radio.begin()) {
     Serial.println(F("radio hardware is not responding!!"));
     while (1) {}  // hold in infinite loop
@@ -85,55 +92,64 @@ void setup() {
 }
 
 void loop() {
-  j1_X_angle = analogRead(j1_X); //874 max, 443 = mid, 0 min
+  //update all inputs
+  j1_X_angle = analogRead(j1_X); 
   j1_Y_angle = analogRead(j1_Y);
   j2_X_angle = analogRead(j2_X);
   j2_Y_angle = analogRead(j2_Y);
-
-
   j1_BV = digitalRead(j1_B);
   j2_BV = digitalRead(j2_B);
 
+  j1_X_angle_r = rationalizeJoystick(j1_X_angle);
+  j1_Y_angle_r = rationalizeJoystick(j1_Y_angle);
+  j2_X_angle_r = rationalizeJoystick(j2_X_angle);
+  j2_Y_angle_r = rationalizeJoystick(j2_Y_angle);
+
+  //button on joystick = turn in place one or other direction
+  // i sw1 = menu mode
+  // i sw2 = move / estop
+  // i sw3 = gyro
+  // sw4 = PID on / off
+  // sw5 = future / na
   sw1V = digitalRead(sw1);
   sw2V = digitalRead(sw2);
   sw3V = digitalRead(sw3);
   sw4V = digitalRead(sw4);
   sw5V = digitalRead(sw5);
 
-  j1_X_angle_s = (smoothingFactor * j1_X_angle) + ((1 - smoothingFactor) * j1_X_angle_s);
-  j1_Y_angle_s = (smoothingFactor * j1_Y_angle) + ((1 - smoothingFactor) * j1_Y_angle_s);
-  j2_X_angle_s = (smoothingFactor * j2_X_angle) + ((1 - smoothingFactor) * j2_X_angle_s);
-  j2_Y_angle_s = (smoothingFactor * j2_Y_angle) + ((1 - smoothingFactor) * j2_Y_angle_s);
-
+  
   if(sw2V != 1){
     payload.eStop = true;
+  }else{
+    payload.eStop = false;
   }
-
-  //button on joystick = turn in place one or other direction
-  // i sw1 = menu mode
-  // sw2 = move / estop
-  // sw3 = gyro
-  // sw4 = PID on / off
-  // sw5 = future / na 
   
-  while (sw1V != 1){
-      if(j1_X_angle_s >= 600){
+  if (sw1V != 1){ //might cause watchdog error, consider rework
+      if(j1_X_angle_r >= .25){
+        delay(100);
         state = decState(state);
-      }else if(j1_X_angle_s <= 300){
+      }else if(j1_X_angle_r <= -.25){
+        delay(100);
         state = incState(state);
-        
       }
-      if(sw3V != 1){
-        gyro = false;
-      }else{
-        gyro = true;
-      }
-      payload.gyro = gyro;
       payload.state = state;
-      updateMenu(state, gyro);
+      updateMenu(state);
+      loop(); //cursed but should prevent other options from being changed
   }
 
+  if(sw3V != 1){
+    payload.gyro = false;
+  }else{
+    payload.gyro = true;
+  }
 
+  if(sw3V != 4){
+    payload.PID = false;
+  }else{
+    payload.PID = true;
+  }
+ 
+  radio.write(&payload, sizeof(PayloadStruct));
 }
 
 
@@ -150,9 +166,11 @@ int decState(int state){
   if (state < 0){
     state = maxStates-1;
   }
+  return state;
 }
 
-void updateMenu(int state, bool gyro){
+void updateMenu(int state){
+
   lcd.setCursor(0,0);
   lcd.print("Control");
   switch (state)
@@ -182,8 +200,18 @@ void updateMenu(int state, bool gyro){
   }
   } 
 
-  if(gyro == true){
+  if(payload.gyro == true){
     lcd.setCursor(16,2);
-    lcd.print(gyro);
+    lcd.print("gyro");
   }
+  if(payload.PID == true){
+    lcd.setCursor(15,2);
+    lcd.print("P");
+  }
+}
+
+float rationalizeJoystick(float value){
+  ////874 max, 443 = mid, 0 min
+  value = map(value,0,875,-1,1);
+  return value;
 }

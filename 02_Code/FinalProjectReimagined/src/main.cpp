@@ -9,42 +9,22 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <PID_v1.h> 
+#include <RF24.h>
 
 #include<externFunctions.h>
 
 
-//uint8_t controller[x]; // x = the amount of things being transferred (starting at 1)
-//2 or 3? joysticks
-//x joystick1
-//x joystick2
-//y joystick1
-//y joystick2
-//button j1
-//button j2
-//swtich (4?)
-  //1 for gyro
-  //2 to switch between turn and walk
-  //3 auton
-  //4 stop
-//buttons
-  //sit
-  //down
-
-//controller will have display with up/down and confirm buttons
-//only mode will be sent
-
-
-
-
-//state 0: standing at 150mm, gyro off
-//state 1: standing at 150mm, gyro on
-//state 2: kinematic input, manual angle
-//state 3: kinematic input, gyro
-//state 4: walking forward with set measurement
-//state 5: turn in place with set measurement
-//state 6: user control, gyro off
-//state 7: user control gyro on
-//possible state 8: add a way to adjust the PID values to better tune it
+struct PayloadStruct {
+  bool eStop; //sw2
+  int state;
+  bool gyro;
+  bool PID;
+  float j1_x;
+  float j1_y;
+  float j2_x;
+  float j2_y;
+};
+PayloadStruct payload;
 
 //values for movement
 //current /default values
@@ -99,6 +79,10 @@ PID zPID(&zPreRot, &zRot, &angleGoal, Kp, Ki, Kd, DIRECT);
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(0x41);
 
+
+
+RF24 radio(9, 10);
+
 void setup() {
   Serial.begin(115200);
   Serial.println("alive");
@@ -127,6 +111,10 @@ void setup() {
     Serial.println("PID alive");
   #endif
   
+  radio.begin();
+  radio.setPALevel(RF24_PA_HIGH);
+  radio.startListening();
+
   //Set up PCA9685
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -157,7 +145,9 @@ void setup() {
 }
 
 void loop() {
-  
+  if (radio.available()) {
+        radio.read(&payload, sizeof(PayloadStruct));
+  }
   #ifdef gyro  
     bno.getEvent(&event);
     delay(5);
@@ -173,61 +163,5 @@ void loop() {
 
 turn(yRot, zRot, false);
 //WalkF(yPreRot,zPreRot, true);
-
-
-int state = 0;
-
-
-//state 0: standing at 150mm, gyro off
-//state 1: standing at 150mm, gyro on
-//state 2: kinematic input, manual angle
-//state 3: kinematic input, gyro
-//state 4: walking forward with set measurement
-//state 5: turn in place with set measurement
-//state 6: user control, gyro off
-//state 7: user control gyro on
-//possible state 8: add a way to adjust the PID values to better tune it
-switch(state){
-  case(0):{
-    mainKinematics(150,0,0,aHip,0,0,0);
-    mainKinematics(150,0,0,bHip,0,0,0);
-    mainKinematics(150,0,0,cHip,0,0,0);
-    mainKinematics(150,0,0,dHip,0,0,0);
-  }
-  case(1):{
-    mainKinematics(150,0,0,aHip,0,yRot,zRot);
-    mainKinematics(150,0,0,bHip,0,yRot,zRot);
-    mainKinematics(150,0,0,cHip,0,yRot,zRot);
-    mainKinematics(150,0,0,dHip,0,yRot,zRot);
-
-  }
-  case(2):{
-    
-    // mainKinematics(,0,0,aHip,0,,);
-    // mainKinematics(,0,0,bHip,0,,);
-    // mainKinematics(,0,0,cHip,0,,);
-    // mainKinematics(,0,0,dHip,0,,);
-  }
-  case(3):{
-    // mainKinematics(,0,0,aHip,0,yRot,zRot);
-    // mainKinematics(,0,0,bHip,0,yRot,zRot);
-    // mainKinematics(,0,0,cHip,0,yRot,zRot);
-    // mainKinematics(,0,0,dHip,0,yRot,zRot);
-  }
-  case(4):{
-    WalkF(yRot,zRot, true);
-  }
-  case(5):{
-    turn(yRot, zRot, true);
-  }
-  case(6):{
-    //not sure how to implement this yet, as the cycles will need to break at times and then
-    //change back into "normal"
-  }
-  case(7):{
-    //same as above ^ not sure, however they will have gyro enabled
-  }
-
-}
 }
 
