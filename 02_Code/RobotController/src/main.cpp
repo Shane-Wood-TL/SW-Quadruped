@@ -32,7 +32,7 @@ float rationalizeJoystick(float value);
 LiquidCrystal_I2C lcd(0x27,20,4);
 
 //radio setup
-RF24 radio(10, 9);
+RF24 radio(9, 10);
 uint8_t address[][6] = { "1Node", "2Node" };
 bool radioNumber = 0;  // 0 uses address[0] to transmit, 1 uses address[1] to transmit
 // Used to control whether this node is sending or receiving
@@ -66,13 +66,13 @@ PayloadStruct payload;
 
 void setup() {
   Serial.begin(9600);
-
+  Serial.print("alive");
   //set up display
   lcd.init();           
   lcd.backlight();
   lcd.clear();
-
-  //set all button/switches as input pullup (no resistor is used, buttons are tied to gnd)
+  Serial.print("here2");
+  //set all button/switches ;as input pullup (no resistor is used, buttons are tied to gnd)
   pinMode(sw1, INPUT_PULLUP);
   pinMode(sw2, INPUT_PULLUP);
   pinMode(sw3, INPUT_PULLUP);
@@ -82,14 +82,17 @@ void setup() {
   pinMode(j2_B, INPUT_PULLUP);
 
 
-  //begin radio
+  // begin radio
   if (!radio.begin()) {
     Serial.println(F("radio hardware is not responding!!"));
+    lcd.print("no radio");
     while (1) {}  // hold in infinite loop
   }
    radio.setPALevel(RF24_PA_HIGH);
    radio.stopListening();
 }
+
+
 
 void loop() {
   //update all inputs
@@ -149,7 +152,7 @@ void loop() {
     payload.PID = true;
   }
  
-  radio.write(&payload, sizeof(PayloadStruct));
+ // radio.write(&payload, sizeof(PayloadStruct));
 }
 
 
