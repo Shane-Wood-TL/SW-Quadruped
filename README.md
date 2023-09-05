@@ -2,10 +2,13 @@
 Quadruped Robot similar to the boston dynamic's spot
 Inspiration for the current design is taken from the Spot Mirco Project as well as some of James Bruton's designs
 
-$ Version 7
+# Version 7
 Fixed the body issues of v6 with the use of carbon fiber tubes, similar to v6 otherwise.
+![PXL_20230803_034527840 PORTRAIT (1)](https://github.com/Townlake101/TL-Quadruped/assets/15756211/6cbb1202-86b7-4fbc-993a-1dcd48be1b01)
+
 
 # Version 6
+![PXL_20230622_041525787](https://github.com/Townlake101/TL-Quadruped/assets/15756211/7380e80b-6586-435f-85e7-c34cd7a7470a)
 
 Similar to V5
 The main goal is to reduce tolerance issues within V5 as well as make maintenance easier
