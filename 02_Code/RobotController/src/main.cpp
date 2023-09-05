@@ -22,8 +22,21 @@
 #define sw4 5
 #define sw5 6
 
+//the data sent with the radio
+struct PayloadStruct {
+  bool eStop; //sw2
+  int state;
+  bool gyro;
+  bool PID;
+  float j1_x;
+  float j1_y;
+  float j2_x;
+  float j2_y;
+};
+PayloadStruct payload;
+
 //fucntions
-void updateMenu(int state);
+void updateMenu(int state, PayloadStruct payload);
 int incState(int state);
 int decState(int state);
 float rationalizeJoystick(float value);
@@ -50,18 +63,7 @@ int sw1V, sw2V, sw3V, sw4V, sw5V, j1_BV, j2_BV;
 int state;
 int maxStates =5;
 
-//the data sent with the radio
-struct PayloadStruct {
-  bool eStop; //sw2
-  int state;
-  bool gyro;
-  bool PID;
-  float j1_x;
-  float j1_y;
-  float j2_x;
-  float j2_y;
-};
-PayloadStruct payload;
+
 
 
 void setup() {
@@ -90,6 +92,8 @@ void setup() {
   }
    radio.setPALevel(RF24_PA_HIGH);
    radio.stopListening();
+
+   updateMenu(state, payload);
 }
 
 
@@ -122,37 +126,76 @@ void loop() {
 
   
   if(sw2V != 1){
-    payload.eStop = true;
+    if(payload.eStop != true){
+      payload.eStop = true;
+      updateMenu(state, payload);
+    }
   }else{
-    payload.eStop = false;
+    if(payload.eStop != false){
+      payload.eStop = false;
+      updateMenu(state, payload);
+    }
+    
   }
+
   
   if (sw1V != 1){ //might cause watchdog error, consider rework
+    int oldState = state;
       if(j1_X_angle_r >= .25){
-        delay(100);
         state = decState(state);
-      }else if(j1_X_angle_r <= -.25){
         delay(100);
+      }else if(j1_X_angle_r <= -.25){
         state = incState(state);
+        delay(100);
       }
-      payload.state = state;
-      updateMenu(state);
-      loop(); //cursed but should prevent other options from being changed
+     
+      if (state != oldState){
+        payload.state = state;
+        updateMenu(state, payload);
+        
+      }
+   //cursed but should prevent other options from being changed
   }
 
   if(sw3V != 1){
-    payload.gyro = false;
+    if(payload.gyro != false){
+      payload.gyro = false;
+      updateMenu(state, payload);
+    }
   }else{
-    payload.gyro = true;
+    if(payload.gyro != true){
+      payload.gyro = true;
+      updateMenu(state, payload);
+    }
   }
 
-  if(sw3V != 4){
-    payload.PID = false;
+  if(sw4V != 1){
+    if(payload.PID != false){
+      payload.PID = false;
+      updateMenu(state, payload);
+    }
   }else{
-    payload.PID = true;
+    if(payload.PID != true){
+      payload.PID = true;
+      updateMenu(state, payload);
+    }
   }
  
- // radio.write(&payload, sizeof(PayloadStruct));
+
+payload.state = state;
+payload.j1_x = j1_X_angle_r;
+payload.j1_y = j1_Y_angle_r;
+payload.j2_x = j2_X_angle_r;
+payload.j2_y = j2_Y_angle_r;
+
+  radio.write(&payload, sizeof(PayloadStruct));
+
+  Serial.print(sw1V);
+  Serial.print(sw2V);
+  Serial.print(sw3V);
+  Serial.print(sw4V);
+  Serial.print(sw5V);
+  Serial.println();
 }
 
 
@@ -172,10 +215,26 @@ int decState(int state){
   return state;
 }
 
-void updateMenu(int state){
+void updateMenu(int state, PayloadStruct payload){
+  lcd.clear();
+  if(payload.gyro == true){
+    lcd.setCursor(10,1);
+    lcd.print("gyro");
+  }
+  if(payload.PID == true){
+    lcd.setCursor(15,1);
+    lcd.print("P");
+  }
 
+  if(payload.eStop == true){
+    lcd.setCursor(1,1);
+      lcd.print("STOP");
+  }else{
+      lcd.setCursor(1,1);
+      lcd.print("   ");
+  }
   lcd.setCursor(0,0);
-  lcd.print("Control");
+  lcd.print("Control: ");
   switch (state)
   {
   case 0:{
@@ -202,15 +261,6 @@ void updateMenu(int state){
     break;
   }
   } 
-
-  if(payload.gyro == true){
-    lcd.setCursor(16,2);
-    lcd.print("gyro");
-  }
-  if(payload.PID == true){
-    lcd.setCursor(15,2);
-    lcd.print("P");
-  }
 }
 
 float rationalizeJoystick(float value){
