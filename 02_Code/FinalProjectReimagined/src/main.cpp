@@ -23,6 +23,8 @@ struct PayloadStruct {
   float j1_y;
   float j2_x;
   float j2_y;
+  bool j1_b;
+  bool j2_b;
 };
 PayloadStruct payload;
 
@@ -161,7 +163,106 @@ void loop() {
     zRot = 0;
   #endif
 
-turn(yRot, zRot, false);
-//WalkF(yPreRot,zPreRot, true);
+if(payload.eStop != true){
+  switch (payload.state) {
+    case 0:{ //standing
+      if(payload.gyro && payload.PID){
+        mainKinematics(150,0,0,aHip,0,yRot,zRot);
+        mainKinematics(150,0,0,bHip,0,yRot,zRot);
+        mainKinematics(150,0,0,cHip,0,yRot,zRot);
+        mainKinematics(150,0,0,dHip,0,yRot,zRot);
+      }else if(payload.gyro && !payload.PID){
+        mainKinematics(150,0,0,aHip,0,yPreRot,zPreRot);
+        mainKinematics(150,0,0,bHip,0,yPreRot,zPreRot);
+        mainKinematics(150,0,0,cHip,0,yPreRot,zPreRot);
+        mainKinematics(150,0,0,dHip,0,yPreRot,zPreRot);
+      }else{
+        mainKinematics(150,0,0,aHip,0,0,0);
+        mainKinematics(150,0,0,bHip,0,0,0);
+        mainKinematics(150,0,0,cHip,0,0,0);
+        mainKinematics(150,0,0,dHip,0,0,0);
+      }
+    }
+    case 1:{ //IK mode
+      float xH = payload.j1_x * 150;
+      float xLR = payload.j2_x * 50;
+      float xFB = payload.j2_y * 50;
+      if(payload.gyro && payload.PID){
+        mainKinematics(xH,xFB,xLR,aHip,0,yRot,zRot);
+        mainKinematics(xH,xFB,xLR,bHip,0,yRot,zRot);
+        mainKinematics(xH,xFB,xLR,cHip,0,yRot,zRot);
+        mainKinematics(xH,xFB,xLR,dHip,0,yRot,zRot);
+      }else if(payload.gyro && !payload.PID){
+        mainKinematics(xH,xFB,xLR,aHip,0,yPreRot,zPreRot);
+        mainKinematics(xH,xFB,xLR,bHip,0,yPreRot,zPreRot);
+        mainKinematics(xH,xFB,xLR,cHip,0,yPreRot,zPreRot);
+        mainKinematics(xH,xFB,xLR,dHip,0,yPreRot,zPreRot);
+      }else{
+        mainKinematics(xH,xFB,xLR,aHip,0,0,0);
+        mainKinematics(xH,xFB,xLR,bHip,0,0,0);
+        mainKinematics(xH,xFB,xLR,cHip,0,0,0);
+        mainKinematics(xH,xFB,xLR,dHip,0,0,0);
+      }
+      break;
+    }
+    case 2:{//FWalk
+      if(payload.gyro && payload.PID){
+        WalkF(yRot,zRot, true);
+      }else if (payload.gyro && !payload.PID){
+        WalkF(yPreRot, zPreRot, true);
+      }else{
+        WalkF(0,0,true);
+      }
+      break;
+    }
+    case 3:{ //Fturn
+      if(payload.gyro && payload.PID){
+        turn(yRot,zRot, true);
+      }else if (payload.gyro && !payload.PID){
+        turn(yPreRot, zPreRot, true);
+      }else{
+        turn(0,0,true);
+      }
+      break;
+    }
+    case 4:{ //user
+      float xFB = payload.j2_y * 50;
+      float xLR = payload.j2_x * 50;
+      float xH = payload.j1_x * 150;
+      float timee = payload.j1_y * 50;
+
+      bool direction = true;
+      if(xFB < 0 && xLR < 0){
+        direction = false;  
+      }
+
+      if(payload.gyro && payload.PID){
+        //user controll will be the hardest one
+        // float j1_x; forward distance
+        // float j1_y; time?
+        // float j2_x; xLR
+        // float j2_y; xFB
+        //bool j1_b; turn 1 way
+        //bool j2_b; turn other way
+        //turning and moving can NOT mix
+        if(!payload.j1_b && !payload.j2_b){
+          WalkF(yRot, zRot, direction); //need to make WalkF take in values
+        }else if (payload.j1_b){
+          turn(yRot, zRot, true);
+        }else if (payload.j2_b){
+          turn(yRot, zRot, direction);
+        }
+      }else if (payload.gyro && !payload.PID){
+        int i = 0;
+      }else{
+        int i = 0;
+      }
+    }
+      
+
+    default:
+      break;
+    }
+  }
 }
 

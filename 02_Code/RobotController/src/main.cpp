@@ -32,6 +32,8 @@ struct PayloadStruct {
   float j1_y;
   float j2_x;
   float j2_y;
+  bool j1_b;
+  bool j2_b;
 };
 PayloadStruct payload;
 
@@ -138,8 +140,19 @@ void loop() {
     
   }
 
-  
-  if (sw1V != 1){ //might cause watchdog error, consider rework
+  if(j1_B != 1){ //need to convert to toggle
+    payload.j1_b = true;
+  }else{
+    payload.j1_b = false;
+  }
+
+   if(j2_B != 1){
+    payload.j2_b = true;
+  }else{
+    payload.j2_b = false;
+  }
+
+  if (sw1V != 1){
     int oldState = state;
       if(j1_X_angle_r >= .25){
         state = decState(state);
@@ -154,7 +167,6 @@ void loop() {
         updateMenu(state, payload);
         
       }
-   //cursed but should prevent other options from being changed
   }
 
   if(sw3V != 1){
