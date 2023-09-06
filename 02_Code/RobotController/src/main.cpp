@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <RF24.h>
+#include <nRF24L01.h>
 #include <LiquidCrystal_I2C.h>
 
 //joystick pins
@@ -48,10 +49,7 @@ LiquidCrystal_I2C lcd(0x27,20,4);
 
 //radio setup
 RF24 radio(9, 10);
-uint8_t address[][6] = { "1Node", "2Node" };
-bool radioNumber = 0;  // 0 uses address[0] to transmit, 1 uses address[1] to transmit
-// Used to control whether this node is sending or receiving
-bool role = true;  // true = TX role, false = RX role
+const byte slaveAddress[5] = {'R','x','A','A','A'};
 
 
 //joystick inputs
@@ -85,22 +83,27 @@ void setup() {
   pinMode(j1_B, INPUT_PULLUP);
   pinMode(j2_B, INPUT_PULLUP);
 
-
+  radio.begin();
   // begin radio
   if (!radio.begin()) {
     Serial.println(F("radio hardware is not responding!!"));
     lcd.print("no radio");
     while (1) {}  // hold in infinite loop
   }
-   radio.setPALevel(RF24_PA_HIGH);
+  radio.openWritingPipe(slaveAddress);
+   radio.setPALevel(RF24_PA_MIN);
+   radio.setDataRate( RF24_250KBPS );
+    radio.setRetries(3,5); // delay, count
    radio.stopListening();
 
    updateMenu(state, payload);
+   payload.j1_x = 5;
 }
 
 
 
 void loop() {
+  //radio.printPrettyDetails();
   //update all inputs
   j1_X_angle = analogRead(j1_X); 
   j1_Y_angle = analogRead(j1_Y);
@@ -113,7 +116,7 @@ void loop() {
   j1_Y_angle_r = rationalizeJoystick(j1_Y_angle);
   j2_X_angle_r = rationalizeJoystick(j2_X_angle);
   j2_Y_angle_r = rationalizeJoystick(j2_Y_angle);
-
+  
   //button on joystick = turn in place one or other direction
   // i sw1 = menu mode
   // i sw2 = move / estop
@@ -194,20 +197,21 @@ void loop() {
   }
  
 
-payload.state = state;
-payload.j1_x = j1_X_angle_r;
-payload.j1_y = j1_Y_angle_r;
-payload.j2_x = j2_X_angle_r;
-payload.j2_y = j2_Y_angle_r;
+  payload.state = state;
+  payload.j1_x = j1_X_angle_r;
+  payload.j1_y = j1_Y_angle_r;
+  payload.j2_x = j2_X_angle_r;
+  payload.j2_y = j2_Y_angle_r;
 
-  radio.write(&payload, sizeof(PayloadStruct));
+  Serial.print(radio.write(&payload, sizeof(PayloadStruct)));
+  
 
-  Serial.print(sw1V);
-  Serial.print(sw2V);
-  Serial.print(sw3V);
-  Serial.print(sw4V);
-  Serial.print(sw5V);
-  Serial.println();
+  // Serial.print(sw1V);
+  // Serial.print(sw2V);
+  // Serial.print(sw3V);
+  // Serial.print(sw4V);
+  // Serial.print(sw5V);
+  // Serial.println();
 }
 
 

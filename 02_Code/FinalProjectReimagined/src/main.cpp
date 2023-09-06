@@ -10,10 +10,19 @@
 #include <Adafruit_BNO055.h>
 #include <PID_v1.h> 
 #include <RF24.h>
-
+#include <nRF24L01.h>
 #include<externFunctions.h>
 
 
+
+//SCK 18
+//MOSI 8
+//MISO 10
+//CE 16
+//CSN 9
+
+
+//SPI.begin(16, 8, 10, 16);
 struct PayloadStruct {
   bool eStop; //sw2
   int state;
@@ -83,7 +92,8 @@ Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(0x41);
 
 
 
-RF24 radio(9, 10);
+RF24 radio(16,9);
+const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
 
 void setup() {
   Serial.begin(115200);
@@ -91,6 +101,7 @@ void setup() {
   Wire.begin(17,15); //SDA, SCL
   Serial.println("IC2 alive");
 
+  SPI.begin(18, 8, 10, 16);
   #ifdef gyro
     bno.begin();
     //set up gyro
@@ -113,10 +124,17 @@ void setup() {
     Serial.println("PID alive");
   #endif
   
-  radio.begin();
-  radio.setPALevel(RF24_PA_HIGH);
-  radio.startListening();
+    radio.begin();
+    radio.setDataRate( RF24_250KBPS );
+    radio.openReadingPipe(1, thisSlaveAddress);
+    radio.startListening();
 
+  if (!radio.begin()) {
+    Serial.println(F("radio hardware is not responding!!"));
+    while (1) {}  // hold in infinite loop
+  }
+
+  Serial.println("radio Alive");
   //Set up PCA9685
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -148,8 +166,13 @@ void setup() {
 
 void loop() {
   if (radio.available()) {
-        radio.read(&payload, sizeof(PayloadStruct));
+    radio.read(&payload, sizeof(PayloadStruct));
+    Serial.print("recieved");
+  }else{
+    payload.eStop = true;
+    //radio.printPrettyDetails();
   }
+  
   #ifdef gyro  
     bno.getEvent(&event);
     delay(5);
@@ -263,6 +286,9 @@ if(payload.eStop != true){
     default:
       break;
     }
+  }else{
+    pwm1.sleep();
+    pwm.sleep();
   }
 }
 
