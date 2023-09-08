@@ -90,14 +90,16 @@ void setup() {
     lcd.print("no radio");
     while (1) {}  // hold in infinite loop
   }
+  radio.setDataRate( RF24_250KBPS );
+   radio.setRetries(3,5); // delay, count
   radio.openWritingPipe(slaveAddress);
-   radio.setPALevel(RF24_PA_MIN);
-   radio.setDataRate( RF24_250KBPS );
-    radio.setRetries(3,5); // delay, count
-   radio.stopListening();
+   //radio.setPALevel(RF24_PA_MIN);
+   
+   
+   //radio.stopListening();
 
    updateMenu(state, payload);
-   payload.j1_x = 5;
+   //payload.j1_x = 5;
 }
 
 
@@ -203,8 +205,9 @@ void loop() {
   payload.j2_x = j2_X_angle_r;
   payload.j2_y = j2_Y_angle_r;
 
-  Serial.print(radio.write(&payload, sizeof(PayloadStruct)));
-  
+  bool sent;
+  sent = radio.write(&payload, sizeof(PayloadStruct));
+  Serial.print(sent);
 
   // Serial.print(sw1V);
   // Serial.print(sw2V);
