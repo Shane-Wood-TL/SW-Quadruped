@@ -4,6 +4,7 @@
 #include <RF24.h>
 #include <nRF24L01.h>
 #include <LiquidCrystal_I2C.h>
+#include "printf.h"
 
 //joystick pins
 #define j1_X A0
@@ -68,6 +69,7 @@ int maxStates =5;
 
 void setup() {
   Serial.begin(9600);
+  printf_begin();
   Serial.print("alive");
   //set up display
   lcd.init();           
@@ -90,11 +92,11 @@ void setup() {
     lcd.print("no radio");
     while (1) {}  // hold in infinite loop
   }
-  radio.openWritingPipe(slaveAddress);
+  
    radio.setPALevel(RF24_PA_MIN);
    radio.setDataRate( RF24_250KBPS );
     radio.setRetries(3,5); // delay, count
-   radio.stopListening();
+   radio.openWritingPipe(slaveAddress);
 
    updateMenu(state, payload);
    payload.j1_x = 5;
