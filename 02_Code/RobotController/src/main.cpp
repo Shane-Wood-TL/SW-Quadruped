@@ -25,16 +25,16 @@
 
 //the data sent with the radio
 struct PayloadStruct {
-  bool eStop; //sw2
-  int state;
-  bool gyro;
-  bool PID;
-  float j1_x;
-  float j1_y;
-  float j2_x;
-  float j2_y;
-  bool j1_b;
-  bool j2_b;
+  uint8_t eStop; //sw2
+  uint8_t state;
+  uint8_t gyro;
+  uint8_t PID;
+  int16_t j1_x;
+  int16_t j1_y;
+  int16_t j2_x;
+  int16_t j2_y;
+  uint8_t j1_b;
+  uint8_t j2_b;
 };
 PayloadStruct payload;
 
@@ -133,36 +133,36 @@ void loop() {
 
   
   if(sw2V != 1){
-    if(payload.eStop != true){
-      payload.eStop = true;
+    if(payload.eStop != 1){
+      payload.eStop = 1;
       updateMenu(state, payload);
     }
   }else{
-    if(payload.eStop != false){
-      payload.eStop = false;
+    if(payload.eStop != 0){
+      payload.eStop = 0;
       updateMenu(state, payload);
     }
     
   }
 
   if(j1_B != 1){ //need to convert to toggle
-    payload.j1_b = true;
+    payload.j1_b = 1;
   }else{
-    payload.j1_b = false;
+    payload.j1_b = 0;
   }
 
    if(j2_B != 1){
-    payload.j2_b = true;
+    payload.j2_b = 1;
   }else{
-    payload.j2_b = false;
+    payload.j2_b = 0;
   }
 
   if (sw1V != 1){
     int oldState = state;
-      if(j1_X_angle_r >= .25){
+      if(j1_X_angle_r >=75){
         state = decState(state);
         delay(100);
-      }else if(j1_X_angle_r <= -.25){
+      }else if(j1_X_angle_r <= -75){
         state = incState(state);
         delay(100);
       }
@@ -175,25 +175,25 @@ void loop() {
   }
 
   if(sw3V != 1){
-    if(payload.gyro != false){
-      payload.gyro = false;
+    if(payload.gyro != 0){
+      payload.gyro = 0;
       updateMenu(state, payload);
     }
   }else{
-    if(payload.gyro != true){
-      payload.gyro = true;
+    if(payload.gyro != 1){
+      payload.gyro = 1;
       updateMenu(state, payload);
     }
   }
 
   if(sw4V != 1){
-    if(payload.PID != false){
-      payload.PID = false;
+    if(payload.PID != 0){
+      payload.PID = 0;
       updateMenu(state, payload);
     }
   }else{
-    if(payload.PID != true){
-      payload.PID = true;
+    if(payload.PID != 1){
+      payload.PID = 1;
       updateMenu(state, payload);
     }
   }
@@ -284,6 +284,6 @@ void updateMenu(int state, PayloadStruct payload){
 
 float rationalizeJoystick(float value){
   ////874 max, 443 = mid, 0 min
-  value = map(value,0,875,-1,1);
+  value = map(value,0,875,-150,150);
   return value;
 }
