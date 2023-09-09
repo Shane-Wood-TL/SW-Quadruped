@@ -1,7 +1,12 @@
 #include <Arduino.h>
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
 #include <math.h>
 #include <Wire.h>
-#include <SPI.h>
+
+
 
 #include <Ramp.h>
 #include <Adafruit_PWMServoDriver.h>
@@ -9,8 +14,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <PID_v1.h> 
-#include <RF24.h>
-#include <nRF24L01.h>
+
 #include<externFunctions.h>
 
 
@@ -21,21 +25,6 @@
 //CE 16
 //CSN 9
 
-
-//SPI.begin(16, 8, 10, 16);
-struct PayloadStruct {
-  bool eStop; //sw2
-  int state;
-  bool gyro;
-  bool PID;
-  float j1_x;
-  float j1_y;
-  float j2_x;
-  float j2_y;
-  bool j1_b;
-  bool j2_b;
-};
-PayloadStruct payload;
 
 //values for movement
 //current /default values
@@ -92,16 +81,56 @@ Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(0x41);
 
 
 
-RF24 radio(16,9);
+//SPI.begin(16, 8, 10, 16);
+struct PayloadStruct {
+  uint8_t eStop; //sw2
+  uint8_t state;
+  uint8_t gyro;
+  uint8_t PID;
+  int16_t j1_x;
+  int16_t j1_y;
+  int16_t j2_x;
+  int16_t j2_y;
+  uint8_t j1_b;
+  uint8_t j2_b;
+};
+PayloadStruct payload;
+
 const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
+RF24 radio(16,9);
+
+void getData();
+void showData();
+
+char dataReceived[10]; // this must match dataToSend in the TX
+bool newData = false;
+
+
 
 void setup() {
-  Serial.begin(115200);
+  
+Serial.begin(9600);
+Wire.begin(17,15); //SDA, SCL
+  SPI.begin(18, 8, 10);
+
+  Serial.println("SimpleRx Starting");
+    radio.begin();
+    radio.setDataRate( RF24_250KBPS );
+    radio.openReadingPipe(1, thisSlaveAddress);
+    radio.startListening();
+
+
+  
+  // if (!radio.begin()) {
+  //   Serial.println(F("radio hardware is not responding!!"));
+  //   while (1) {}  // hold in infinite loop
+  // }
+  // delay(1000);
   Serial.println("alive");
-  Wire.begin(17,15); //SDA, SCL
+  
   Serial.println("IC2 alive");
 
-  SPI.begin(18, 8, 10, 16);
+  
   #ifdef gyro
     bno.begin();
     //set up gyro
@@ -124,15 +153,7 @@ void setup() {
     Serial.println("PID alive");
   #endif
   
-    radio.begin();
-    radio.setDataRate( RF24_250KBPS );
-    radio.openReadingPipe(1, thisSlaveAddress);
-    radio.startListening();
 
-  if (!radio.begin()) {
-    Serial.println(F("radio hardware is not responding!!"));
-    while (1) {}  // hold in infinite loop
-  }
 
   Serial.println("radio Alive");
   //Set up PCA9685
@@ -165,13 +186,10 @@ void setup() {
 }
 
 void loop() {
-  if (radio.available()) {
-    radio.read(&payload, sizeof(PayloadStruct));
-    Serial.print("recieved");
-  }else{
-    payload.eStop = true;
-    //radio.printPrettyDetails();
-  }
+  getData();
+  showData();
+
+
   
   #ifdef gyro  
     bno.getEvent(&event);
@@ -182,12 +200,15 @@ void loop() {
     zPID.Compute();
   #endif
   #ifndef gyro
-    yRot =0;
+    yRot = 0;
     zRot = 0;
   #endif
 
-if(payload.eStop != true){
+if(payload.eStop != 1){
+  pwm.wakeup();
+    pwm1.wakeup();
   switch (payload.state) {
+    
     case 0:{ //standing
       if(payload.gyro && payload.PID){
         mainKinematics(150,0,0,aHip,0,yRot,zRot);
@@ -207,15 +228,15 @@ if(payload.eStop != true){
       }
     }
     case 1:{ //IK mode
-      float xH = payload.j1_x * 150;
-      float xLR = payload.j2_x * 50;
-      float xFB = payload.j2_y * 50;
-      if(payload.gyro && payload.PID){
+      float xH = payload.j1_x;
+      float xLR = payload.j2_x;
+      float xFB = payload.j2_y;
+      if(payload.gyro == 1 && payload.PID ==1){
         mainKinematics(xH,xFB,xLR,aHip,0,yRot,zRot);
         mainKinematics(xH,xFB,xLR,bHip,0,yRot,zRot);
         mainKinematics(xH,xFB,xLR,cHip,0,yRot,zRot);
         mainKinematics(xH,xFB,xLR,dHip,0,yRot,zRot);
-      }else if(payload.gyro && !payload.PID){
+      }else if(payload.gyro == 1 && !payload.PID==1){
         mainKinematics(xH,xFB,xLR,aHip,0,yPreRot,zPreRot);
         mainKinematics(xH,xFB,xLR,bHip,0,yPreRot,zPreRot);
         mainKinematics(xH,xFB,xLR,cHip,0,yPreRot,zPreRot);
@@ -229,9 +250,9 @@ if(payload.eStop != true){
       break;
     }
     case 2:{//FWalk
-      if(payload.gyro && payload.PID){
+      if(payload.gyro ==1 && payload.PID== 1){
         WalkF(yRot,zRot, true);
-      }else if (payload.gyro && !payload.PID){
+      }else if (payload.gyro==1 && !payload.PID== 0){
         WalkF(yPreRot, zPreRot, true);
       }else{
         WalkF(0,0,true);
@@ -239,9 +260,9 @@ if(payload.eStop != true){
       break;
     }
     case 3:{ //Fturn
-      if(payload.gyro && payload.PID){
+      if(payload.gyro ==1 && payload.PID== 1){
         turn(yRot,zRot, true);
-      }else if (payload.gyro && !payload.PID){
+      }else if (payload.gyro ==1 && !payload.PID==0){
         turn(yPreRot, zPreRot, true);
       }else{
         turn(0,0,true);
@@ -249,17 +270,17 @@ if(payload.eStop != true){
       break;
     }
     case 4:{ //user
-      float xFB = payload.j2_y * 50;
-      float xLR = payload.j2_x * 50;
-      float xH = payload.j1_x * 150;
-      float timee = payload.j1_y * 50;
+      float xFB = payload.j2_y;
+      float xLR = payload.j2_x;
+      float xH = payload.j1_x;
+      float timee = payload.j1_y;
 
       bool direction = true;
       if(xFB < 0 && xLR < 0){
         direction = false;  
       }
 
-      if(payload.gyro && payload.PID){
+      if(payload.gyro == 1 && payload.PID == 1){
         //user controll will be the hardest one
         // float j1_x; forward distance
         // float j1_y; time?
@@ -268,14 +289,14 @@ if(payload.eStop != true){
         //bool j1_b; turn 1 way
         //bool j2_b; turn other way
         //turning and moving can NOT mix
-        if(!payload.j1_b && !payload.j2_b){
+        if(!payload.j1_b == 1 && !payload.j2_b == 1){
           WalkF(yRot, zRot, direction); //need to make WalkF take in values
-        }else if (payload.j1_b){
+        }else if (payload.j1_b==1){
           turn(yRot, zRot, true);
-        }else if (payload.j2_b){
+        }else if (payload.j2_b==1){
           turn(yRot, zRot, direction);
         }
-      }else if (payload.gyro && !payload.PID){
+      }else if (payload.gyro == 1 && !payload.PID == 1){
         int i = 0;
       }else{
         int i = 0;
@@ -292,3 +313,18 @@ if(payload.eStop != true){
   }
 }
 
+
+void getData(){
+   if (radio.available()) {
+    radio.read( &payload, sizeof(payload) );
+    newData = true;
+   }
+}
+
+void showData() {
+    if (newData == true) {
+        Serial.print("Data received ");
+        Serial.println(payload.gyro);
+        newData = false;
+    }
+}
