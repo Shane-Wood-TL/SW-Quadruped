@@ -114,10 +114,12 @@ void loop() {
   j1_BV = digitalRead(j1_B);
   j2_BV = digitalRead(j2_B);
 
-  j1_X_angle_r = rationalizeJoystick(j1_X_angle);
-  j1_Y_angle_r = rationalizeJoystick(j1_Y_angle);
-  j2_X_angle_r = rationalizeJoystick(j2_X_angle);
-  j2_Y_angle_r = rationalizeJoystick(j2_Y_angle);
+  j1_X_angle_r = (j1_X_angle);
+  j1_Y_angle_r = (j1_Y_angle);
+  j2_X_angle_r = (j2_X_angle);
+  j2_Y_angle_r = (j2_Y_angle);
+  
+
   
   //button on joystick = turn in place one or other direction
   // i sw1 = menu mode
@@ -145,25 +147,30 @@ void loop() {
     
   }
 
-  if(j1_B != 1){ //need to convert to toggle
-    payload.j1_b = 1;
-  }else{
-    payload.j1_b = 0;
+  if(j1_B == 0){ //need to convert to toggle
+    if(payload.j1_b == 0){
+      payload.j1_b = 1;
+    }else{
+      payload.j1_b = 0;
+    }
   }
 
-   if(j2_B != 1){
-    payload.j2_b = 1;
-  }else{
-    payload.j2_b = 0;
+   if(j2_B == 0){
+    if(payload.j2_b == 0){
+      payload.j2_b = 1;
+    }else{
+      payload.j2_b = 0;
+    }
   }
 
   
   if (sw1V != 1){
+      float j1_X_angle_B = map(j1_X_angle,0,875,-150,150);
       int temp_state = state;
-      if(j1_X_angle_r >=75){
+      if(j1_X_angle_B >=75){
         state = decState(state);
         delay(100);
-      }else if(j1_X_angle_r <= -75){
+      }else if(j1_X_angle_B <= -75){
         state = incState(state);
         delay(100);
       }
@@ -204,10 +211,45 @@ void loop() {
   }
  
 
-  payload.j1_x = j1_X_angle_r;
-  payload.j1_y = j1_Y_angle_r;
-  payload.j2_x = j2_X_angle_r;
-  payload.j2_y = j2_Y_angle_r;
+  switch (payload.state)
+  {
+  case(4):
+    j1_X_angle_r=map(j1_X_angle_r, 0,875,80,-80);
+    j1_Y_angle_r=0;
+    j2_X_angle_r=map(j2_X_angle_r, 0,875,-50,50);
+    j2_Y_angle_r=map(j2_Y_angle_r, 0,875,-40,40);
+
+
+    payload.j1_x = int(j1_X_angle_r);
+    payload.j1_y = int(j1_Y_angle_r);
+    payload.j2_x = int(j2_X_angle_r);
+    payload.j2_y = int(j2_Y_angle_r);
+    break;
+  case 1:{
+    j1_X_angle_r=map(j1_X_angle_r, 0,875,10,150);
+    j1_Y_angle_r=0;
+    j2_X_angle_r=map(j2_X_angle_r, 0,875,-50,50);
+    j2_Y_angle_r=map(j2_Y_angle_r, 0,875,-40,40);
+
+    payload.j1_x = int(j1_X_angle_r);
+    payload.j1_y = int(j1_Y_angle_r);
+    payload.j2_x = int(j2_X_angle_r);
+    payload.j2_y = int(j2_Y_angle_r);
+    break;
+  }
+
+  case 0:
+  case(2):
+  case(3):
+  default:{
+    payload.j1_x = 0;
+    payload.j1_y = 0;
+    payload.j2_x = 0;
+    payload.j2_y = 0;
+    break;
+  }
+  }
+  
 
   bool sent;
   sent = radio.write(&payload, sizeof(PayloadStruct));
@@ -220,6 +262,7 @@ void loop() {
   // Serial.print(sw5V);
   // Serial.println();
 }
+
 
 
 int incState(int state){
@@ -285,6 +328,7 @@ void updateMenu(int state, PayloadStruct payload){
   }
   } 
 }
+
 
 float rationalizeJoystick(float value){
   ////874 max, 443 = mid, 0 min
