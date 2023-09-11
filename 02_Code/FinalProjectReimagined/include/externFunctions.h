@@ -102,5 +102,5 @@ float decrad(float deg); //degrees to radians
 
 //Movement
 void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
-void WalkF(float yRot, float zRot, bool direction);
-void turn(float yRot, float zRot, bool clockwise);
+void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
+void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);

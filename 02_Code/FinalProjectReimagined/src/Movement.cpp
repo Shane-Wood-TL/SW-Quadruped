@@ -1,17 +1,18 @@
 #include <Arduino.h>
 #include <Ramp.h>
 #include <externFunctions.h>
+#include <math.h>
 
-extern float timee;
+// extern float timee;
 
-extern float backDistance;
-extern float upDistance;
-extern float LRDistance;
+// extern float backDistance;
+// extern float upDistance;
+// extern float LRDistance;
 
-extern float testHeight;
-extern float testHeightBACK;
-extern float testFB;
-extern float testLR;
+// extern float testHeight;
+// extern float testHeightBACK;
+// extern float testFB;
+// extern float testLR;
 
 extern rampLeg aLeg;
 extern rampLeg bLeg;
@@ -23,7 +24,9 @@ rampLeg* bLegAdd = &bLeg;
 rampLeg* cLegAdd = &cLeg;
 rampLeg* dLegAdd = &dLeg;
 
-void WalkF(float yRot, float zRot, bool direction){
+void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
+  float timee = sqrt(pow(backDistance,2) + pow(upDistance,2) + pow(LRDistance,2));
+  timee = timee;
   updateAll();
 
   if(allDone()){
@@ -64,7 +67,9 @@ void WalkF(float yRot, float zRot, bool direction){
 }
 
 
-void turn(float yRot, float zRot, bool clockwise){
+void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
+  float timee = sqrt(pow(backDistance,2) + pow(upDistance,2) + pow(LRDistance,2));
+  timee = timee;
   updateAll();
   if(allDone()){
     walk(*aLegAdd, timee, backDistance, upDistance, LRDistance, true);

@@ -60,11 +60,11 @@ float j1_X_angle_r = 0, j1_Y_angle_r = 0, j2_X_angle_r = 0, j2_Y_angle_r = 0;
 int sw1V, sw2V, sw3V, sw4V, sw5V, j1_BV, j2_BV;
 
 //amount of states on the controller (must match robot)
-int state;
+int state =0;
 int maxStates =5;
 
 
-
+int oldState = state;
 
 void setup() {
   Serial.begin(9600);
@@ -157,8 +157,9 @@ void loop() {
     payload.j2_b = 0;
   }
 
+  
   if (sw1V != 1){
-    int oldState = state;
+      int temp_state = state;
       if(j1_X_angle_r >=75){
         state = decState(state);
         delay(100);
@@ -166,13 +167,17 @@ void loop() {
         state = incState(state);
         delay(100);
       }
-     
-      if (state != oldState){
-        payload.state = state;
-        updateMenu(state, payload);
-        
+      if(temp_state!=state){
+      updateMenu(state, payload);
       }
   }
+     
+    if (state != oldState && sw1V == 1){
+      oldState = state;
+        payload.state = oldState; 
+           
+    }
+  
 
   if(sw3V != 1){
     if(payload.gyro != 0){
@@ -199,7 +204,6 @@ void loop() {
   }
  
 
-  payload.state = state;
   payload.j1_x = j1_X_angle_r;
   payload.j1_y = j1_Y_angle_r;
   payload.j2_x = j2_X_angle_r;

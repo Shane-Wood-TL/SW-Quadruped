@@ -53,8 +53,8 @@ const int dAnkle = 5; //
 //  front
 
 // 
-const float aHipOffset = -5; // higher value = more out
-const float aKneeOffset = -30; // higer value = cc
+const float aHipOffset = -30; // higher value = more out
+const float aKneeOffset = 20; // higer value = cc
 const float aAnkleOffset = -20; // higer value = smaller angle
 
 const float bHipOffset = 0; // higher value = more in
@@ -156,7 +156,7 @@ if (true) {
   }
 
   if(xLR >= 50){
-    xLR = 25;
+    xLR = 50;
   }else if(xLR <= -25){
     xLR = -25;
   }
