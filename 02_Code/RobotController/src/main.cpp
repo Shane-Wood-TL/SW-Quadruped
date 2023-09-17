@@ -61,7 +61,7 @@ int sw1V, sw2V, sw3V, sw4V, sw5V, j1_BV, j2_BV;
 
 //amount of states on the controller (must match robot)
 int state =0;
-int maxStates =5;
+int maxStates =6;
 
 
 int oldState = state;
@@ -214,7 +214,7 @@ void loop() {
   switch (payload.state)
   {
   case(4):
-    j1_X_angle_r=map(j1_X_angle_r, 0,875,80,-80);
+    j1_X_angle_r=map(j1_X_angle_r, 0,875,-80,80);
     j1_Y_angle_r=0;
     j2_X_angle_r=map(j2_X_angle_r, 0,875,-50,50);
     j2_Y_angle_r=map(j2_Y_angle_r, 0,875,-40,40);
@@ -226,7 +226,7 @@ void loop() {
     payload.j2_y = int(j2_Y_angle_r);
     break;
   case 1:{
-    j1_X_angle_r=map(j1_X_angle_r, 0,875,10,150);
+    j1_X_angle_r=map(j1_X_angle_r, 436,875,0,150);
     j1_Y_angle_r=0;
     j2_X_angle_r=map(j2_X_angle_r, 0,875,-50,50);
     j2_Y_angle_r=map(j2_Y_angle_r, 0,875,-40,40);
@@ -241,6 +241,7 @@ void loop() {
   case 0:
   case(2):
   case(3):
+  case(5):
   default:{
     payload.j1_x = 0;
     payload.j1_y = 0;
@@ -322,6 +323,8 @@ void updateMenu(int state, PayloadStruct payload){
   case 4:{
     lcd.print("User");
     break;
+  }case 5:{
+    lcd.print("90s");
   }
   default:{
     break;

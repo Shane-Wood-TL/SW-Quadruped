@@ -104,3 +104,19 @@ float decrad(float deg); //degrees to radians
 void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
 void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
+
+
+//Modes
+void standing_0();
+void IK_1();
+void FWalk_2();
+void FTurn_3();
+void User_4();
+
+
+void Default_9();
+void wakeup_9();
+
+
+void getData();
+void showData();

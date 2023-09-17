@@ -2,6 +2,7 @@
 #include <Ramp.h>
 #include <externFunctions.h>
 #include <math.h>
+#include "Variables.cpp"
 
 // extern float timee;
 
@@ -23,6 +24,8 @@ rampLeg* aLegAdd = &aLeg;
 rampLeg* bLegAdd = &bLeg;
 rampLeg* cLegAdd = &cLeg;
 rampLeg* dLegAdd = &dLeg;
+
+
 
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
   float timee = sqrt(pow(backDistance,2) + pow(upDistance,2) + pow(LRDistance,2));
@@ -229,4 +232,22 @@ void start(){
   bLeg.setCycle(3);
   cLeg.setCycle(3);
   dLeg.setCycle(0);
+}
+
+
+void getData(){
+   if (radio.available()) {
+    radio.read( &payload, sizeof(payload) );
+    newData = true;
+   }else{
+    payload.eStop ==true;
+   }
+}
+
+void showData() {
+    if (newData == true) {
+        Serial.print("Data received ");
+        Serial.println(payload.gyro);
+        newData = false;
+    }
 }
