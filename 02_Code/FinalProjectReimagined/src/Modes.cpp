@@ -1,8 +1,36 @@
 #include <Arduino.h>
-#include<externFunctions.h>
-#include "main.cpp"
+#include <externFunctions.h>
+#include <Adafruit_PWMServoDriver.h>
 
-extern PayloadStruct paylod;
+extern int aHip;
+extern int bHip;
+extern int cHip;
+extern int dHip;
+
+extern float yRot;
+extern float zRot;
+extern float yPreRot;
+extern float zPreRot;
+extern const float testHeightW; 
+extern const float testHeightBACKW;
+extern const float testFBW;
+extern const float testLRW;
+extern const float upDistanceW;
+extern const float backDistanceW;
+extern const float LRDistanceW;
+
+extern const float testHeightT;
+extern const float testHeightBACKT;
+extern const float testFBT;
+extern const float  testLRT;
+extern const float upDistanceT;
+extern const float backDistanceT;
+extern const float LRDistanceT;
+
+
+extern PayloadStruct payload;
+extern Adafruit_PWMServoDriver pwm;
+extern Adafruit_PWMServoDriver pwm1;
 
 void standing_0(){
     if(payload.gyro ==1 && payload.PID==1){

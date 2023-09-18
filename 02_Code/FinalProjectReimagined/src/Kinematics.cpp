@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <Adafruit_PWMServoDriver.h>
-#include <Ramp.h>
+#include <externFunctions.h>
 
 extern Adafruit_PWMServoDriver pwm;
 extern Adafruit_PWMServoDriver pwm1;

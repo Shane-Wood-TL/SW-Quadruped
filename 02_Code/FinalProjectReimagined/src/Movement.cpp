@@ -1,8 +1,5 @@
 #include <Arduino.h>
-#include <Ramp.h>
 #include <externFunctions.h>
-#include <math.h>
-#include "Variables.cpp"
 
 // extern float timee;
 
@@ -234,20 +231,3 @@ void start(){
   dLeg.setCycle(0);
 }
 
-
-void getData(){
-   if (radio.available()) {
-    radio.read( &payload, sizeof(payload) );
-    newData = true;
-   }else{
-    payload.eStop ==true;
-   }
-}
-
-void showData() {
-    if (newData == true) {
-        Serial.print("Data received ");
-        Serial.println(payload.gyro);
-        newData = false;
-    }
-}

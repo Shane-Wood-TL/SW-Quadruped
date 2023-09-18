@@ -215,18 +215,25 @@ void loop() {
   {
   case(4):
     j1_X_angle_r=map(j1_X_angle_r, 0,875,-80,80);
-    j1_Y_angle_r=0;
+    j1_Y_angle_r=map(j1_X_angle_r, 0,875,-80,80);
     j2_X_angle_r=map(j2_X_angle_r, 0,875,-50,50);
     j2_Y_angle_r=map(j2_Y_angle_r, 0,875,-40,40);
 
-
-    payload.j1_x = int(j1_X_angle_r);
-    payload.j1_y = int(j1_Y_angle_r);
-    payload.j2_x = int(j2_X_angle_r);
-    payload.j2_y = int(j2_Y_angle_r);
+    
+    payload.j1_x = int(j1_X_angle_r-13);
+    payload.j1_y = int(j1_Y_angle_r+78);
+    payload.j2_x = int(j2_X_angle_r-9);
+    payload.j2_y = int(j2_Y_angle_r-7);
+    Serial.print(payload.j1_x);
+    Serial.print("  ");
+    Serial.print(payload.j1_y);
+    Serial.print("  ");
+    Serial.print(payload.j2_x);
+    Serial.print("  ");
+    Serial.println(payload.j2_y);
     break;
   case 1:{
-    j1_X_angle_r=map(j1_X_angle_r, 436,875,0,150);
+    j1_X_angle_r=map(j1_X_angle_r, 0,875,0,150);
     j1_Y_angle_r=0;
     j2_X_angle_r=map(j2_X_angle_r, 0,875,-50,50);
     j2_Y_angle_r=map(j2_Y_angle_r, 0,875,-40,40);
@@ -254,7 +261,7 @@ void loop() {
 
   bool sent;
   sent = radio.write(&payload, sizeof(PayloadStruct));
-  Serial.print(sent);
+  //Serial.print(sent);
 
   // Serial.print(sw1V);
   // Serial.print(sw2V);

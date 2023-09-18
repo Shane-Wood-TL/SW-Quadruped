@@ -1,6 +1,53 @@
 #include <Arduino.h>
 #include <Ramp.h>
 
+
+
+//values for non controlled turn
+//current /default values
+const float testHeightT = 150;
+const float testHeightBACKT = 150;
+const float testLRT = 0;
+const float testFBT = 0;
+
+//time for a cycle (in ms)
+const float timeeT = 100;
+
+//amount to change values by in a cycle
+const float backDistanceT = 0; //(FB)
+const float upDistanceT = -50; //xH
+const float LRDistanceT =100; //xLR
+
+
+//values for non controlled walk
+const float testHeightW = 150;
+const float testHeightBACKW = 170;
+const float testLRW = 0;
+const float testFBW = 0;
+
+//time for a cycle (in ms)
+const float timeeW = 750;
+
+//amount to change values by in a cycle
+const float backDistanceW = -50; //(FB)
+const float upDistanceW = -70; //xH
+const float LRDistanceW =0; //xLR
+
+
+
+struct PayloadStruct {
+  uint8_t eStop; //sw2
+  uint8_t state;
+  uint8_t gyro;
+  uint8_t PID;
+  int16_t j1_x;
+  int16_t j1_y;
+  int16_t j2_x;
+  int16_t j2_y;
+  uint8_t j1_b;
+  uint8_t j2_b;
+};
+
 //class
 class rampLeg{
   private:
