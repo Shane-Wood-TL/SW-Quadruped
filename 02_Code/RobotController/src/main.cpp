@@ -147,22 +147,28 @@ void loop() {
     
   }
 
-  if(j1_B == 0){ //need to convert to toggle
+  if(j1_BV == 0){ //need to convert to toggle
     if(payload.j1_b == 0){
       payload.j1_b = 1;
+      delay(200);
     }else{
       payload.j1_b = 0;
+      delay(200);
     }
   }
 
-   if(j2_B == 0){
+   if(j2_BV == 0){
     if(payload.j2_b == 0){
       payload.j2_b = 1;
+      delay(200);
     }else{
       payload.j2_b = 0;
+      delay(200);
     }
   }
-
+Serial.print(payload.j1_b);
+Serial.print(" ");
+Serial.println(payload.j2_b);
   
   if (sw1V != 1){
       float j1_X_angle_B = map(j1_X_angle,0,875,-150,150);
@@ -224,13 +230,6 @@ void loop() {
     payload.j1_y = int(j1_Y_angle_r+78);
     payload.j2_x = int(j2_X_angle_r-9);
     payload.j2_y = int(j2_Y_angle_r-7);
-    Serial.print(payload.j1_x);
-    Serial.print("  ");
-    Serial.print(payload.j1_y);
-    Serial.print("  ");
-    Serial.print(payload.j2_x);
-    Serial.print("  ");
-    Serial.println(payload.j2_y);
     break;
   case 1:{
     j1_X_angle_r=map(j1_X_angle_r, 0,875,0,150);
@@ -261,14 +260,6 @@ void loop() {
 
   bool sent;
   sent = radio.write(&payload, sizeof(PayloadStruct));
-  //Serial.print(sent);
-
-  // Serial.print(sw1V);
-  // Serial.print(sw2V);
-  // Serial.print(sw3V);
-  // Serial.print(sw4V);
-  // Serial.print(sw5V);
-  // Serial.println();
 }
 
 

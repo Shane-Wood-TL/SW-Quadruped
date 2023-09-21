@@ -2,17 +2,18 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <externFunctions.h>
 
+//motor drivers defined in main
 extern Adafruit_PWMServoDriver pwm;
 extern Adafruit_PWMServoDriver pwm1;
 
+//servo motor pwm limits
 #define USMIN 771  // min value given from arduino lib
 #define USMAX 2193 // max value given from arduino lib
 
 
-
+//dimensions of the bot
 const int yHalfDis = 85;
 const int zHalfDis = 190;
-
 // constant distances
 const float aLength = 95; // upper leg length more red
 const float bLength = 95; // lower leg length more purple
@@ -35,12 +36,6 @@ const int dHip = 3;    //
 const int dKnee = 4;  //
 const int dAnkle = 5; //
 
-//mainKinematics(190,0,0,cHip,0,0,0);
-// mainKinematics(190,0,0,dHip,0,0,0);
-// mainKinematics(85,0,0,aHip,0,0,0);
-// mainKinematics(85,0,0,bHip,0,0,0);
-
-
 
 // DO NOT CHANGE, UNLESS MOTOR SWAP
 // B-----A
@@ -52,47 +47,33 @@ const int dAnkle = 5; //
 // D-----C
 //  front
 
-// 
-const float aHipOffset = -30; // higher value = more out
-const float aKneeOffset = 20; // higer value = cc
-const float aAnkleOffset = -20; // higer value = smaller angle
+const float aHipOffset = -30; 
+const float aKneeOffset = 20; 
+const float aAnkleOffset = -20;
 
-const float bHipOffset = 0; // higher value = more in
+const float bHipOffset = 0;
 const float bKneeOffset = 20;
 const float bAnkleOffset = 0;
 
-const float cHipOffset = 14; // higher value = more in
+const float cHipOffset = 14;
 const float cKneeOffset = -10;
 const float cAnkleOffset = -35;
 
-const float dHipOffset = -4;     // higher value = more out
-const float dKneeOffset = 85;   // higer value = cc
-const float dAnkleOffset = 35; // higer value = larger angl
-
-//External Functions
-float pytherm(float sidea, float sideb);     // returns hypotenuse c
-float raddec(float rad);                     // radians to degress
-float loc(float a, float b, float c);        // law of cosines, returns angle c in degress
-float pythermhypt(float sidea, float sidec); // returns side b
-float decrad(float deg);                     // degrees to radians
-void all_90s();
+const float dHipOffset = -4;
+const float dKneeOffset = 85;
+const float dAnkleOffset = 35;
 
 
-
-
-
-// given height, forward/back, left/right, hip motor num, knee motor num, ankle motor num, bool if on the other side.
+//code that creates the angles for the motors based on position and angles
 void mainKinematics(float xH, float xFB, float xLR, int hipMotor, float xRot, float yRot, float zRot)
 {
-  float innerAngleKneeA, kneeAngle, outerAngleKneeB; // cah
+  float innerAngleKneeA, kneeAngle, outerAngleKneeB;
   float zMultiplier = 1;
   float yMultiplier = 1;
-  // Serial.print("this is running");
 
-  // angle code (no idea how s rotation works so for now it is going to be ignored)
   float yRotR = decrad((yRot));
-  // float yRotR = decrad(abs(yRot));
   float yAddition = yMultiplier * yHalfDis * tan(yRotR);
+
   if ((hipMotor == 0 || hipMotor == 6))
   {
     if (yRot < 0)
@@ -261,6 +242,7 @@ if (true) {
   }
 }
 
+//used to ensure that new motors are in a close position to what is "correct"
 void all_90s(){
       pwm.writeMicroseconds(aHip, map(90, 0, 180, USMIN, USMAX));
       pwm.writeMicroseconds(aKnee, map(90, 0, 180, USMIN, USMAX));

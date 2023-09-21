@@ -1,27 +1,17 @@
 #include <Arduino.h>
 #include <externFunctions.h>
 
-// extern float timee;
-
-// extern float backDistance;
-// extern float upDistance;
-// extern float LRDistance;
-
-// extern float testHeight;
-// extern float testHeightBACK;
-// extern float testFB;
-// extern float testLR;
 
 extern rampLeg aLeg;
 extern rampLeg bLeg;
 extern rampLeg cLeg;
 extern rampLeg dLeg;
 
+//create pointers to legs
 rampLeg* aLegAdd = &aLeg;
 rampLeg* bLegAdd = &bLeg;
 rampLeg* cLegAdd = &cLeg;
 rampLeg* dLegAdd = &dLeg;
-
 
 
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
@@ -221,13 +211,6 @@ void stop(float timee){
   aLeg.setCycle(0);
   bLeg.setCycle(0);
   cLeg.setCycle(0);
-  dLeg.setCycle(0);
-}
-
-void start(){
-  aLeg.setCycle(0);
-  bLeg.setCycle(3);
-  cLeg.setCycle(3);
   dLeg.setCycle(0);
 }
 

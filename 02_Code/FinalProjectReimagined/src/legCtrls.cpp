@@ -8,6 +8,7 @@ extern rampLeg cLeg;
 extern rampLeg dLeg;
 
 
+//sets all legs to 0
 void resetAll(){ 
   aLeg.reset();
   bLeg.reset();
@@ -15,6 +16,7 @@ void resetAll(){
   dLeg.reset();
 }
 
+//updates all ramps
 void updateAll(){
  aLeg.update();
  bLeg.update();
@@ -22,6 +24,7 @@ void updateAll(){
  dLeg.update();
 }
 
+//checks if all ramps are done
 bool allDone(){
   return aLeg.allDone() && bLeg.allDone() && cLeg.allDone() && dLeg.allDone();
 }

@@ -32,6 +32,13 @@ extern PayloadStruct payload;
 extern Adafruit_PWMServoDriver pwm;
 extern Adafruit_PWMServoDriver pwm1;
 
+
+extern rampLeg aLeg;
+extern rampLeg bLeg;
+extern rampLeg cLeg;
+extern rampLeg dLeg;
+
+
 void standing_0(){
     if(payload.gyro ==1 && payload.PID==1){
         mainKinematics(150,0,0,aHip,0,yRot,zRot);
@@ -104,6 +111,8 @@ void User_4(){
       if(xFB < 0 && xLR < 0){
         direction = false;  
       }
+      xFB = abs(xFB);
+      xLR = abs(xLR);
 
       if(payload.gyro == 1 && payload.PID == 1){
         if(!payload.j1_b == 1 && !payload.j2_b == 1){
@@ -143,4 +152,11 @@ void Default_9(){
 void wakeup_9(){
 pwm.wakeup();
   pwm1.wakeup();
+}
+
+void setCycle(){
+  aLeg.setCycle(0);
+  bLeg.setCycle(3);
+  cLeg.setCycle(3);
+  dLeg.setCycle(0);
 }

@@ -2,6 +2,14 @@
 #include <Ramp.h>
 
 
+//SCK 18
+//MOSI 8
+//MISO 10
+//CE 16
+//CSN 9
+
+
+
 
 //values for non controlled turn
 //current /default values
@@ -166,4 +174,5 @@ void wakeup_9();
 
 
 void getData();
-void showData();
+
+void setCycle();

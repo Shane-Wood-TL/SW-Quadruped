@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-
+//finds hypotenuse of triangle
 float pytherm(float sidea, float sideb)
 { // solves for side c
   float sidec = 0;
@@ -9,6 +9,7 @@ float pytherm(float sidea, float sideb)
   return sidec;
 }
 
+//finds leg of triangle
 float pythermhypt(float sidea, float sidec)
 { // solves for side b
   float sideb = 0;
@@ -18,12 +19,14 @@ float pythermhypt(float sidea, float sidec)
   return sideb;
 }
 
+//converts radians to degrees
 float raddec(float rad)
 {
   rad = rad * (180 / PI);
   return rad;
 }
 
+//law of consines, returns angle across from c
 float loc(float a, float b, float c)
 {
   // this finds the angle for c
@@ -33,6 +36,7 @@ float loc(float a, float b, float c)
   return anglec;
 }
 
+//converts degrees to radians
 float decrad(float deg)
 
 {
