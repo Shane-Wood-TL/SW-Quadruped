@@ -54,15 +54,19 @@ const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
 RF24 radio(16,9);
 bool newData = false;
 
+movementVariables walkSet;
+movementVariables turnSet;
+
 
 void setup() {
   //start busses
   Serial.begin(9600);
   Serial.println("Serial Active");
-
+  
   Wire.begin(17,15); //SDA, SCL
   Serial.println("IC2 Active");
 
+  //SPI.begin(SCK, MISO, MOSI);
   SPI.begin(18, 8, 10);
 
   //start radio
@@ -119,6 +123,9 @@ void setup() {
   bLeg.reset();
   cLeg.reset();
   dLeg.reset();
+  movementVariables* walkSetP = &walkSet;
+  movementVariables* turnSetP = &turnSet;
+  populateStructs(*walkSetP,*turnSetP);
 }
 
 void loop() {

@@ -41,6 +41,18 @@ const float backDistanceW = -50; //(FB)
 const float upDistanceW = -70; //xH
 const float LRDistanceW =0; //xLR
 
+struct movementVariables{
+ float testHeight; 
+ float testHeightBACK;
+ float testFB;
+ float testLR;
+ float upDistance;
+ float backDistance;
+ float LRDistance;
+};
+
+void populateStructs(movementVariables walkV, movementVariables turnV);
+//(testHeightW, testHeightBACKW, testLRW, testFBW, upDistanceW, backDistanceW, LRDistanceW)
 
 
 struct PayloadStruct {

@@ -214,3 +214,20 @@ void stop(float timee){
   dLeg.setCycle(0);
 }
 
+void populateStructs(movementVariables &walkV, movementVariables &turnV){
+  walkV.testHeight = testHeightW;
+  walkV.testHeightBACK = testHeightBACKW;
+  walkV.testFB = testFBW;
+  walkV.testLR = testLRW;
+  walkV.upDistance = upDistanceW;
+  walkV.backDistance = backDistanceW;
+  walkV.LRDistance = LRDistanceW;
+
+  turnV.testHeight = testHeightW;
+  turnV.testHeightBACK = testHeightBACKW;
+  turnV.testFB = testFBW;
+  turnV.testLR = testLRW;
+  turnV.upDistance = upDistanceW;
+  turnV.backDistance = backDistanceW;
+  turnV.LRDistance = LRDistanceW;
+}
