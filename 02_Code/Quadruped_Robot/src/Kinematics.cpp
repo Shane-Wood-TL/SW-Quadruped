@@ -47,8 +47,8 @@ const int dAnkle = 5; //
 // D-----C
 //  front
 
-const float aHipOffset = -30; 
-const float aKneeOffset = 20; 
+const float aHipOffset = 0; 
+const float aKneeOffset =40; 
 const float aAnkleOffset = -20;
 
 const float bHipOffset = 0;

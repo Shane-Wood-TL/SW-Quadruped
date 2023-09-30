@@ -51,7 +51,7 @@ struct movementVariables{
  float LRDistance;
 };
 
-void populateStructs(movementVariables walkV, movementVariables turnV);
+void populateStructs(movementVariables &walkV, movementVariables &turnV);
 //(testHeightW, testHeightBACKW, testLRW, testFBW, upDistanceW, backDistanceW, LRDistanceW)
 
 
