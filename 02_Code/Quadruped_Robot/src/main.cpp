@@ -21,24 +21,52 @@ double Kp= .25, Ki=.01, Kd =0;
 double angleGoal = 0;
 
 
-// DO NOT CHANGE ANY VARIABLE BELOW THIS LINE (unless you know what you are doing)
-//motor definitions
-// old way to desinate each leg, legacy, but the kinematic model depends on these values.
-//leg
-int aHip = 0; //
-int bHip = 3; //
-int cHip = 6; //
-int dHip = 9; //
-
-rampLeg aLeg(aHip);
-rampLeg bLeg(bHip);
-rampLeg cLeg(cHip);
-rampLeg dLeg(dHip);
+rampLeg aLegR(aHip);
+rampLeg bLegR(bHip);
+rampLeg cLegR(cHip);
+rampLeg dLegR(dHip);
 
 //motor
 #define SERVO_FREQ 50
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(0x41);
+
+
+
+Cords aCords;
+Cords bCords;
+Cords cCords;
+Cords dCords;
+
+
+//float LlimitV, float HlimitV, bool directionV, float offsetV)
+motor aHipM(&pwm, aHip, 45, 135, true, A_HIP_OFFSET);
+motor aKneeM(&pwm, aKnee, 0, 180, false, A_KNEE_OFFSET);
+motor aAnkleM(&pwm, aAnkle, 0, 180, true, A_ANKLE_OFFSET);
+
+motor bHipM(&pwm, bHip, 45, 135, false, B_HIP_OFFSET);
+motor bKneeM(&pwm, bKnee, 0, 180, true, B_KNEE_OFFSET);
+motor bAnkleM(&pwm, bAnkle, 0, 180, false, B_ANKLE_OFFSET);
+
+motor cHipM(&pwm1, cHip, 45, 135, false, C_HIP_OFFSET);
+motor cKneeM(&pwm1, cKnee, 0, 180, false, C_KNEE_OFFSET);
+motor cAnkleM(&pwm1, cAnkle, 0, 180, true, C_ANKLE_OFFSET);
+
+motor dHipM(&pwm1, dHip, 45, 135, true, D_HIP_OFFSET);
+motor dKneeM(&pwm1, dKnee, 0, 180, true, D_KNEE_OFFSET);
+motor dAnkleM(&pwm1, dAnkle, 0, 180, false, D_ANKLE_OFFSET);
+
+leg Aleg(&aHipM, &aKneeM, &aAnkleM);
+leg Bleg(&bHipM, &bKneeM, &bAnkleM);
+leg Cleg(&cHipM, &cKneeM, &cAnkleM);
+leg Dleg(&dHipM, &dKneeM, &dAnkleM);
+
+kinematics AlegK(&Aleg);
+kinematics BlegK(&Bleg);
+kinematics ClegK(&Cleg);
+kinematics DlegK(&Dleg);
+
+
 
 //gyro
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
@@ -56,6 +84,8 @@ bool newData = false;
 
 movementVariables walkSet;
 movementVariables turnSet;
+Cords basicStand;
+
 
 
 void setup() {
@@ -108,21 +138,22 @@ void setup() {
 
 
   //where in the walk cycle the robot is at. Way to share state across all movements
-  setCycle();
-  
+  // setCycle();
+ 
   //set legs to stand in some default form
-  mainKinematics(testHeightW, 0, 0, aHip,0,0,0);
-  delay(200); //prevents OCP
-  mainKinematics(testHeightW, 0, 0, cHip,0,0,0);
-  mainKinematics(testHeightW, 0, 0, bHip,0,0,0);
+  basicStand.xH = 150;
+  AlegK.mainKinematics(basicStand);
   delay(200);
-  mainKinematics(testHeightW, 0, 0, dHip,0,0,0);
+  ClegK.mainKinematics(basicStand);
+  BlegK.mainKinematics(basicStand);
+  delay(200);
+  DlegK.mainKinematics(basicStand);
 
   //Sets all RAMPS to go to 0 in all joints in all legs
-  aLeg.reset();
-  bLeg.reset();
-  cLeg.reset();
-  dLeg.reset();
+  aLegR.reset();
+  bLegR.reset();
+  cLegR.reset();
+  dLegR.reset();
   movementVariables* walkSetP = &walkSet;
   movementVariables* turnSetP = &turnSet;
   populateStructs(*walkSetP,*turnSetP);
@@ -130,9 +161,15 @@ void setup() {
 
 void loop() {
   //update radio
+
+  Aleg.setAngles(90,0,0);
+  Bleg.setAngles(90,0,0);
+  Cleg.setAngles(90,0,0);
+  Dleg.setAngles(90,0,0);
+
   getData();
   
-  //update gyro
+  // //update gyro
   if(payload.gyro == 1){
     bno.getEvent(&event);
     delay(5);
@@ -151,10 +188,10 @@ void loop() {
   if(payload.eStop != 1){
     wakeup_9();
     if(oldState !=payload.state){
-      aLeg.setCycle(0);
-      bLeg.setCycle(3);
-      cLeg.setCycle(3);
-      dLeg.setCycle(0);
+      aLegR.setCycle(0);
+      bLegR.setCycle(3);
+      cLegR.setCycle(3);
+      dLegR.setCycle(0);
     }
     switch (payload.state) {
       case 0:{ //standing
@@ -178,7 +215,10 @@ void loop() {
         break;
       } 
       case 5:{ //used to install new motors
-        all_90s();
+          Aleg.setAngles(90,90,0);
+          Bleg.setAngles(90,90,0);
+          Cleg.setAngles(90,90,0);
+          Dleg.setAngles(90,90,0);
       }
       default:
         break;

@@ -2,35 +2,27 @@
 #include <externFunctions.h>
 #include <Adafruit_PWMServoDriver.h>
 
-extern int aHip;
-extern int bHip;
-extern int cHip;
-extern int dHip;
+
+extern Cords aCords;
+extern Cords bCords;
+extern Cords cCords;
+extern Cords dCords;
+
+
 
 extern float yRot;
 extern float zRot;
 extern float yPreRot;
 extern float zPreRot;
-extern const float testHeightW; 
-extern const float testHeightBACKW;
-extern const float testFBW;
-extern const float testLRW;
-extern const float upDistanceW;
-extern const float backDistanceW;
-extern const float LRDistanceW;
-
-extern const float testHeightT;
-extern const float testHeightBACKT;
-extern const float testFBT;
-extern const float  testLRT;
-extern const float upDistanceT;
-extern const float backDistanceT;
-extern const float LRDistanceT;
-
 
 extern PayloadStruct payload;
 extern Adafruit_PWMServoDriver pwm;
 extern Adafruit_PWMServoDriver pwm1;
+
+extern kinematics AlegK;
+extern kinematics BlegK;
+extern kinematics ClegK;
+extern kinematics DlegK;
 
 
 extern rampLeg aLeg;
@@ -38,46 +30,27 @@ extern rampLeg bLeg;
 extern rampLeg cLeg;
 extern rampLeg dLeg;
 
+extern movementVariables walkSet;
+extern movementVariables turnSet;
+extern Cords basicStand;
 
 void standing_0(){
-    if(payload.gyro ==1 && payload.PID==1){
-        mainKinematics(150,0,0,aHip,0,yRot,zRot);
-        mainKinematics(150,0,0,bHip,0,yRot,zRot);
-        mainKinematics(150,0,0,cHip,0,yRot,zRot);
-        mainKinematics(150,0,0,dHip,0,yRot,zRot);
-    }else if(payload.gyro==1 && payload.PID==0){
-        mainKinematics(150,0,0,aHip,0,yPreRot,zPreRot);
-        mainKinematics(150,0,0,bHip,0,yPreRot,zPreRot);
-        mainKinematics(150,0,0,cHip,0,yPreRot,zPreRot);
-        mainKinematics(150,0,0,dHip,0,yPreRot,zPreRot);
-    }else{
-        mainKinematics(150,0,0,aHip,0,0,0);
-        mainKinematics(150,0,0,bHip,0,0,0);
-        mainKinematics(150,0,0,cHip,0,0,0);
-        mainKinematics(150,0,0,dHip,0,0,0);
-    }
+        AlegK.mainKinematics(basicStand);
+        BlegK.mainKinematics(basicStand);
+        ClegK.mainKinematics(basicStand);
+        DlegK.mainKinematics(basicStand);
 }
 
 void IK_1(){
     float xH = payload.j1_x;
     float xLR = payload.j2_x;
     float xFB = payload.j2_y;
-    if(payload.gyro == 1 && payload.PID ==1){
-        mainKinematics(xH,xFB,xLR,aHip,0,yRot,zRot);
-        mainKinematics(xH,xFB,xLR,bHip,0,yRot,zRot);
-        mainKinematics(xH,xFB,xLR,cHip,0,yRot,zRot);
-        mainKinematics(xH,xFB,xLR,dHip,0,yRot,zRot);
-    }else if(payload.gyro == 1 && !payload.PID==1){
-        mainKinematics(xH,xFB,xLR,aHip,0,yPreRot,zPreRot);
-        mainKinematics(xH,xFB,xLR,bHip,0,yPreRot,zPreRot);
-        mainKinematics(xH,xFB,xLR,cHip,0,yPreRot,zPreRot);
-        mainKinematics(xH,xFB,xLR,dHip,0,yPreRot,zPreRot);
-    }else{
-        mainKinematics(xH,xFB,xLR,aHip,0,0,0);
-        mainKinematics(xH,xFB,xLR,bHip,0,0,0);
-        mainKinematics(xH,xFB,xLR,cHip,0,0,0);
-        mainKinematics(xH,xFB,xLR,dHip,0,0,0);
-    }
+    Cords pos;
+    pos.updateCords(xH,xFB,xLR,0,yRot,zRot);
+    AlegK.mainKinematics(pos);
+    BlegK.mainKinematics(pos);
+    ClegK.mainKinematics(pos);
+    DlegK.mainKinematics(pos);
 }
 
 void FWalk_2(){
