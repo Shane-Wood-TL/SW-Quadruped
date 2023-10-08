@@ -2,29 +2,29 @@
 #include <externFunctions.h>
 
 //Ramps
-extern rampLeg aLeg;
-extern rampLeg bLeg;
-extern rampLeg cLeg;
-extern rampLeg dLeg;
+extern rampLeg aLegR;
+extern rampLeg bLegR;
+extern rampLeg cLegR;
+extern rampLeg dLegR;
 
 
 //sets all legs to 0
 void resetAll(){ 
-  aLeg.reset();
-  bLeg.reset();
-  cLeg.reset();
-  dLeg.reset();
+  aLegR.reset();
+  bLegR.reset();
+  cLegR.reset();
+  dLegR.reset();
 }
 
 //updates all ramps
 void updateAll(){
- aLeg.update();
- bLeg.update();
- cLeg.update();
- dLeg.update();
+ aLegR.update();
+ bLegR.update();
+ cLegR.update();
+ dLegR.update();
 }
 
 //checks if all ramps are done
 bool allDone(){
-  return aLeg.allDone() && bLeg.allDone() && cLeg.allDone() && dLeg.allDone();
+  return aLegR.allDone() && bLegR.allDone() && cLegR.allDone() && dLegR.allDone();
 }

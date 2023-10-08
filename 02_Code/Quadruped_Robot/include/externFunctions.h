@@ -2,9 +2,25 @@
 #include <Ramp.h>
 #include <Adafruit_PWMServoDriver.h>
 
+// #define A_HIP_OFFSET 0
+// #define A_KNEE_OFFSET 20
+// #define A_ANKLE_OFFSET -20
+
+// #define B_HIP_OFFSET 0
+// #define B_KNEE_OFFSET -35
+// #define B_ANKLE_OFFSET -20
+
+// #define C_HIP_OFFSET 0
+// #define C_KNEE_OFFSET -35
+// #define C_ANKLE_OFFSET -30
+
+// #define D_HIP_OFFSET 0
+// #define D_KNEE_OFFSET -30
+// #define D_ANKLE_OFFSET -30
+
 #define A_HIP_OFFSET 0
 #define A_KNEE_OFFSET 0
-#define A_ANKLE_OFFSET 0
+#define A_ANKLE_OFFSET -20
 
 #define B_HIP_OFFSET 0
 #define B_KNEE_OFFSET 0
@@ -17,8 +33,6 @@
 #define D_HIP_OFFSET 0
 #define D_KNEE_OFFSET 0
 #define D_ANKLE_OFFSET 0
-
-
 
 
 //servo motor pwm limits
@@ -60,13 +74,13 @@
 
 //values for non controlled turn
 //current /default values
-const float testHeightT = 150;
-const float testHeightBACKT = 150;
+const float testHeightT = 120;
+const float testHeightBACKT = 120;
 const float testLRT = 0;
 const float testFBT = 0;
 
 //time for a cycle (in ms)
-const float timeeT = 100;
+const float timeeT = 750;
 
 //amount to change values by in a cycle
 const float backDistanceT = 0; //(FB)
@@ -76,16 +90,16 @@ const float LRDistanceT =100; //xLR
 
 //values for non controlled walk
 const float testHeightW = 150;
-const float testHeightBACKW = 170;
+const float testHeightBACKW = 130;
 const float testLRW = 0;
 const float testFBW = 0;
 
 //time for a cycle (in ms)
-const float timeeW = 750;
+const float timeeW = 100;
 
 //amount to change values by in a cycle
-const float backDistanceW = -50; //(FB)
-const float upDistanceW = -70; //xH
+const float backDistanceW = -90; //(FB)
+const float upDistanceW = -30; //xH
 const float LRDistanceW =0; //xLR
 
 
@@ -339,7 +353,7 @@ class kinematics{
   void mainKinematics(Cords position){
     float yRotR = decrad(position.yRot);
     float yAddition = yHalfDis * tan(yRotR);
-
+    
     float zRotR = decrad(position.zRot);
     float zAddition = zHalfDis * tan(zRotR);
 
@@ -354,7 +368,11 @@ class kinematics{
     innerAngleKneeA = raddec(innerAngleKneeA);
     float outerAngleKneeB = loc(aLength, modLegLL, bLength);
     float kneeAngle = loc(aLength, bLength, modLegLL);
-
-    legC->setAngles(innerAngleA + innerAngleB, outerAngleKneeB + innerAngleKneeA, kneeAngle);
+    if (position.xFB <= 0){
+      legC->setAngles(innerAngleA + innerAngleB, 90-(outerAngleKneeB + innerAngleKneeA), kneeAngle);
+    }else{
+      legC->setAngles(innerAngleA + innerAngleB, 90-(outerAngleKneeB-innerAngleKneeA), kneeAngle);
+    }
+    
   }
 };

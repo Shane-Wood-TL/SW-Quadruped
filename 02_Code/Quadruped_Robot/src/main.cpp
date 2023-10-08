@@ -12,6 +12,10 @@
 #include <PID_v1.h> 
 #include <externFunctions.h>
 
+double xAngle = 0;
+double yAngle = 0;
+double zAngle = 0;
+
 //angle variables
 double yPreRot= 0, zPreRot = 0;
 double yRot= 0, zRot = 0;
@@ -138,8 +142,8 @@ void setup() {
 
 
   //where in the walk cycle the robot is at. Way to share state across all movements
-  // setCycle();
- 
+  
+  setCycle();
   //set legs to stand in some default form
   basicStand.xH = 150;
   AlegK.mainKinematics(basicStand);
@@ -162,19 +166,16 @@ void setup() {
 void loop() {
   //update radio
 
-  Aleg.setAngles(90,0,0);
-  Bleg.setAngles(90,0,0);
-  Cleg.setAngles(90,0,0);
-  Dleg.setAngles(90,0,0);
-
   getData();
   
-  // //update gyro
+  //update gyro
   if(payload.gyro == 1){
     bno.getEvent(&event);
     delay(5);
     yPreRot = event.orientation.y;
     zPreRot = event.orientation.z;
+    yAngle = yPreRot;
+    zAngle = zPreRot;
     if(payload.PID == 1){
       yPID.Compute();
       zPID.Compute();
@@ -183,6 +184,9 @@ void loop() {
     yRot = 0;
     zRot = 0;
   }
+  yAngle = yRot;
+  yAngle = zRot;
+
 
   //switch modes and saftey mode
   if(payload.eStop != 1){
@@ -215,10 +219,10 @@ void loop() {
         break;
       } 
       case 5:{ //used to install new motors
-          Aleg.setAngles(90,90,0);
-          Bleg.setAngles(90,90,0);
-          Cleg.setAngles(90,90,0);
-          Dleg.setAngles(90,90,0);
+          Aleg.setAngles(90,180,0);
+          Bleg.setAngles(90,180,0);
+          Cleg.setAngles(90,180,0);
+          Dleg.setAngles(90,180,0);
       }
       default:
         break;

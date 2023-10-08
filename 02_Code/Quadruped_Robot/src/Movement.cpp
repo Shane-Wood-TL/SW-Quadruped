@@ -7,10 +7,10 @@ extern rampLeg bLegR;
 extern rampLeg cLegR;
 extern rampLeg dLegR;
 
-Cords aCords;
-Cords bCords;
-Cords cCords;
-Cords dCords;
+extern Cords aCords;
+extern Cords bCords;
+extern Cords cCords;
+extern Cords dCords;
 
 //create pointers to legs
 rampLeg* aLegAdd = &aLegR;
@@ -25,7 +25,7 @@ extern kinematics DlegK;
 
 
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
-  float timee = sqrt(pow(backDistance,2) + pow(upDistance,2) + pow(LRDistance,2));
+  float timee = 100;
   timee = timee;
   updateAll();
 

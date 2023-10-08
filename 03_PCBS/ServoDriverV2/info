@@ -1,0 +1,170 @@
+{
+  "uuid": "65e8e6a7321c1639ab83e5f20b65f3ba",
+  "path": "Offline/ServoDriverV2",
+  "name": "ServoDriverV2",
+  "content": "",
+  "created_at": "2023-09-14 22:58:48",
+  "updated_at": "2023-09-21 22:51:27",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "46eaf48107eaaf1afe5a56d74f712b57",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "3e402906a0f047bdab7d016fd9b30e98": 6,
+        "ea68a8fbc6c74f4abd7b0b3a5339aa6d": 1,
+        "7c89dde5a28e428da1c86c69d833b512": 1,
+        "584fb1f8b2144e0d996c36a7c072f99e": 2,
+        "b897c34e64944dda8ef792e05fa2cd17": 6,
+        "6a8689fca7374180a6f8c9b7134cb1c4": 3
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "100uF",
+          6,
+          "100UFX16V CAPACITOR D5.0XF11.0",
+          "C4,C5,C6,C7,C8,C9",
+          {
+            "Supplier Part": "",
+            "Supplier": "My_collection",
+            "Manufacturer Part": "Jweo",
+            "Rated Voltage": "16V",
+            "Contributor": "stefanczykdk",
+            "spiceSymbolName": "CAP-POL-1",
+            "puuid": "14f224c011733d92a7a36c742432e5ad",
+            "uuid": "3e402906a0f047bdab7d016fd9b30e98"
+          }
+        ],
+        [
+          "AWG14 CABLE",
+          2,
+          "AWG14-HOLE",
+          "J1,J2",
+          {
+            "Supplier": "",
+            "Manufacturer": "PCB",
+            "Manufacturer Part": "AWG14 HOLE",
+            "Supplier Part": "PCB",
+            "Contributor": "Joseph Pramudito",
+            "spiceSymbolName": "AWG14 CABLE",
+            "puuid": "0541d6b923ca40988fbf4b3161ff9fdb",
+            "uuid": "584fb1f8b2144e0d996c36a7c072f99e"
+          }
+        ],
+        [
+          "Header-Male-2.54_1x4",
+          3,
+          "HDR-4X1/2.54",
+          "P2,P4,P6",
+          {
+            "Supplier": "LCSC",
+            "Manufacturer": "ReliaPro",
+            "Manufacturer Part": "Headers  Pins 1*4P",
+            "image": "http://image.lceda.cn/szlcsc/C59481.jpg",
+            "Supplier Part": "C59481",
+            "Contributor": "NC North",
+            "spiceSymbolName": "Header-Male-2.54_1x4",
+            "puuid": "f123e165c63a4fb6b981e3a31827ddc4",
+            "uuid": "6a8689fca7374180a6f8c9b7134cb1c4"
+          }
+        ],
+        [
+          "NO",
+          1,
+          "CONN-TH_10P-P2.54_KINGHELM_KH-2.54PH180-2X5P-L8.9",
+          "U1",
+          {
+            "Supplier": "LCSC",
+            "Supplier Part": "C5157628",
+            "Manufacturer": "kinghelm(金航标)",
+            "Manufacturer Part": "KH-2.54PH180-2X5P-L8.9",
+            "link": "https://atta.szlcsc.com/upload/public/pdf/source/20220906/04BEB622ED10B556BB25C8F90E10FD05.pdf",
+            "Contributor": "lcsc",
+            "JLCPCB Part Class": "Extended Part",
+            "spiceSymbolName": "KH-2.54PH180-2X5P",
+            "puuid": "bf3bc3b90be548f39bfeaea8c48678fb",
+            "uuid": "7c89dde5a28e428da1c86c69d833b512"
+          }
+        ],
+        [
+          "NO",
+          6,
+          "HDR-3X1/2.54",
+          "U2,U3,U5,U6,U7,U8",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "claudiomcs",
+            "A": "B",
+            "spiceSymbolName": "conector-3-PINOS",
+            "puuid": "0f82bef859574a9b8b634d900f76cedb",
+            "uuid": "b897c34e64944dda8ef792e05fa2cd17"
+          }
+        ],
+        [
+          "NO",
+          1,
+          "PCA9685",
+          "U4",
+          {
+            "Contributor": "Quentin Chatenet",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "PCA9685_module_mod",
+            "Manufacturer Part": "",
+            "puuid": "0edf0a8c64c743b5adb8f859b6e3e830",
+            "uuid": "ea68a8fbc6c74f4abd7b0b3a5339aa6d"
+          }
+        ]
+      ],
+      "updateTime": 1695350829,
+      "createTime": 1694746729,
+      "histories": [],
+      "created_at": "2023-09-14 22:58:49",
+      "updated_at": "2023-09-21 22:47:09"
+    },
+    {
+      "uuid": "a972bafd5071f000bf21b0572925c2b5",
+      "puuid": "65e8e6a7321c1639ab83e5f20b65f3ba",
+      "title": "PCB_ServoDriverV2",
+      "filename": "PCB_ServoDriverV2.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "0edf0a8c64c743b5adb8f859b6e3e830": 1,
+        "14f224c011733d92a7a36c742432e5ad": 6,
+        "0541d6b923ca40988fbf4b3161ff9fdb": 2,
+        "bf3bc3b90be548f39bfeaea8c48678fb": 1,
+        "f123e165c63a4fb6b981e3a31827ddc4": 3,
+        "0f82bef859574a9b8b634d900f76cedb": 6
+      },
+      "BOM": [],
+      "updateTime": 1695351087,
+      "createTime": 1694750410,
+      "histories": [],
+      "created_at": "2023-09-15 00:00:10",
+      "updated_at": "2023-09-21 22:51:27"
+    }
+  ],
+  "sort": [],
+  "title": "ServoDriverV2",
+  "foldername": "ServoDriverV2",
+  "schfilename": "ServoDriverV2.json",
+  "schfilemtime": 1695350829279
+}

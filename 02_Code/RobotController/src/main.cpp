@@ -38,6 +38,10 @@ struct PayloadStruct {
 };
 PayloadStruct payload;
 
+
+
+int motorAdjust = 0;
+int motorAdjustVal = 0;
 //fucntions
 void updateMenu(int state, PayloadStruct payload);
 int incState(int state);
@@ -160,6 +164,9 @@ void loop() {
    if(j2_BV == 0){
     if(payload.j2_b == 0){
       payload.j2_b = 1;
+      if(payload.state == 6){
+        payload.PID++;
+      }
       delay(200);
     }else{
       payload.j2_b = 0;
@@ -203,17 +210,19 @@ Serial.println(payload.j2_b);
       updateMenu(state, payload);
     }
   }
-
+  if(payload.state != 6){
   if(sw4V != 1){
     if(payload.PID != 0){
       payload.PID = 0;
       updateMenu(state, payload);
     }
+
   }else{
     if(payload.PID != 1){
       payload.PID = 1;
       updateMenu(state, payload);
     }
+  }
   }
  
 
@@ -244,6 +253,17 @@ Serial.println(payload.j2_b);
     break;
   }
 
+  case(6):{
+    if (j1_BV == 0){
+      payload.j1_x=int(map(j1_X_angle_r, 0,875,-50,50));
+      motorAdjustVal=map(j1_X_angle_r, 0,875,-50,50);
+    }
+
+    
+
+
+    
+  }
   case 0:
   case(2):
   case(3):
@@ -323,6 +343,8 @@ void updateMenu(int state, PayloadStruct payload){
     break;
   }case 5:{
     lcd.print("90s");
+  }case 6:{
+    lcd.print("OAdjust " + String(motorAdjust) + " " + String(motorAdjustVal));
   }
   default:{
     break;
