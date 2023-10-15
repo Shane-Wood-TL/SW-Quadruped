@@ -2,20 +2,30 @@
 #include <externFunctions.h>
 
 
-extern rampLeg aLeg;
-extern rampLeg bLeg;
-extern rampLeg cLeg;
-extern rampLeg dLeg;
+extern rampLeg aLegR;
+extern rampLeg bLegR;
+extern rampLeg cLegR;
+extern rampLeg dLegR;
+
+extern Cords aCords;
+extern Cords bCords;
+extern Cords cCords;
+extern Cords dCords;
 
 //create pointers to legs
-rampLeg* aLegAdd = &aLeg;
-rampLeg* bLegAdd = &bLeg;
-rampLeg* cLegAdd = &cLeg;
-rampLeg* dLegAdd = &dLeg;
+rampLeg* aLegAdd = &aLegR;
+rampLeg* bLegAdd = &bLegR;
+rampLeg* cLegAdd = &cLegR;
+rampLeg* dLegAdd = &dLegR;
+
+extern kinematics AlegK;
+extern kinematics BlegK;
+extern kinematics ClegK;
+extern kinematics DlegK;
 
 
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
-  float timee = sqrt(pow(backDistance,2) + pow(upDistance,2) + pow(LRDistance,2));
+  float timee = 100;
   timee = timee;
   updateAll();
 
@@ -28,31 +38,39 @@ void WalkF(float yRot, float zRot, bool direction, float  testHeight, float test
   }
 
   
-  if(!aLeg.isGrounded()){
-    mainKinematics(testHeightBACK+aLeg.heightAt(), testFB+aLeg.fbAt(), testLR-aLeg.lrAt(), aLeg.getMotor(),0,0,0);
+  if(!aLegR.isGrounded()){
+    aCords.updateCords(testHeightBACK+aLegR.heightAt(), testFB+aLegR.fbAt(), testLR-aLegR.lrAt(),0,0,0);
+    AlegK.mainKinematics(aCords);
   }else{
-    mainKinematics(testHeightBACK+aLeg.heightAt(), testFB+aLeg.fbAt(), testLR-aLeg.lrAt(), aLeg.getMotor(),0,yRot,zRot);
+    aCords.updateCords(testHeightBACK+aLegR.heightAt(), testFB+aLegR.fbAt(), testLR-aLegR.lrAt(),0,yRot,zRot);
+    AlegK.mainKinematics(aCords);
   }
   
   
-  if(!cLeg.isGrounded()){
-    mainKinematics(testHeight+cLeg.heightAt(), testFB+cLeg.fbAt(), testLR-cLeg.lrAt(), cLeg.getMotor(),0,0, 0);
+  if(!cLegR.isGrounded()){
+    cCords.updateCords(testHeightBACK+cLegR.heightAt(), testFB+cLegR.fbAt(), testLR-cLegR.lrAt(),0,0,0);
+    ClegK.mainKinematics(cCords);
   }else{
-    mainKinematics(testHeight+cLeg.heightAt(), testFB+cLeg.fbAt(), testLR-cLeg.lrAt(), cLeg.getMotor(),0,yRot,zRot);
-  }
-
-  
-  if(!bLeg.isGrounded()){
-    mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR+bLeg.lrAt(), bLeg.getMotor(),0,0,0);
-  }else{
-    mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR+bLeg.lrAt(), bLeg.getMotor(),0,yRot,zRot);
+    cCords.updateCords(testHeightBACK+cLegR.heightAt(), testFB+cLegR.fbAt(), testLR-cLegR.lrAt(),0,yRot,zRot);
+    ClegK.mainKinematics(cCords);
   }
 
   
-  if(!dLeg.isGrounded()){
-    mainKinematics(testHeight+dLeg.heightAt(), testFB+dLeg.fbAt(), testLR+dLeg.lrAt(), dLeg.getMotor(),0,0,0);
+  if(!bLegR.isGrounded()){
+    bCords.updateCords(testHeightBACK+bLegR.heightAt(), testFB+bLegR.fbAt(), testLR-bLegR.lrAt(),0,0,0);
+    BlegK.mainKinematics(bCords);
   }else{
-   mainKinematics(testHeight+dLeg.heightAt(), testFB+dLeg.fbAt(), testLR+dLeg.lrAt(), dLeg.getMotor(),0,yRot,zRot);
+    bCords.updateCords(testHeightBACK+bLegR.heightAt(), testFB+bLegR.fbAt(), testLR-bLegR.lrAt(),0,yRot,zRot);
+    BlegK.mainKinematics(bCords);
+  }
+
+  
+  if(!dLegR.isGrounded()){
+    dCords.updateCords(testHeightBACK+dLegR.heightAt(), testFB+dLegR.fbAt(), testLR-dLegR.lrAt(),0,0,0);
+    DlegK.mainKinematics(dCords);
+  }else{
+    dCords.updateCords(testHeightBACK+dLegR.heightAt(), testFB+dLegR.fbAt(), testLR-dLegR.lrAt(),0,yRot,zRot);
+    DlegK.mainKinematics(dCords);
   }
 }
 
@@ -68,60 +86,78 @@ void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testH
     walk(*bLegAdd, timee, backDistance, upDistance, LRDistance, true);
     }
   if(clockwise){  
-    if(!aLeg.isGrounded()){
-      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR-aLeg.lrAt(), aLeg.getMotor(),0,0,0);
+    if(!aLegR.isGrounded()){
+      aCords.updateCords(testHeightBACK+aLegR.heightAt(), testFB, testLR-aLegR.lrAt(),0,0,0);
+      AlegK.mainKinematics(aCords);
     }else{
-      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR-aLeg.lrAt(), aLeg.getMotor(),0,yRot,zRot);
+      aCords.updateCords(testHeightBACK+aLegR.heightAt(), testFB, testLR-aLegR.lrAt(),0,yRot,zRot);
+      AlegK.mainKinematics(aCords);
     }
     
     
-    if(!cLeg.isGrounded()){
-      mainKinematics(testHeight+cLeg.heightAt(), testFB-cLeg.fbAt(), testLR, cLeg.getMotor(),0,0, 0);
+    if(!cLegR.isGrounded()){
+      cCords.updateCords(testHeightBACK+cLegR.heightAt(), testFB-cLegR.fbAt(), testLR,0,0,0);
+      ClegK.mainKinematics(cCords);
     }else{
-      mainKinematics(testHeight+cLeg.heightAt(), testFB-cLeg.fbAt(), testLR, cLeg.getMotor(),0,yRot,zRot);
-    }
-
-    
-    if(!bLeg.isGrounded()){
-      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR, bLeg.getMotor(),0,0,0);
-    }else{
-      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB+bLeg.fbAt(), testLR, bLeg.getMotor(),0,yRot,zRot);
+      cCords.updateCords(testHeightBACK+aLegR.heightAt(), testFB-cLegR.fbAt(), testLR,0,0,0);
+      ClegK.mainKinematics(cCords);
     }
 
     
-    if(!dLeg.isGrounded()){
-      mainKinematics(testHeight+dLeg.heightAt(), testFB, testLR-dLeg.lrAt(), dLeg.getMotor(),0,0,0);
+    if(!bLegR.isGrounded()){
+      bCords.updateCords(testHeightBACK+bLegR.heightAt(), testFB+bLegR.fbAt(), testLR,0,0,0);
+      BlegK.mainKinematics(bCords);
     }else{
-    mainKinematics(testHeight+dLeg.heightAt(), testFB, testLR-dLeg.lrAt(), dLeg.getMotor(),0,yRot,zRot);
+      bCords.updateCords(testHeightBACK+bLegR.heightAt(), testFB+bLegR.fbAt(), testLR,0,0,0);
+      BlegK.mainKinematics(bCords);
+    }
+
+    
+    if(!dLegR.isGrounded()){
+      dCords.updateCords(testHeightBACK+dLegR.heightAt(), testFB, testLR-dLegR.lrAt(),0,0,0);
+      DlegK.mainKinematics(dCords);
+    }else{
+      dCords.updateCords(testHeightBACK+dLegR.heightAt(), testFB, testLR-dLegR.lrAt(),0,yRot,zRot);
+      DlegK.mainKinematics(dCords);
     }
     
   }else{
 
-   if(!aLeg.isGrounded()){
-      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR+aLeg.lrAt(), aLeg.getMotor(),0,0,0);
+   if(!aLegR.isGrounded()){
+      aCords.updateCords(testHeightBACK+aLegR.heightAt(), testFB, testLR+aLegR.lrAt(),0,0,0);
+      AlegK.mainKinematics(aCords);
     }else{
-      mainKinematics(testHeightBACK+aLeg.heightAt(), testFB, testLR+aLeg.lrAt(), aLeg.getMotor(),0,yRot,zRot);
-    }
-    
-    
-    if(!cLeg.isGrounded()){
-      mainKinematics(testHeight+cLeg.heightAt(), testFB+cLeg.fbAt(), testLR, cLeg.getMotor(),0,0, 0);
-    }else{
-      mainKinematics(testHeight+cLeg.heightAt(), testFB+cLeg.fbAt(), testLR, cLeg.getMotor(),0,yRot,zRot);
+      aCords.updateCords(testHeightBACK+aLegR.heightAt(), testFB, testLR+aLegR.lrAt(),0,yRot,zRot);
+      AlegK.mainKinematics(aCords);
     }
 
     
-    if(!bLeg.isGrounded()){
-      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB-bLeg.fbAt(), testLR, bLeg.getMotor(),0,0,0);
+    
+    if(!cLegR.isGrounded()){
+      cCords.updateCords(testHeightBACK+cLegR.heightAt(), testFB+cLegR.fbAt(), testLR,0,0,0);
+      ClegK.mainKinematics(cCords);
     }else{
-      mainKinematics(testHeightBACK+bLeg.heightAt(), testFB-bLeg.fbAt(), testLR, bLeg.getMotor(),0,yRot,zRot);
+      cCords.updateCords(testHeightBACK+cLegR.heightAt(), testFB+cLegR.fbAt(), testLR,0,yRot,zRot);
+      ClegK.mainKinematics(cCords);
     }
 
     
-    if(!dLeg.isGrounded()){
-      mainKinematics(testHeight+dLeg.heightAt(), testFB, testLR+dLeg.lrAt(), dLeg.getMotor(),0,0,0);
+    if(!bLegR.isGrounded()){
+      bCords.updateCords(testHeightBACK+bLegR.heightAt(), testFB-bLegR.fbAt(), testLR,0,0,0);
+      BlegK.mainKinematics(bCords);
     }else{
-    mainKinematics(testHeight+dLeg.heightAt(), testFB, testLR+dLeg.lrAt(), dLeg.getMotor(),0,yRot,zRot);
+      bCords.updateCords(testHeightBACK+bLegR.heightAt(), testFB-bLegR.fbAt(), testLR,0,yRot,zRot);
+      BlegK.mainKinematics(bCords);
+    }
+
+
+    
+    if(!dLegR.isGrounded()){
+      dCords.updateCords(testHeightBACK+dLegR.heightAt(), testFB, testLR+dLegR.lrAt(),0,0,0);
+      DlegK.mainKinematics(dCords);
+    }else{
+      dCords.updateCords(testHeightBACK+dLegR.heightAt(), testFB, testLR+dLegR.lrAt(),0,yRot,zRot);
+      DlegK.mainKinematics(dCords);
     }
   }
 }
@@ -204,14 +240,14 @@ void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float
 }
 
 void stop(float timee){
-  aLeg.setPositions(0,0,0,timee);
-  bLeg.setPositions(0,0,0,timee);
-  cLeg.setPositions(0,0,0,timee);
-  dLeg.setPositions(0,0,0,timee);
-  aLeg.setCycle(0);
-  bLeg.setCycle(0);
-  cLeg.setCycle(0);
-  dLeg.setCycle(0);
+  aLegR.setPositions(0,0,0,timee);
+  bLegR.setPositions(0,0,0,timee);
+  cLegR.setPositions(0,0,0,timee);
+  dLegR.setPositions(0,0,0,timee);
+  aLegR.setCycle(0);
+  bLegR.setCycle(0);
+  cLegR.setCycle(0);
+  dLegR.setCycle(0);
 }
 
 void populateStructs(movementVariables &walkV, movementVariables &turnV){
