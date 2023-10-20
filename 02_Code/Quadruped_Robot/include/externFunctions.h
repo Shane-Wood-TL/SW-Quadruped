@@ -20,7 +20,7 @@
 
 #define A_HIP_OFFSET 0
 #define A_KNEE_OFFSET 0
-#define A_ANKLE_OFFSET -20
+#define A_ANKLE_OFFSET 0
 
 #define B_HIP_OFFSET 0
 #define B_KNEE_OFFSET 0

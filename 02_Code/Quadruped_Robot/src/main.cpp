@@ -32,8 +32,8 @@ rampLeg dLegR(dHip);
 
 //motor
 #define SERVO_FREQ 50
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
-Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(0x41);
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x60);
+Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(0x7C);
 
 
 
@@ -97,27 +97,38 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Serial Active");
   
-  Wire.begin(17,15); //SDA, SCL
+ Wire.begin(13,11); //SDA, SCL
   Serial.println("IC2 Active");
 
   //SPI.begin(SCK, MISO, MOSI);
-  SPI.begin(18, 8, 10);
+ // SPI.begin(18, 8, 10);
 
   //start radio
-  radio.begin();
-  radio.setDataRate( RF24_250KBPS );
-  radio.openReadingPipe(1, thisSlaveAddress);
-  radio.startListening();
-  Serial.println("radio Active");
+  // radio.begin();
+  // radio.setDataRate( RF24_250KBPS );
+  // radio.openReadingPipe(1, thisSlaveAddress);
+  // radio.startListening();
+  // Serial.println("radio Active");
 
-  //start gyro
+
+  //Set up PCA9685
+  pwm.begin();
+  pwm.setOscillatorFrequency(27000000);
+  pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
+  delay(10);  
+  pwm1.begin();
+  pwm1.setOscillatorFrequency(27000000);
+  pwm1.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
+
+
+  // start gyro
   bno.begin();
   Serial.println("gyro Started");
   if(!bno.begin()){
     Serial.print("Gyro Error");
     while(1);
   }
-  //bno.setExtCrystalUse(true);
+  bno.setExtCrystalUse(true);
   delay(1000); 
   Serial.println("Gyro Active");
 
@@ -131,14 +142,7 @@ void setup() {
   Serial.println("PID Active");
 
   
-  //Set up PCA9685
-  pwm.begin();
-  pwm.setOscillatorFrequency(27000000);
-  pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
-  delay(10);  
-  pwm1.begin();
-  pwm1.setOscillatorFrequency(27000000);
-  pwm1.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
+
 
 
   //where in the walk cycle the robot is at. Way to share state across all movements
@@ -153,7 +157,7 @@ void setup() {
   delay(200);
   DlegK.mainKinematics(basicStand);
 
-  //Sets all RAMPS to go to 0 in all joints in all legs
+  // Sets all RAMPS to go to 0 in all joints in all legs
   aLegR.reset();
   bLegR.reset();
   cLegR.reset();
@@ -164,73 +168,77 @@ void setup() {
 }
 
 void loop() {
-  //update radio
-
-  getData();
-  
-  //update gyro
-  if(payload.gyro == 1){
-    bno.getEvent(&event);
-    delay(5);
-    yPreRot = event.orientation.y;
-    zPreRot = event.orientation.z;
-    yAngle = yPreRot;
-    zAngle = zPreRot;
-    if(payload.PID == 1){
-      yPID.Compute();
-      zPID.Compute();
-    }
-  }else{
-    yRot = 0;
-    zRot = 0;
-  }
-  yAngle = yRot;
-  yAngle = zRot;
-
-
-  //switch modes and saftey mode
-  if(payload.eStop != 1){
-    wakeup_9();
-    if(oldState !=payload.state){
-      aLegR.setCycle(0);
-      bLegR.setCycle(3);
-      cLegR.setCycle(3);
-      dLegR.setCycle(0);
-    }
-    switch (payload.state) {
-      case 0:{ //standing
-        standing_0();
-        break;
-      }
-      case 1:{ //IK mode
-        IK_1();
-        break;
-      }
-      case 2:{//FWalk
-        FWalk_2();
-        break;
-      }
-      case 3:{ //
-        FTurn_3();
-        break;
-      }
-      case 4:{ //user
-        User_4();
-        break;
-      } 
-      case 5:{ //used to install new motors
-          Aleg.setAngles(90,180,0);
+  Aleg.setAngles(90,180,0);
           Bleg.setAngles(90,180,0);
           Cleg.setAngles(90,180,0);
           Dleg.setAngles(90,180,0);
-      }
-      default:
-        break;
-      }
-  }else{
-      Default_9(); //turns off motors
-  }
-  oldState = payload.state;
+  //update radio
+
+  // getData();
+  
+  // //update gyro
+  // if(payload.gyro == 1){
+  //   bno.getEvent(&event);
+  //   delay(5);
+  //   yPreRot = event.orientation.y;
+  //   zPreRot = event.orientation.z;
+  //   yAngle = yPreRot;
+  //   zAngle = zPreRot;
+  //   if(payload.PID == 1){
+  //     yPID.Compute();
+  //     zPID.Compute();
+  //   }
+  // }else{
+  //   yRot = 0;
+  //   zRot = 0;
+  // }
+  // yAngle = yRot;
+  // yAngle = zRot;
+
+
+  // //switch modes and saftey mode
+  // if(payload.eStop != 1){
+  //   wakeup_9();
+  //   if(oldState !=payload.state){
+  //     aLegR.setCycle(0);
+  //     bLegR.setCycle(3);
+  //     cLegR.setCycle(3);
+  //     dLegR.setCycle(0);
+  //   }
+  //   switch (payload.state) {
+  //     case 0:{ //standing
+  //       standing_0();
+  //       break;
+  //     }
+  //     case 1:{ //IK mode
+  //       IK_1();
+  //       break;
+  //     }
+  //     case 2:{//FWalk
+  //       FWalk_2();
+  //       break;
+  //     }
+  //     case 3:{ //
+  //       FTurn_3();
+  //       break;
+  //     }
+  //     case 4:{ //user
+  //       User_4();
+  //       break;
+  //     } 
+  //     case 5:{ //used to install new motors
+  //         Aleg.setAngles(90,180,0);
+  //         Bleg.setAngles(90,180,0);
+  //         Cleg.setAngles(90,180,0);
+  //         Dleg.setAngles(90,180,0);
+  //     }
+  //     default:
+  //       break;
+  //     }
+  // }else{
+  //     Default_9(); //turns off motors
+  // }
+  // oldState = payload.state;
 }
 
 
