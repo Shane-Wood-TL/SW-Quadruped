@@ -2,37 +2,22 @@
 #include <Ramp.h>
 #include <Adafruit_PWMServoDriver.h>
 
-// #define A_HIP_OFFSET 0
-// #define A_KNEE_OFFSET 20
-// #define A_ANKLE_OFFSET -20
-
-// #define B_HIP_OFFSET 0
-// #define B_KNEE_OFFSET -35
-// #define B_ANKLE_OFFSET -20
-
-// #define C_HIP_OFFSET 0
-// #define C_KNEE_OFFSET -35
-// #define C_ANKLE_OFFSET -30
-
-// #define D_HIP_OFFSET 0
-// #define D_KNEE_OFFSET -30
-// #define D_ANKLE_OFFSET -30
 
 #define A_HIP_OFFSET 0
-#define A_KNEE_OFFSET 0
-#define A_ANKLE_OFFSET 0
+#define A_KNEE_OFFSET -10
+#define A_ANKLE_OFFSET -7
 
 #define B_HIP_OFFSET 0
-#define B_KNEE_OFFSET 0
-#define B_ANKLE_OFFSET 0
+#define B_KNEE_OFFSET -20
+#define B_ANKLE_OFFSET -10
 
 #define C_HIP_OFFSET 0
 #define C_KNEE_OFFSET 0
-#define C_ANKLE_OFFSET 0
+#define C_ANKLE_OFFSET -10
 
 #define D_HIP_OFFSET 0
-#define D_KNEE_OFFSET 0
-#define D_ANKLE_OFFSET 0
+#define D_KNEE_OFFSET -10
+#define D_ANKLE_OFFSET -4
 
 
 //servo motor pwm limits
@@ -98,7 +83,7 @@ const float testFBW = 0;
 const float timeeW = 100;
 
 //amount to change values by in a cycle
-const float backDistanceW = -90; //(FB)
+const float backDistanceW = -60; //(FB)
 const float upDistanceW = -30; //xH
 const float LRDistanceW =0; //xLR
 

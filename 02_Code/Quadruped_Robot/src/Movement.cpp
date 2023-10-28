@@ -25,7 +25,7 @@ extern kinematics DlegK;
 
 
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
-  float timee = 100;
+  float timee = 90;
   timee = timee;
   updateAll();
 
