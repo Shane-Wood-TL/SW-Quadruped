@@ -15,9 +15,11 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include <TelnetStream.h>
 
-const char* ssid = "";
-const char* password = "";
+
+const char* ssid = "SSID";
+const char* password = "password";
 
 //angle goal values
 double xAngle = 0;
@@ -66,10 +68,10 @@ motor dHipM(&pwm1, dHip, 45, 135, false, D_HIP_OFFSET);
 motor dKneeM(&pwm1, dKnee, 0, 180, false, D_KNEE_OFFSET);
 motor dAnkleM(&pwm1, dAnkle, 0, 180, true, D_ANKLE_OFFSET);
 
-leg Aleg(&aHipM, &aKneeM, &aAnkleM);
-leg Bleg(&bHipM, &bKneeM, &bAnkleM);
-leg Cleg(&cHipM, &cKneeM, &cAnkleM);
-leg Dleg(&dHipM, &dKneeM, &dAnkleM);
+leg Aleg(&aHipM, &aKneeM, &aAnkleM, "A");
+leg Bleg(&bHipM, &bKneeM, &bAnkleM, "B");
+leg Cleg(&cHipM, &cKneeM, &cAnkleM, "C");
+leg Dleg(&dHipM, &dKneeM, &dAnkleM, "D");
 
 kinematics AlegK(&Aleg);
 kinematics BlegK(&Bleg);
@@ -156,7 +158,7 @@ void setup() {
   });
   ArduinoOTA.begin();
 
-
+  TelnetStream.begin();
   //start radio
   // radio.begin();
   // radio.setDataRate( RF24_250KBPS );
@@ -199,7 +201,7 @@ void setup() {
   setCycle();
 
   //set legs to stand in some default form
-  basicStand.xH = 150;
+  basicStand.xH = 130;
   AlegK.mainKinematics(basicStand);
   delay(200);
   ClegK.mainKinematics(basicStand);
@@ -220,30 +222,42 @@ void setup() {
 void loop() {
   ArduinoOTA.handle();
   
-  //standing_0();
+  standing_0();
           // Aleg.setAngles(90,90,0);
           // Bleg.setAngles(90,90,0);
           // Cleg.setAngles(90,90,0);
           // Dleg.setAngles(90,90,0);
   
   //bKneeM.setDegree(0);
-  FWalk_2();
+  //FWalk_2();
   //update radio
 
   // getData();
   
   // //update gyro
-  // if(payload.gyro == 1){
-  //   bno.getEvent(&event);
-  //   delay(5);
-  //   yPreRot = event.orientation.y;
-  //   zPreRot = event.orientation.z;
-  //   yAngle = yPreRot;
-  //   zAngle = zPreRot;
-  //   if(payload.PID == 1){
-  //     yPID.Compute();
-  //     zPID.Compute();
-  //   }
+  payload.gyro =1;
+  payload.PID = 1;
+  if(payload.gyro == 1){
+    bno.getEvent(&event);
+    delay(5);
+    yPreRot = event.orientation.y;
+    zPreRot = event.orientation.z;
+    yAngle = yPreRot;
+    zAngle = zPreRot;
+    basicStand.yRot = yPreRot;
+    basicStand.zRot = zPreRot;
+    if(payload.PID == 1){
+      yPID.Compute();
+      zPID.Compute();
+    
+    }
+    TelnetStream.print("y: ");
+    TelnetStream.print(yPreRot);
+    TelnetStream.print("      z: ");
+    TelnetStream.println(zPreRot);
+  
+  }
+  
   // }else{
   //   yRot = 0;
   //   zRot = 0;

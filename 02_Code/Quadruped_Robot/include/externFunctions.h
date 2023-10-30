@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Ramp.h>
 #include <Adafruit_PWMServoDriver.h>
-
+#include <TelnetStream.h>
 
 #define A_HIP_OFFSET 0
 #define A_KNEE_OFFSET -10
@@ -276,11 +276,11 @@ class Cords{
 class motor{
   private:
     Adafruit_PWMServoDriver* pwm;
-    int motorC;
     float Hlimit;
     float Llimit;
     bool direction;
     float offset;
+    int motorC;
   public:
   motor(Adafruit_PWMServoDriver* pwmV, int motorV, float LlimitV, float HlimitV, bool directionV, float offsetV){
     pwm = pwmV;
@@ -304,7 +304,9 @@ class motor{
     }else{
         pwm->writeMicroseconds(motorC, (map(nDegree, 180, 0, USMIN, USMAX)));
     }
-    
+  }
+  int getMotor(){
+    return motorC;
   }
 };
 
@@ -312,17 +314,22 @@ class leg{
   motor* hip;
   motor* knee;
   motor* ankle;
+  String name;
   public:
-    leg(motor* hipV, motor* kneeV, motor* ankleV){
+    leg(motor* hipV, motor* kneeV, motor* ankleV, String nameV){
       hip = hipV;
       knee = kneeV;
       ankle = ankleV;
+      name = nameV;
     }
 
     void setAngles(float hipV, float kneeV, float ankleV){
       hip->setDegree(hipV);
       knee->setDegree(kneeV);
       ankle->setDegree(ankleV);
+    }
+    String getLegName(){
+      return name;
     }
 };
 
@@ -336,11 +343,43 @@ class kinematics{
   }
   
   void mainKinematics(Cords position){
-    float yRotR = decrad(position.yRot);
-    float yAddition = yHalfDis * tan(yRotR);
-    
-    float zRotR = decrad(position.zRot);
-    float zAddition = zHalfDis * tan(zRotR);
+    //code to convert angles to change in positions
+    float modZd;
+    float modYd;
+    float xHz;
+    float xHy;
+    float xFBz;
+    float xLRy;
+
+    xHz = zHalfDis * sin(decrad(position.zRot));
+    modZd = zHalfDis * cos(decrad(position.zRot));
+
+    if(legC->getLegName() == "C" || legC->getLegName() == "D"){
+      position.xH -= xHz;
+      position.xFB -= modZd - zHalfDis;
+    }else{
+      position.xH += xHz;
+      position.xFB += modZd - zHalfDis;    
+    }
+
+
+    xHy = yHalfDis * sin(decrad(position.yRot));
+    modYd = yHalfDis * cos(decrad(position.yRot));
+
+  if(legC->getLegName() == "B" || legC->getLegName() == "D"){
+    position.xH -= xHy;
+    position.xLR -= modYd - yHalfDis;
+  }else{
+    position.xH += xHy;
+    position.xLR += modYd - yHalfDis; 
+  }
+
+    TelnetStream.println();
+    TelnetStream.print(position.xH);
+    TelnetStream.print("    ");
+    TelnetStream.print(position.xLR);
+    TelnetStream.print("    ");
+    TelnetStream.println(position.xFB);
 
     float innerLegLength = pytherm(position.xH, Ldis + position.xLR);
     float modLegL = pythermhypt(Ldis, innerLegLength);
