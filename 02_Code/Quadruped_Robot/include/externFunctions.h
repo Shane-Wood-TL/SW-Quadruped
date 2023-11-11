@@ -50,6 +50,7 @@
 #define dAnkle 5 //
 
 
+//------------------------------------------------------------------------------------------------
 //SCK 18
 //MOSI 8
 //MISO 10
@@ -57,6 +58,7 @@
 //CSN 9
 
 
+//------------------------------------------------------------------------------------------------
 //values for non controlled turn
 //current /default values
 const float testHeightT = 120;
@@ -76,7 +78,7 @@ const float LRDistanceT =100; //xLR
 //values for non controlled walk
 const float testHeightW = 150;
 const float testHeightBACKW = 130;
-const float testLRW = 0;
+const float testLRW = 15;
 const float testFBW = 0;
 
 //time for a cycle (in ms)
@@ -84,17 +86,11 @@ const float timeeW = 100;
 
 //amount to change values by in a cycle
 const float backDistanceW = -60; //(FB)
-const float upDistanceW = -30; //xH
+const float upDistanceW = -40; //xH
 const float LRDistanceW =0; //xLR
 
 
-
-
-
-
-
-
-
+//------------------------------------------------------------------------------------------------
 struct movementVariables{
  float testHeight; 
  float testHeightBACK;
@@ -105,10 +101,13 @@ struct movementVariables{
  float LRDistance;
 };
 
+
+//------------------------------------------------------------------------------------------------
 void populateStructs(movementVariables &walkV, movementVariables &turnV);
 //(testHeightW, testHeightBACKW, testLRW, testFBW, upDistanceW, backDistanceW, LRDistanceW)
 
 
+//------------------------------------------------------------------------------------------------
 struct PayloadStruct {
   uint8_t eStop; //sw2
   uint8_t state;
@@ -122,6 +121,8 @@ struct PayloadStruct {
   uint8_t j2_b;
 };
 
+
+//------------------------------------------------------------------------------------------------
 //class
 class rampLeg{
   private:
@@ -206,11 +207,14 @@ class rampLeg{
 };
 
 
+//------------------------------------------------------------------------------------------------
 //legCtrls
 void updateAll();
 void resetAll();
 bool allDone();
 
+
+//------------------------------------------------------------------------------------------------
 //Extra Math
 float pytherm(float sidea, float sideb); //returns hypotenuse c
 float raddec(float rad); //radians to degress
@@ -218,35 +222,32 @@ float loc(float a, float b, float c); // law of cosines, returns angle c in degr
 float pythermhypt(float sidea, float sidec); //returns side b
 float decrad(float deg); //degrees to radians
 
+
+//------------------------------------------------------------------------------------------------
 //Movement
 void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
 void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
 
 
+//------------------------------------------------------------------------------------------------
 //Modes
 void standing_0();
-void IK_1();
-void FWalk_2();
-void FTurn_3();
-void User_4();
-
+void IK_1(float xAngleV, float yAngleV, float zAngleV);
+void FWalk_2(float yAngleV, float zAngleV);
+void FTurn_3(float yAngleV, float zAngleV);
+void User_4(float yAngleV, float zAngleV);
 
 void Default_9();
 void wakeup_9();
 
 
+//------------------------------------------------------------------------------------------------
 void getData();
-
 void setCycle();
 
 
-
-
-
-
-
-
+//------------------------------------------------------------------------------------------------
 class Cords{
   public:
     float xH;
@@ -273,6 +274,8 @@ class Cords{
     }
 };
 
+
+//------------------------------------------------------------------------------------------------
 class motor{
   private:
     Adafruit_PWMServoDriver* pwm;
@@ -310,6 +313,8 @@ class motor{
   }
 };
 
+
+//------------------------------------------------------------------------------------------------
 class leg{
   motor* hip;
   motor* knee;
@@ -333,6 +338,8 @@ class leg{
     }
 };
 
+
+//------------------------------------------------------------------------------------------------
 class kinematics{
   private:
   leg *legC;
@@ -380,6 +387,10 @@ class kinematics{
     TelnetStream.print(position.xLR);
     TelnetStream.print("    ");
     TelnetStream.println(position.xFB);
+
+    if(position.xH > 134){
+      position.xH = 134;
+    }
 
     float innerLegLength = pytherm(position.xH, Ldis + position.xLR);
     float modLegL = pythermhypt(Ldis, innerLegLength);

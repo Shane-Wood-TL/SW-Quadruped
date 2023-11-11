@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <externFunctions.h>
 
-
+//------------------------------------------------------------------------------------------------
 extern rampLeg aLegR;
 extern rampLeg bLegR;
 extern rampLeg cLegR;
@@ -12,18 +12,20 @@ extern Cords bCords;
 extern Cords cCords;
 extern Cords dCords;
 
-//create pointers to legs
-rampLeg* aLegAdd = &aLegR;
-rampLeg* bLegAdd = &bLegR;
-rampLeg* cLegAdd = &cLegR;
-rampLeg* dLegAdd = &dLegR;
-
 extern kinematics AlegK;
 extern kinematics BlegK;
 extern kinematics ClegK;
 extern kinematics DlegK;
 
 
+//------------------------------------------------------------------------------------------------
+//create pointers to legs
+rampLeg* aLegAdd = &aLegR;
+rampLeg* bLegAdd = &bLegR;
+rampLeg* cLegAdd = &cLegR;
+rampLeg* dLegAdd = &dLegR;
+
+//------------------------------------------------------------------------------------------------
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
   float timee = 50;
   timee = timee;
@@ -75,6 +77,7 @@ void WalkF(float yRot, float zRot, bool direction, float  testHeight, float test
 }
 
 
+//------------------------------------------------------------------------------------------------
 void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
   float timee = sqrt(pow(backDistance,2) + pow(upDistance,2) + pow(LRDistance,2));
   timee = timee;
@@ -163,7 +166,7 @@ void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testH
 }
 
 
-
+//------------------------------------------------------------------------------------------------
 void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d){
   float offTime = timee/6.0;
   if(Leg.cycleAt() == 0 && (Leg.allDone())){
@@ -239,6 +242,8 @@ void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float
   }
 }
 
+
+//------------------------------------------------------------------------------------------------
 void stop(float timee){
   aLegR.setPositions(0,0,0,timee);
   bLegR.setPositions(0,0,0,timee);
@@ -250,6 +255,8 @@ void stop(float timee){
   dLegR.setCycle(0);
 }
 
+
+//------------------------------------------------------------------------------------------------
 void populateStructs(movementVariables &walkV, movementVariables &turnV){
   walkV.testHeight = testHeightW;
   walkV.testHeightBACK = testHeightBACKW;
