@@ -19,6 +19,7 @@
 
 //#define OTA
 #define CONTROLLER
+#define CONTROLLERA
 //#define TELNET
 
 //------------------------------------------------------------------------------------------------
@@ -72,20 +73,20 @@ Cords dCords;
 //------------------------------------------------------------------------------------------------
 // Motor, Leg, kinematics, interpolation set up
 //float LlimitV, float HlimitV, bool directionV, float offsetV)
-motor aHipM(&pwm, aHip, 45, 135, false, A_HIP_OFFSET);
-motor aKneeM(&pwm, aKnee, 0, 180, true, A_KNEE_OFFSET);
+motor aHipM(&pwm, aHip, 45, 135, true, A_HIP_OFFSET);
+motor aKneeM(&pwm, aKnee, 0, 180, false, A_KNEE_OFFSET);
 motor aAnkleM(&pwm, aAnkle, 0, 180, false, A_ANKLE_OFFSET);
 
-motor bHipM(&pwm, bHip, 45, 135, true, B_HIP_OFFSET);
-motor bKneeM(&pwm, bKnee, 0, 180, false, B_KNEE_OFFSET);
+motor bHipM(&pwm, bHip, 45, 135, false, B_HIP_OFFSET);
+motor bKneeM(&pwm, bKnee, 0, 180, true, B_KNEE_OFFSET);
 motor bAnkleM(&pwm, bAnkle, 0, 180, true, B_ANKLE_OFFSET);
 
-motor cHipM(&pwm1, cHip, 45, 135, true, C_HIP_OFFSET);
-motor cKneeM(&pwm1, cKnee, 0, 180, true, C_KNEE_OFFSET);
+motor cHipM(&pwm1, cHip, 45, 135, false, C_HIP_OFFSET);
+motor cKneeM(&pwm1, cKnee, 0, 180, false, C_KNEE_OFFSET);
 motor cAnkleM(&pwm1, cAnkle, 0, 180, false, C_ANKLE_OFFSET);
 
-motor dHipM(&pwm1, dHip, 45, 135, false, D_HIP_OFFSET);
-motor dKneeM(&pwm1, dKnee, 0, 180, false, D_KNEE_OFFSET);
+motor dHipM(&pwm1, dHip, 45, 135, true, D_HIP_OFFSET);
+motor dKneeM(&pwm1, dKnee, 0, 180, true, D_KNEE_OFFSET);
 motor dAnkleM(&pwm1, dAnkle, 0, 180, true, D_ANKLE_OFFSET);
 
 
@@ -129,7 +130,7 @@ PID zPID(&zPreRot, &zRot, &angleGoal, Kp, Ki, Kd, DIRECT);
 //radio
 PayloadStruct payload;
 //RF24 radio(ce, csn)
-RF24 radio(12,18);
+RF24 radio(14,13);
 bool newData = false;
 #ifdef CONTROLLER
 int oldState = 0;
@@ -158,14 +159,16 @@ void setup() {
 
   //------------------------------------------------------------------------------------------------
   //Start I2C
-  Wire.begin(13,11); //SDA, SCL
+  Wire.begin(04,05); //SDA, SCL
   Serial.println("IC2 Active");
 
   //------------------------------------------------------------------------------------------------
   //start SPI bus for NRF2401
   #ifdef CONTROLLER
     //SPI.begin(SCK, MISO, MOSI);
-    SPI.begin(14, 17, 8);
+    SPI.begin(12, 10, 11);
+    //SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+
   #endif
 
   //------------------------------------------------------------------------------------------------
@@ -225,16 +228,16 @@ void setup() {
   #ifdef CONTROLLER
   //start radio
     radio.begin();
-    radio.setPALevel(RF24_PA_LOW);
-    radio.setDataRate( RF24_250KBPS );
+    radio.setPALevel(RF24_PA_MAX);
+    radio.setDataRate(RF24_250KBPS);
     radio.openReadingPipe(1, thisSlaveAddress);
     radio.startListening();
     Serial.println("radio Active");
   #endif
 
 
-  //------------------------------------------------------------------------------------------------
-  //Set up PCA9685s / motor drivers
+  // //------------------------------------------------------------------------------------------------
+  // //Set up PCA9685s / motor drivers
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
@@ -244,7 +247,7 @@ void setup() {
   pwm1.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 
 
-  //------------------------------------------------------------------------------------------------
+  // //------------------------------------------------------------------------------------------------
   // start gyro
   radio.printPrettyDetails();
   bno.begin();
@@ -260,8 +263,8 @@ void setup() {
   Serial.println("Gyro Active");
 
 
-  //------------------------------------------------------------------------------------------------
-  //limit PID values to keep motors in safe range
+  // //------------------------------------------------------------------------------------------------
+  // //limit PID values to keep motors in safe range
   yPID.SetOutputLimits(-20.0,20.0);
   zPID.SetOutputLimits(-20.0,20.0);
 
@@ -271,13 +274,14 @@ void setup() {
   Serial.println("PID Active");
 
 
-  //------------------------------------------------------------------------------------------------
+  // //------------------------------------------------------------------------------------------------
   //where in the walk cycle the robot is at. Way to share state across all movements
   setCycle();
 
   //set legs to stand in some default form
-  basicStand.xH = 130;
-  basicStand.xLR = 50;
+  basicStand.xH = 100;
+  basicStand.xLR = 0;
+  basicStand.xFB = -20;
   standing_0();
 
   // Sets all RAMPS to go to 0 in all joints in all legs
@@ -288,26 +292,24 @@ void setup() {
   populateStructs(*walkSetP,*turnSetP);
 }
 
-void loop() {
-  
+void loop() {  
   #ifdef OTA
   ArduinoOTA.handle();
   #endif
   
   //standing_0();
-  Serial.print(payload.eStop);
+  
   //bKneeM.setDegree(0);
   //FWalk_2(yAngleV, zAngleV);
   //update radio
 
   getData();
-
+  //payload.state == 0;
   //------------------------------------------------------------------------------------------------
   // //update gyro
-
+  bno.getEvent(&event);
+  delay(5);
   if(payload.gyro == 1){
-    bno.getEvent(&event);
-    delay(5);
     yPreRot = event.orientation.y;
     zPreRot = event.orientation.z;
     if(payload.PID == 1){
@@ -324,44 +326,45 @@ void loop() {
     zAngleV = 0;
   }
 
-
+  
   //------------------------------------------------------------------------------------------------
   #ifdef CONTROLLERA
     //switch modes and saftey mode
     if(payload.eStop != 1){
       wakeup_9();
       if(oldState !=payload.state){
-        aLegR.setCycle(0);
-        bLegR.setCycle(3);
-        cLegR.setCycle(3);
-        dLegR.setCycle(0);
+          // aLegR.setCycle(0);
+          // bLegR.setCycle(3);
+          // cLegR.setCycle(3);
+          // dLegR.setCycle(0);
       }
       switch (payload.state) {
         case 0:{ //standing
-          standing_0();
+            standing_0();
           break;
         }
         case 1:{ //IK mode
-          IK_1();
+            IK_1(0,0,0);
           break;
         }
         case 2:{//FWalk
-          FWalk_2();
+            FWalk_2(xAngleV,yAngleV);
           break;
         }
         case 3:{ //
-          FTurn_3();
+            FTurn_3(xAngleV,yAngleV);
           break;
         }
         case 4:{ //user
-          User_4();
+            User_4(xAngleV,yAngleV);
           break;
         } 
         case 5:{ //used to install new motors
-            Aleg.setAngles(90,180,0);
-            Bleg.setAngles(90,180,0);
-            Cleg.setAngles(90,180,0);
-            Dleg.setAngles(90,180,0);
+              Aleg.setAngles(90,180,0);
+              Bleg.setAngles(90,180,0);
+              Cleg.setAngles(90,180,0);
+              Dleg.setAngles(90,180,0);
+            break;
         }
         default:
           break;
