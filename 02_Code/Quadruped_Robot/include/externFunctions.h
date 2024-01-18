@@ -3,21 +3,21 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <TelnetStream.h>
 
-#define A_HIP_OFFSET 0
-#define A_KNEE_OFFSET -10
-#define A_ANKLE_OFFSET -7
+#define A_HIP_OFFSET -10
+#define A_KNEE_OFFSET 0
+#define A_ANKLE_OFFSET 0
 
 #define B_HIP_OFFSET 0
-#define B_KNEE_OFFSET -20
-#define B_ANKLE_OFFSET -10
+#define B_KNEE_OFFSET 15
+#define B_ANKLE_OFFSET -15
 
 #define C_HIP_OFFSET 0
 #define C_KNEE_OFFSET 0
-#define C_ANKLE_OFFSET -10
+#define C_ANKLE_OFFSET 0
 
 #define D_HIP_OFFSET 0
-#define D_KNEE_OFFSET -10
-#define D_ANKLE_OFFSET -4
+#define D_KNEE_OFFSET 10
+#define D_ANKLE_OFFSET -5
 
 
 //servo motor pwm limits
@@ -25,12 +25,12 @@
 #define USMAX 2193 // max value given from arduino lib
 
 //dimensions of the bot
-#define yHalfDis 85
+#define yHalfDis 122
 #define zHalfDis 190
 // constant distances
 #define aLength 95 // upper leg length more red
 #define bLength 95 // lower leg length more purple
-#define Ldis 45
+#define Ldis 50
 
 
 #define aHip 3  //
@@ -115,10 +115,13 @@ struct PayloadStruct {
   uint8_t PID;
   int16_t j1_x;
   int16_t j1_y;
+  int16_t j1_z;
   int16_t j2_x;
   int16_t j2_y;
-  uint8_t j1_b;
-  uint8_t j2_b;
+  int16_t j2_z;
+  uint8_t bt0_;
+  uint8_t bt1_;
+  uint8_t bt2_;
 };
 
 

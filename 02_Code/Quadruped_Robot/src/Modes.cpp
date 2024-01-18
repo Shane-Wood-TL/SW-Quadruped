@@ -54,7 +54,7 @@ void IK_1(float xAngleV, float yAngleV, float zAngleV){
 
 //------------------------------------------------------------------------------------------------
 void FWalk_2(float yAngleV, float zAngleV){
-  Serial.println(yAngleV);
+  //Serial.println(yAngleV);
   WalkF(yAngleV,zAngleV, true, testHeightW, testHeightBACKW, testFBW, testLRW,upDistanceW,backDistanceW,LRDistanceW);
 }
 
@@ -78,14 +78,14 @@ void User_4(float yAngleV, float zAngleV)
     direction = false;
   }
 
-  if (!payload.j1_b == 1 && !payload.j2_b == 1){
+  if (!payload.bt0_ == 1 && !payload.bt1_ == 1){
     // WalkF( yRot,zRot, direction,testHeight, testHeightBACK,  testFB, testLR,  upDistance,   backDistance, LRDistance)
     WalkF(yAngleV, zAngleV, direction, testHeightW, testHeightBACKW, testFBW, testLRW, xH, xFB, xLR); // need to make WalkF take in values
   }
-  else if (payload.j1_b == 1){
+  else if (payload.bt0_ == 1){
     turn(yAngleV, zAngleV, true, testHeightT, testHeightBACKT, testFBT, testLRT, xH, xFB, xLR);
   }
-  else if (payload.j2_b == 1){
+  else if (payload.bt1_ == 1){
     turn(yAngleV, zAngleV, direction, testHeightT, testHeightBACKT, testFBT, testLRT, xH, xFB, xLR);
   }
 }
