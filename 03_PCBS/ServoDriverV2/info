@@ -4,7 +4,7 @@
   "name": "ServoDriverV2",
   "content": "",
   "created_at": "2023-09-14 22:58:48",
-  "updated_at": "2023-09-21 22:51:27",
+  "updated_at": "2024-01-07 19:27:23",
   "stick": "",
   "documents": [
     {
@@ -15,12 +15,12 @@
       "master": "",
       "thumb": "/images/thumb-default.png",
       "components": {
-        "3e402906a0f047bdab7d016fd9b30e98": 6,
-        "ea68a8fbc6c74f4abd7b0b3a5339aa6d": 1,
-        "7c89dde5a28e428da1c86c69d833b512": 1,
-        "584fb1f8b2144e0d996c36a7c072f99e": 2,
+        "6a8689fca7374180a6f8c9b7134cb1c4": 3,
         "b897c34e64944dda8ef792e05fa2cd17": 6,
-        "6a8689fca7374180a6f8c9b7134cb1c4": 3
+        "584fb1f8b2144e0d996c36a7c072f99e": 2,
+        "7c89dde5a28e428da1c86c69d833b512": 1,
+        "ea68a8fbc6c74f4abd7b0b3a5339aa6d": 1,
+        "3e402906a0f047bdab7d016fd9b30e98": 6
       },
       "BOM": [
         [
@@ -34,7 +34,7 @@
           "100uF",
           6,
           "100UFX16V CAPACITOR D5.0XF11.0",
-          "C4,C5,C6,C7,C8,C9",
+          "C1,C2,C3,C10,C11,C12",
           {
             "Supplier Part": "",
             "Supplier": "My_collection",
@@ -50,7 +50,7 @@
           "AWG14 CABLE",
           2,
           "AWG14-HOLE",
-          "J1,J2",
+          "J3,J4",
           {
             "Supplier": "",
             "Manufacturer": "PCB",
@@ -66,7 +66,7 @@
           "Header-Male-2.54_1x4",
           3,
           "HDR-4X1/2.54",
-          "P2,P4,P6",
+          "P1,P3,P5",
           {
             "Supplier": "LCSC",
             "Manufacturer": "ReliaPro",
@@ -81,27 +81,9 @@
         ],
         [
           "NO",
-          1,
-          "CONN-TH_10P-P2.54_KINGHELM_KH-2.54PH180-2X5P-L8.9",
-          "U1",
-          {
-            "Supplier": "LCSC",
-            "Supplier Part": "C5157628",
-            "Manufacturer": "kinghelm(金航标)",
-            "Manufacturer Part": "KH-2.54PH180-2X5P-L8.9",
-            "link": "https://atta.szlcsc.com/upload/public/pdf/source/20220906/04BEB622ED10B556BB25C8F90E10FD05.pdf",
-            "Contributor": "lcsc",
-            "JLCPCB Part Class": "Extended Part",
-            "spiceSymbolName": "KH-2.54PH180-2X5P",
-            "puuid": "bf3bc3b90be548f39bfeaea8c48678fb",
-            "uuid": "7c89dde5a28e428da1c86c69d833b512"
-          }
-        ],
-        [
-          "NO",
           6,
           "HDR-3X1/2.54",
-          "U2,U3,U5,U6,U7,U8",
+          "U9,U10,U11,U12,U13,U14",
           {
             "Manufacturer": "",
             "Manufacturer Part": "",
@@ -118,8 +100,26 @@
         [
           "NO",
           1,
+          "CONN-TH_10P-P2.54_KINGHELM_KH-2.54PH180-2X5P-L8.9",
+          "U15",
+          {
+            "Supplier": "LCSC",
+            "Supplier Part": "C5157628",
+            "Manufacturer": "kinghelm(金航标)",
+            "Manufacturer Part": "KH-2.54PH180-2X5P-L8.9",
+            "link": "https://atta.szlcsc.com/upload/public/pdf/source/20220906/04BEB622ED10B556BB25C8F90E10FD05.pdf",
+            "Contributor": "lcsc",
+            "JLCPCB Part Class": "Extended Part",
+            "spiceSymbolName": "KH-2.54PH180-2X5P",
+            "puuid": "bf3bc3b90be548f39bfeaea8c48678fb",
+            "uuid": "7c89dde5a28e428da1c86c69d833b512"
+          }
+        ],
+        [
+          "NO",
+          1,
           "PCA9685",
-          "U4",
+          "U16",
           {
             "Contributor": "Quentin Chatenet",
             "Supplier Part": "",
@@ -131,11 +131,11 @@
           }
         ]
       ],
-      "updateTime": 1695350829,
+      "updateTime": 1704665349,
       "createTime": 1694746729,
       "histories": [],
       "created_at": "2023-09-14 22:58:49",
-      "updated_at": "2023-09-21 22:47:09"
+      "updated_at": "2024-01-07 17:09:09"
     },
     {
       "uuid": "a972bafd5071f000bf21b0572925c2b5",
@@ -147,24 +147,27 @@
       "master": "",
       "thumb": "/images/thumb-default.png",
       "components": {
-        "0edf0a8c64c743b5adb8f859b6e3e830": 1,
         "14f224c011733d92a7a36c742432e5ad": 6,
         "0541d6b923ca40988fbf4b3161ff9fdb": 2,
-        "bf3bc3b90be548f39bfeaea8c48678fb": 1,
         "f123e165c63a4fb6b981e3a31827ddc4": 3,
-        "0f82bef859574a9b8b634d900f76cedb": 6
+        "0f82bef859574a9b8b634d900f76cedb": 6,
+        "bf3bc3b90be548f39bfeaea8c48678fb": 1,
+        "0edf0a8c64c743b5adb8f859b6e3e830": 1
       },
       "BOM": [],
-      "updateTime": 1695351087,
+      "updateTime": 1704673643,
       "createTime": 1694750410,
       "histories": [],
       "created_at": "2023-09-15 00:00:10",
-      "updated_at": "2023-09-21 22:51:27"
+      "updated_at": "2024-01-07 19:27:23"
     }
   ],
-  "sort": [],
+  "sort": [
+    "46eaf48107eaaf1afe5a56d74f712b57",
+    "c1979e4fd03695fef60a7c135bc95aac"
+  ],
   "title": "ServoDriverV2",
   "foldername": "ServoDriverV2",
   "schfilename": "ServoDriverV2.json",
-  "schfilemtime": 1695350829279
+  "schfilemtime": 1704665349247
 }

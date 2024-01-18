@@ -1,0 +1,172 @@
+{
+  "uuid": "6b4e0169b1b1af3b679ff9849783b4f2",
+  "path": "Offline/GeneralPortBreakout",
+  "name": "GeneralPortBreakout",
+  "content": "",
+  "created_at": "2023-11-29 11:13:52",
+  "updated_at": "2023-12-03 13:06:51",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "9f06b5de080c62f893a6676e7e816778",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "7c89dde5a28e428da1c86c69d833b512": 1,
+        "7dcc704ea9a4404980b920b1340c7fab": 4,
+        "49cd3877fe6745228f41953156f70842": 1,
+        "cd96e6d08d91469d85a8ccea52224817": 2,
+        "895e6dd1fb2d49e6afa33722531a2c22": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "Connector_1x4/2.5mm",
+          1,
+          "HDR-1X4/2.54",
+          "P1",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "David Lochlin",
+            "spiceSymbolName": "Connector_1x4/2.5mm",
+            "puuid": "4a686347376d4ae7a993c4c0a52ad5cf",
+            "uuid": "49cd3877fe6745228f41953156f70842"
+          }
+        ],
+        [
+          "HDR-PIN-MALE-2.54-1x3",
+          1,
+          "PKG-HDR-1X3-2.54",
+          "P2",
+          {
+            "spiceSymbolName": "HDR-PIN-MALE-2.54-1x3",
+            "Manufacturer Part": "",
+            "puuid": "27726a6df5524b909b4d0e3d172e0845",
+            "uuid": "895e6dd1fb2d49e6afa33722531a2c22"
+          }
+        ],
+        [
+          "NO",
+          2,
+          "14AWG PTH LARGE",
+          "U1,U5",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "P0_+5",
+          1,
+          "14AWG PTH LARGE",
+          "U2",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "NO",
+          2,
+          "PKG-HDR-1X6-2.54",
+          "U3,U4",
+          {
+            "spiceSymbolName": "HDR-PIN-MALE-2.54-1x6",
+            "Manufacturer Part": "",
+            "puuid": "1dd430eb26284e0283040c2cb5534ec3",
+            "uuid": "cd96e6d08d91469d85a8ccea52224817"
+          }
+        ],
+        [
+          "P0_Gnd",
+          1,
+          "14AWG PTH LARGE",
+          "U6",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "NO",
+          1,
+          "CONN-TH_10P-P2.54_KINGHELM_KH-2.54PH180-2X5P-L8.9",
+          "U9",
+          {
+            "Supplier": "LCSC",
+            "Supplier Part": "C5157628",
+            "Manufacturer": "kinghelm(金航标)",
+            "Manufacturer Part": "KH-2.54PH180-2X5P-L8.9",
+            "link": "https://atta.szlcsc.com/upload/public/pdf/source/20220906/04BEB622ED10B556BB25C8F90E10FD05.pdf",
+            "Contributor": "lcsc",
+            "JLCPCB Part Class": "Extended Part",
+            "spiceSymbolName": "KH-2.54PH180-2X5P",
+            "puuid": "bf3bc3b90be548f39bfeaea8c48678fb",
+            "uuid": "7c89dde5a28e428da1c86c69d833b512"
+          }
+        ]
+      ],
+      "updateTime": 1701626811,
+      "createTime": 1701274432,
+      "histories": [],
+      "created_at": "2023-11-29 11:13:52",
+      "updated_at": "2023-12-03 13:06:51"
+    },
+    {
+      "uuid": "de6c83d0eae2609c85a8d40f4a3b6ad1",
+      "puuid": "6b4e0169b1b1af3b679ff9849783b4f2",
+      "title": "PCB_GeneralPortBreakout",
+      "filename": "PCB_GeneralPortBreakout.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "4a686347376d4ae7a993c4c0a52ad5cf": 1,
+        "6cce713c8e9846b484d4be849601ecb5": 4,
+        "1dd430eb26284e0283040c2cb5534ec3": 2,
+        "bf3bc3b90be548f39bfeaea8c48678fb": 1,
+        "27726a6df5524b909b4d0e3d172e0845": 1
+      },
+      "BOM": [],
+      "updateTime": 1701318260,
+      "createTime": 1701275628,
+      "histories": [],
+      "created_at": "2023-11-29 11:33:48",
+      "updated_at": "2023-11-29 23:24:20"
+    }
+  ],
+  "sort": [],
+  "title": "GeneralPortBreakout",
+  "foldername": "GeneralPortBreakout",
+  "schfilename": "GeneralPortBreakout.json",
+  "schfilemtime": 1701626811857
+}

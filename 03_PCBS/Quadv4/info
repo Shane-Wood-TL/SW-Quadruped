@@ -1,0 +1,330 @@
+{
+  "uuid": "4d1fd9a675e729fa409d2e0311930a90",
+  "path": "Offline/Quadv4",
+  "name": "Quadv4",
+  "content": "",
+  "created_at": "2023-11-25 15:23:05",
+  "updated_at": "2023-12-10 00:47:21",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "578a34b649572a6241ac549b9437acc1",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "983f47c4a7354178b49fc7ba2b547776": 1,
+        "7f5bc65bac744649bcc5830fc2a17f6a": 2,
+        "b5f7f909b2f14def8b8d2d0e61a39144": 1,
+        "3e402906a0f047bdab7d016fd9b30e98": 1,
+        "7dcc704ea9a4404980b920b1340c7fab": 4,
+        "4972dbd9a873408eabf326095526bd1d": 1,
+        "fda2cee5ca7c4eb49d7e26a0b515e67e": 1,
+        "4c0421e8c2f0414e9b08259ffdc25bc4": 1,
+        "a46d71e82a024fab8cef13b3079665d8": 1,
+        "7c89dde5a28e428da1c86c69d833b512": 5,
+        "49cd3877fe6745228f41953156f70842": 1,
+        "54b46bfcc1fe41a79e270961dfecff37": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "U7",
+          1,
+          "CONN-TH_HDR-1X5",
+          "BNO1",
+          {
+            "Contributor": "LCSC",
+            "Supplier": "LCSC",
+            "Supplier Part": "C2935751",
+            "Manufacturer": "null",
+            "Manufacturer Part": "HDR-1X5插件",
+            "JLCPCB Part Class": "Extended Part",
+            "link": "https://lcsc.com/eda_search?q=C2935751&%26type=1&ref=editor",
+            "spiceSymbolName": "HDR-1X5.",
+            "puuid": "4c038e972de9425883ac9f5004a0f469",
+            "uuid": "a46d71e82a024fab8cef13b3079665d8"
+          }
+        ],
+        [
+          "100uF",
+          1,
+          "100UFX16V CAPACITOR D5.0XF11.0",
+          "C1",
+          {
+            "Supplier Part": "",
+            "Supplier": "My_collection",
+            "Manufacturer Part": "Jweo",
+            "Rated Voltage": "16V",
+            "Contributor": "stefanczykdk",
+            "spiceSymbolName": "CAP-POL-1",
+            "puuid": "14f224c011733d92a7a36c742432e5ad",
+            "uuid": "3e402906a0f047bdab7d016fd9b30e98"
+          }
+        ],
+        [
+          "100nF",
+          1,
+          "100NF",
+          "C2",
+          {
+            "Supplier": "LCSC",
+            "Manufacturer": "ReliaPro",
+            "Manufacturer Part": "CT4-0805Y104M500",
+            "Contributor": "LCSC",
+            "Supplier Part": "C46756",
+            "subpart_no": "1",
+            "spiceSymbolName": "100NF COPY",
+            "puuid": "c7c83bcf61c2449d80b412879a8ca2a8",
+            "uuid": "fda2cee5ca7c4eb49d7e26a0b515e67e"
+          }
+        ],
+        [
+          "10uF",
+          1,
+          "100UFX16V CAPACITOR D5.0XF11.0",
+          "C3",
+          {
+            "Supplier Part": "",
+            "Supplier": "My_collection",
+            "Manufacturer Part": "Jweo",
+            "Rated Voltage": "16V",
+            "Contributor": "stefanczykdk",
+            "spiceSymbolName": "CAP 100 UF 2.5 MM KNIPEX",
+            "puuid": "14f224c011733d92a7a36c742432e5ad",
+            "uuid": "4c0421e8c2f0414e9b08259ffdc25bc4"
+          }
+        ],
+        [
+          "ESP32-S3-DevKitC-1 RC",
+          1,
+          "ESP32-S2-DEVKITC-1",
+          "M1",
+          {
+            "Manufacturer": "Espressif Manifacturer",
+            "Manufacturer Part": "ESP32-S3-DevKitC-1",
+            "Supplier": "Mouser",
+            "Supplier Part": "ESP32-S2-DevKitC-1",
+            "link": "https://www.espressif.com/en/products/socs/esp32-s2",
+            "Contributor": "remi_chamb",
+            "spiceSymbolName": "ESP32-S2-DevKitC-1 RC",
+            "Package Display": "No",
+            "puuid": "a75834d1a12e40049759868b9810bfe3",
+            "uuid": "983f47c4a7354178b49fc7ba2b547776"
+          }
+        ],
+        [
+          "LD1117V33C",
+          1,
+          "ITO-220AB-3_L10.2-W4.5-P2.60-L",
+          "P1",
+          {
+            "Contributor": "LCSC",
+            "Supplier": "LCSC",
+            "Supplier Part": "C672117",
+            "Manufacturer": "ST(意法半导体)",
+            "Manufacturer Part": "LD1117V33C",
+            "JLCPCB Part Class": "Extended Part",
+            "link": "https://lcsc.com/eda_search?q=C672117&%26type=1&ref=editor",
+            "spiceSymbolName": "LD1117V33C",
+            "puuid": "4b73c61053f9437599e8956c44ffaa53",
+            "uuid": "4972dbd9a873408eabf326095526bd1d"
+          }
+        ],
+        [
+          "Connector_1x4/2.5mm",
+          1,
+          "HDR-1X4/2.54",
+          "P2",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "David Lochlin",
+            "spiceSymbolName": "Connector_1x4/2.5mm",
+            "puuid": "4a686347376d4ae7a993c4c0a52ad5cf",
+            "uuid": "49cd3877fe6745228f41953156f70842"
+          }
+        ],
+        [
+          "Header-2.54_1x2",
+          1,
+          "HDR-1X2/2.54",
+          "P3",
+          {
+            "Supplier": "",
+            "Manufacturer": "BOOMELE",
+            "Manufacturer Part": "2.54-1*2PFemale",
+            "image": "//image.lceda.cn/szlcsc/C49661.jpg",
+            "Supplier Part": "C49661",
+            "Contributor": "jccc2",
+            "spiceSymbolName": "Header-2.54_1x2",
+            "puuid": "f61994d539564aabbacb96cb1ba011be",
+            "uuid": "54b46bfcc1fe41a79e270961dfecff37"
+          }
+        ],
+        [
+          "R0",
+          1,
+          "1.8K RESISTOR 1/2W",
+          "R1",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "jokosays",
+            "spiceSymbolName": "1.8K_R_1/2W",
+            "puuid": "bc16248e321d4adcadb7d4645a145484",
+            "uuid": "7f5bc65bac744649bcc5830fc2a17f6a"
+          }
+        ],
+        [
+          "R1",
+          1,
+          "1.8K RESISTOR 1/2W",
+          "R2",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "jokosays",
+            "spiceSymbolName": "1.8K_R_1/2W",
+            "puuid": "bc16248e321d4adcadb7d4645a145484",
+            "uuid": "7f5bc65bac744649bcc5830fc2a17f6a"
+          }
+        ],
+        [
+          "NO",
+          2,
+          "14AWG PTH LARGE",
+          "U1,U5",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "P0_+5",
+          1,
+          "14AWG PTH LARGE",
+          "U2",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "NRF2401L",
+          1,
+          "NRF2401L",
+          "U4",
+          {
+            "Manufacturer Part": "nrf2401l",
+            "Contributor": "freddyka",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "NRF2401L",
+            "puuid": "ebce6c43077d4e9cb8fa91ab473f0605",
+            "uuid": "b5f7f909b2f14def8b8d2d0e61a39144"
+          }
+        ],
+        [
+          "P0_Gnd",
+          1,
+          "14AWG PTH LARGE",
+          "U6",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "NO",
+          5,
+          "CONN-TH_10P-P2.54_KINGHELM_KH-2.54PH180-2X5P-L8.9",
+          "U7,U8,U9,U10,U11",
+          {
+            "Supplier": "LCSC",
+            "Supplier Part": "C5157628",
+            "Manufacturer": "kinghelm(金航标)",
+            "Manufacturer Part": "KH-2.54PH180-2X5P-L8.9",
+            "link": "https://atta.szlcsc.com/upload/public/pdf/source/20220906/04BEB622ED10B556BB25C8F90E10FD05.pdf",
+            "Contributor": "lcsc",
+            "JLCPCB Part Class": "Extended Part",
+            "spiceSymbolName": "KH-2.54PH180-2X5P",
+            "puuid": "bf3bc3b90be548f39bfeaea8c48678fb",
+            "uuid": "7c89dde5a28e428da1c86c69d833b512"
+          }
+        ]
+      ],
+      "updateTime": 1701626527,
+      "createTime": 1700943785,
+      "histories": [],
+      "created_at": "2023-11-25 15:23:05",
+      "updated_at": "2023-12-03 13:02:07"
+    },
+    {
+      "uuid": "aecfafa32d30b983453812f8ae190a2e",
+      "puuid": "4d1fd9a675e729fa409d2e0311930a90",
+      "title": "PCB_Quadv4_2",
+      "filename": "PCB_Quadv4_2.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "4a686347376d4ae7a993c4c0a52ad5cf": 1,
+        "6cce713c8e9846b484d4be849601ecb5": 4,
+        "f61994d539564aabbacb96cb1ba011be": 1,
+        "bc16248e321d4adcadb7d4645a145484": 2,
+        "bf3bc3b90be548f39bfeaea8c48678fb": 5,
+        "14f224c011733d92a7a36c742432e5ad": 2,
+        "c7c83bcf61c2449d80b412879a8ca2a8": 1,
+        "a75834d1a12e40049759868b9810bfe3": 1,
+        "4b73c61053f9437599e8956c44ffaa53": 1,
+        "ebce6c43077d4e9cb8fa91ab473f0605": 1,
+        "4c038e972de9425883ac9f5004a0f469": 1
+      },
+      "BOM": [],
+      "updateTime": 1702187241,
+      "createTime": 1701144385,
+      "histories": [],
+      "created_at": "2023-11-27 23:06:25",
+      "updated_at": "2023-12-10 00:47:21"
+    }
+  ],
+  "sort": [],
+  "title": "Quadv4",
+  "foldername": "Quadv4",
+  "schfilename": "Quadv4.json",
+  "schfilemtime": 1701626527610
+}
