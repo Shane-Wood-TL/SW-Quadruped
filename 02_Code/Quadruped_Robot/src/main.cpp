@@ -12,25 +12,16 @@
 #include <PID_v1.h> 
 #include <externFunctions.h>
 
-#include <WiFi.h>
-#include <WiFiUdp.h>
-#include <ArduinoOTA.h>
-#include <TelnetStream.h>
+#include <motorOffsets.h>
 
-//#define OTA
+
 #define CONTROLLER
 #define CONTROLLERA
-//#define TELNET
-
-//------------------------------------------------------------------------------------------------
-
-// pload_protocol = espota
-// upload_port = QuadrupedRobot.local
-
-// const char* ssid = "SSID";
-// const char* password = "password";
 
 
+
+
+positions parseData(String input);
 
 //------------------------------------------------------------------------------------------------
 //angle goal values
@@ -73,21 +64,23 @@ Cords dCords;
 //------------------------------------------------------------------------------------------------
 // Motor, Leg, kinematics, interpolation set up
 //float LlimitV, float HlimitV, bool directionV, float offsetV)
-motor aHipM(&pwm, aHip, 45, 135, true, A_HIP_OFFSET);
-motor aKneeM(&pwm, aKnee, 0, 180, false, A_KNEE_OFFSET);
-motor aAnkleM(&pwm, aAnkle, 0, 180, false, A_ANKLE_OFFSET);
+positions activeOffsets;
 
-motor bHipM(&pwm, bHip, 45, 135, false, B_HIP_OFFSET);
-motor bKneeM(&pwm, bKnee, 0, 180, true, B_KNEE_OFFSET);
-motor bAnkleM(&pwm, bAnkle, 0, 180, true, B_ANKLE_OFFSET);
+motor aHipM(&pwm, aHip, 45, 135, true, &(activeOffsets.aHipV));
+motor aKneeM(&pwm, aKnee, 0, 180, false, &(activeOffsets.aKneeV));
+motor aAnkleM(&pwm, aAnkle, 0, 180, true, &(activeOffsets.aAnkleV));
 
-motor cHipM(&pwm1, cHip, 45, 135, false, C_HIP_OFFSET);
-motor cKneeM(&pwm1, cKnee, 0, 180, false, C_KNEE_OFFSET);
-motor cAnkleM(&pwm1, cAnkle, 0, 180, false, C_ANKLE_OFFSET);
+motor bHipM(&pwm, bHip, 45, 135, false, &(activeOffsets.bHipV));
+motor bKneeM(&pwm, bKnee, 0, 180, true, &(activeOffsets.bKneeV));
+motor bAnkleM(&pwm, bAnkle, 0, 180, false, &(activeOffsets.bAnkleV));
 
-motor dHipM(&pwm1, dHip, 45, 135, true, D_HIP_OFFSET);
-motor dKneeM(&pwm1, dKnee, 0, 180, true, D_KNEE_OFFSET);
-motor dAnkleM(&pwm1, dAnkle, 0, 180, true, D_ANKLE_OFFSET);
+motor cHipM(&pwm1, cHip, 45, 135, false, &(activeOffsets.cHipV));
+motor cKneeM(&pwm1, cKnee, 0, 180, false, &(activeOffsets.cKneeV));
+motor cAnkleM(&pwm1, cAnkle, 0, 180, true, &(activeOffsets.cAnkleV));
+
+motor dHipM(&pwm1, dHip, 45, 135, true, &(activeOffsets.dHipV));
+motor dKneeM(&pwm1, dKnee, 0, 180, true, &(activeOffsets.dKneeV));
+motor dAnkleM(&pwm1, dAnkle, 0, 180, false, &(activeOffsets.dAnkleV));
 
 
 //------------------------------------------------------------------------------------------------
@@ -116,6 +109,7 @@ rampLeg dLegR(dHip);
 
 //------------------------------------------------------------------------------------------------
 //gyro
+#define BNO055_SAMPLERATE_DELAY_MS (100)
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
 sensors_event_t event;
 
@@ -150,6 +144,10 @@ Cords basicStand;
 
 
 
+
+
+
+
 void setup() {
   //start busses
   //start Serial
@@ -172,58 +170,6 @@ void setup() {
   #endif
 
   //------------------------------------------------------------------------------------------------
-  //enable OTA
-  #ifdef OTA
-  ArduinoOTA.setHostname("QuadrupedRobot");
-  // Connect to Wi-Fi
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-  }
-  
-  // Print the ESP32's local IP address
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  // Setup OTA
-  ArduinoOTA.onStart([]() {
-    String type;
-    if (ArduinoOTA.getCommand() == U_FLASH) {
-      type = "sketch";
-    } else {
-      type = "filesystem";
-    }
-    // NOTE: if updating FS this would be the place to unmount FS using FS.end()
-    Serial.println("Start updating " + type);
-  });
-  ArduinoOTA.onEnd([]() {
-    Serial.println("\nEnd");
-  });
-  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-  });
-  ArduinoOTA.onError([](ota_error_t error) {
-    Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR) Serial.println("End Failed");
-  });
-  ArduinoOTA.begin();
-  #endif
-
-
-  //------------------------------------------------------------------------------------------------
-  //Start Telent, (serial over wifi)
-  #ifdef TELNET
-  TelnetStream.begin();
-  #endif
-
-
-  //------------------------------------------------------------------------------------------------
   //enable the controller
   #ifdef CONTROLLER
   //start radio
@@ -234,6 +180,9 @@ void setup() {
     radio.startListening();
     Serial.println("radio Active");
   #endif
+
+
+  applyBaseOffsets();
 
 
   // //------------------------------------------------------------------------------------------------
@@ -249,16 +198,15 @@ void setup() {
 
   // //------------------------------------------------------------------------------------------------
   // start gyro
-  radio.printPrettyDetails();
   bno.begin();
-  bno.setExtCrystalUse(true);
+ 
   Serial.println("gyro Started");
 
   if(!bno.begin()){
     Serial.print("Gyro Error");
     while(1);
   }
-
+  bno.setExtCrystalUse(true);
   delay(1000); 
   Serial.println("Gyro Active");
 
@@ -279,9 +227,9 @@ void setup() {
   setCycle();
 
   //set legs to stand in some default form
-  basicStand.xH = 100;
+  basicStand.xH = 80;
   basicStand.xLR = 0;
-  basicStand.xFB = -20;
+  basicStand.xFB = 0;
   standing_0();
 
   // Sets all RAMPS to go to 0 in all joints in all legs
@@ -292,88 +240,138 @@ void setup() {
   populateStructs(*walkSetP,*turnSetP);
 }
 
-void loop() {  
-  #ifdef OTA
-  ArduinoOTA.handle();
-  #endif
-  
-  //standing_0();
-  
-  //bKneeM.setDegree(0);
-  //FWalk_2(yAngleV, zAngleV);
-  //update radio
+void loop() {
 
-  getData();
-  //payload.state == 0;
-  //------------------------------------------------------------------------------------------------
-  // //update gyro
-  bno.getEvent(&event);
-  delay(5);
-  if(payload.gyro == 1){
-    yPreRot = event.orientation.y;
-    zPreRot = event.orientation.z;
-    if(payload.PID == 1){
-      yPID.Compute();
-      zPID.Compute();
-      //yAngleV = yRot;
-      //zAngleV = zRot;
-    }else{
-      yAngleV =  event.orientation.y;
-      zAngleV =  event.orientation.z;
-    }
-  }else{
-    yAngleV = 0;
-    zAngleV = 0;
-  }
+  //Serial.print(dAnkleM.Degree);
+  
+  // //standing_0();
+  
+  // //bKneeM.setDegree(0);
+  // //FWalk_2(yAngleV, zAngleV);
+  // //update radio
+
+  // //getData();
+  // payload.state = 0;
+
+  // //payload.state == 0;
+  // //------------------------------------------------------------------------------------------------
+  // // //update gyro
+  // bno.getEvent(&event);
+
+  // //delay(100);
+  // if(payload.gyro == 1){
+  //   yPreRot = event.orientation.y;
+  //   zPreRot = event.orientation.z;
+  //   if(payload.PID == 1){
+  //     yPID.Compute();
+  //     zPID.Compute();
+  //     //yAngleV = yRot;
+  //     //zAngleV = zRot;
+  //   }else{
+  //     yAngleV =  event.orientation.y;
+  //     zAngleV =  event.orientation.z;
+  //   }
+    
+  // }else{
+  //   yAngleV = 0;
+  //   zAngleV = 0;
+  // }
+  
+  // // Serial.print("y: ");
+  // //   Serial.print(yAngleV);
+  // //   Serial.print("    z: ");
+  // //   Serial.println(zAngleV);
+
 
   
-  //------------------------------------------------------------------------------------------------
-  #ifdef CONTROLLERA
-    //switch modes and saftey mode
-    if(payload.eStop != 1){
-      wakeup_9();
-      if(oldState !=payload.state){
-          // aLegR.setCycle(0);
-          // bLegR.setCycle(3);
-          // cLegR.setCycle(3);
-          // dLegR.setCycle(0);
-      }
-      switch (payload.state) {
-        case 0:{ //standing
-            standing_0();
-          break;
-        }
-        case 1:{ //IK mode
-            IK_1(0,0,0);
-          break;
-        }
-        case 2:{//FWalk
-            FWalk_2(xAngleV,yAngleV);
-          break;
-        }
-        case 3:{ //
-            FTurn_3(xAngleV,yAngleV);
-          break;
-        }
-        case 4:{ //user
-            User_4(xAngleV,yAngleV);
-          break;
-        } 
-        case 5:{ //used to install new motors
-              Aleg.setAngles(90,180,0);
-              Bleg.setAngles(90,180,0);
-              Cleg.setAngles(90,180,0);
-              Dleg.setAngles(90,180,0);
-            break;
-        }
-        default:
-          break;
-        }
-    }else{
-        Default_9(); //turns off motors
-    }
-    oldState = payload.state;
-  #endif
+  // //------------------------------------------------------------------------------------------------
+  // #ifdef CONTROLLERA
+  //   //switch modes and saftey mode
+  //   if(payload.eStop != 1){
+  //     wakeup_9();
+  //     if(oldState !=payload.state){
+  //         // aLegR.setCycle(0);
+  //         // bLegR.setCycle(3);
+  //         // cLegR.setCycle(3);
+  //         // dLegR.setCycle(0);
+  //     }
+  //     switch (payload.state) {
+  //       case 0:{ //standing
+  //           standing_0();
+  //         break;
+  //       }
+  //       case 1:{ //IK mode
+  //           IK_1(0,yAngle,zAngle);
+  //         break;
+  //       }
+  //       case 2:{//FWalk
+  //           FWalk_2(xAngleV,yAngleV);
+  //         break;
+  //       }
+  //       case 3:{ //
+  //           FTurn_3(xAngleV,yAngleV);
+  //         break;
+  //       }
+  //       case 4:{ //user
+  //           User_4(xAngleV,yAngleV);
+  //         break;
+  //       } 
+  //       case 5:{ //used to install new motors
+  //       float bAng = 90;
+  //             Aleg.setAngles(90,bAng,0);
+  //             Bleg.setAngles(90,bAng,0);
+  //             Cleg.setAngles(90,bAng,0);
+  //             Dleg.setAngles(90,bAng,0);
+  //           break;
+  //       }
+          //  case 6:{ //motor offset setup
+          //     if (Serial.available() > 0) {
+          //       // Read the incoming data into a string
+          //       String input = Serial.readStringUntil('\n');
+          //       positions recievedOffsets = parseData(input);
+          //       activeOffsets.setOffsets(recievedOffsets);
+          //       aHipM.setDegree(90);
+          //       aKneeM.setDegree(45);
+          //       aAnkleM.setDegree(0);
+          //       bHipM.setDegree(90);
+          //       bKneeM.setDegree(45);
+          //       bAnkleM.setDegree(0);
+          //       cHipM.setDegree(90);
+          //       cKneeM.setDegree(45);
+          //       cAnkleM.setDegree(0);
+          //       dHipM.setDegree(90);
+          //       dKneeM.setDegree(45);
+          //       dAnkleM.setDegree(0);
+          //     }
+          //  }
+          // case 7:{
+          //   if (Serial.available() > 0) {
+          //     // Read the incoming data into a string
+          //     String input = Serial.readStringUntil('\n');
+          //     positions recievedPositions = parseData(input);
+          //     aHipM.setDegree(90);
+          //     aKneeM.setDegree(45);
+          //     aAnkleM.setDegree(0);
+          //     bHipM.setDegree(90);
+          //     bKneeM.setDegree(45);
+          //     bAnkleM.setDegree(0);
+          //     cHipM.setDegree(90);
+          //     cKneeM.setDegree(45);
+          //     cAnkleM.setDegree(0);
+          //     dHipM.setDegree(90);
+          //     dKneeM.setDegree(45);
+          //     dAnkleM.setDegree(0);
+          //   }
+          //  }
+          // }
+  //       default:
+  //         break;
+  //       }
+  //   }else{
+  //       Default_9(); //turns off motors
+  //   }
+  //   oldState = payload.state;
+  // #endif
 }
 
 //gets data from radio, checks if data was recieved
@@ -385,4 +383,47 @@ void getData(){
   //   payload.eStop ==true; 
   }
 
+}
+
+
+
+positions parseData(String input) {
+  positions receivedVales;
+  const int numFloats = 12;
+  float values[numFloats];
+  // Create an index for storing float values
+  int index = 0;
+  
+  // Split the input string using a delimiter (assuming comma-separated values)
+  int startIndex = 0;
+  int endIndex = input.indexOf(',');
+
+  while (endIndex != -1 && index < numFloats) {
+    // Convert the substring to a float and store it in the values array
+    values[index] = input.substring(startIndex, endIndex).toFloat();
+    index++;
+
+    // Update the indices for the next substring
+    startIndex = endIndex + 1;
+    endIndex = input.indexOf(',', startIndex);
+  }
+
+  // Handle the last value after the last comma
+  if (index < numFloats) {
+    values[index] = input.substring(startIndex).toFloat();  // This handles the last value in the string
+  }
+
+  receivedVales.aHipV = values[0];
+  receivedVales.aKneeV = values[1];
+  receivedVales.aAnkleV = values[2];
+  receivedVales.bHipV = values[3];
+  receivedVales.bKneeV = values[4];
+  receivedVales.bAnkleV = values[5];
+  receivedVales.cHipV = values[6];
+  receivedVales.cKneeV = values[7];
+  receivedVales.cAnkleV = values[8];
+  receivedVales.dHipV = values[9];
+  receivedVales.dKneeV = values[10];
+  receivedVales.dAnkleV = values[11];
+  return receivedVales;
 }

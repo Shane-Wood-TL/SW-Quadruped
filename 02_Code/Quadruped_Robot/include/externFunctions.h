@@ -3,22 +3,6 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <TelnetStream.h>
 
-#define A_HIP_OFFSET -10
-#define A_KNEE_OFFSET 0
-#define A_ANKLE_OFFSET 0
-
-#define B_HIP_OFFSET 0
-#define B_KNEE_OFFSET 15
-#define B_ANKLE_OFFSET -15
-
-#define C_HIP_OFFSET 0
-#define C_KNEE_OFFSET 0
-#define C_ANKLE_OFFSET 0
-
-#define D_HIP_OFFSET 0
-#define D_KNEE_OFFSET 10
-#define D_ANKLE_OFFSET -5
-
 
 //servo motor pwm limits
 #define USMIN 771  // min value given from arduino lib
@@ -49,7 +33,6 @@
 #define dKnee 4  //
 #define dAnkle 5 //
 
-
 //------------------------------------------------------------------------------------------------
 //SCK 18
 //MOSI 8
@@ -77,15 +60,15 @@ const float LRDistanceT =100; //xLR
 
 //values for non controlled walk
 const float testHeightW = 150;
-const float testHeightBACKW = 130;
-const float testLRW = 15;
+const float testHeightBACKW = 150;
+const float testLRW = 0;
 const float testFBW = 0;
 
 //time for a cycle (in ms)
-const float timeeW = 100;
+const float timeeW = 50;
 
 //amount to change values by in a cycle
-const float backDistanceW = -60; //(FB)
+const float backDistanceW = -20; //(FB)
 const float upDistanceW = -40; //xH
 const float LRDistanceW =0; //xLR
 
@@ -285,10 +268,10 @@ class motor{
     float Hlimit;
     float Llimit;
     bool direction;
-    float offset;
+    float* offset;
     int motorC;
   public:
-  motor(Adafruit_PWMServoDriver* pwmV, int motorV, float LlimitV, float HlimitV, bool directionV, float offsetV){
+  motor(Adafruit_PWMServoDriver* pwmV, int motorV, float LlimitV, float HlimitV, bool directionV, float* offsetV){
     pwm = pwmV;
     motorC = motorV;
     Llimit = LlimitV;
@@ -298,12 +281,12 @@ class motor{
   }
     float Degree;
   void setDegree(float nDegree){
-    if(nDegree+offset > Hlimit){
-      nDegree = Hlimit-offset;
-    }else if(nDegree+offset < Llimit){
-      nDegree = Llimit-offset; 
+    if(nDegree+*offset > Hlimit){
+      nDegree = Hlimit-*offset;
+    }else if(nDegree+*offset < Llimit){
+      nDegree = Llimit-*offset; 
     }else{
-        nDegree = nDegree + offset;
+        nDegree = nDegree + *offset;
     }
     if(direction){
         pwm->writeMicroseconds(motorC, (map(nDegree, 0, 180, USMIN, USMAX)));
