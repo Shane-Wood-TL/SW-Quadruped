@@ -227,7 +227,7 @@ void setup() {
   setCycle();
 
   //set legs to stand in some default form
-  basicStand.xH = 80;
+  basicStand.xH = 100;
   basicStand.xLR = 0;
   basicStand.xFB = 0;
   standing_0();
@@ -250,128 +250,120 @@ void loop() {
   // //FWalk_2(yAngleV, zAngleV);
   // //update radio
 
-  // //getData();
-  // payload.state = 0;
+  getData();
+  //payload.state = 0;
 
-  // //payload.state == 0;
-  // //------------------------------------------------------------------------------------------------
-  // // //update gyro
-  // bno.getEvent(&event);
+  //payload.state == 0;
+  //------------------------------------------------------------------------------------------------
+  // //update gyro
+  bno.getEvent(&event);
 
-  // //delay(100);
-  // if(payload.gyro == 1){
-  //   yPreRot = event.orientation.y;
-  //   zPreRot = event.orientation.z;
-  //   if(payload.PID == 1){
-  //     yPID.Compute();
-  //     zPID.Compute();
-  //     //yAngleV = yRot;
-  //     //zAngleV = zRot;
-  //   }else{
-  //     yAngleV =  event.orientation.y;
-  //     zAngleV =  event.orientation.z;
-  //   }
+  //delay(100);
+  if(payload.gyro == 1){
+    yPreRot = event.orientation.y;
+    zPreRot = event.orientation.z;
+    if(payload.PID == 1){
+      yPID.Compute();
+      zPID.Compute();
+      //yAngleV = yRot;
+      //zAngleV = zRot;
+    }else{
+      yAngleV =  event.orientation.y;
+      zAngleV =  event.orientation.z;
+    }
     
-  // }else{
-  //   yAngleV = 0;
-  //   zAngleV = 0;
-  // }
+  }else{
+    yAngleV = 0;
+    zAngleV = 0;
+  }
   
-  // // Serial.print("y: ");
-  // //   Serial.print(yAngleV);
-  // //   Serial.print("    z: ");
-  // //   Serial.println(zAngleV);
+  // Serial.print("y: ");
+  //   Serial.print(yAngleV);
+  //   Serial.print("    z: ");
+  //   Serial.println(zAngleV);
 
 
   
-  // //------------------------------------------------------------------------------------------------
-  // #ifdef CONTROLLERA
-  //   //switch modes and saftey mode
-  //   if(payload.eStop != 1){
-  //     wakeup_9();
-  //     if(oldState !=payload.state){
-  //         // aLegR.setCycle(0);
-  //         // bLegR.setCycle(3);
-  //         // cLegR.setCycle(3);
-  //         // dLegR.setCycle(0);
-  //     }
-  //     switch (payload.state) {
-  //       case 0:{ //standing
-  //           standing_0();
-  //         break;
-  //       }
-  //       case 1:{ //IK mode
-  //           IK_1(0,yAngle,zAngle);
-  //         break;
-  //       }
-  //       case 2:{//FWalk
-  //           FWalk_2(xAngleV,yAngleV);
-  //         break;
-  //       }
-  //       case 3:{ //
-  //           FTurn_3(xAngleV,yAngleV);
-  //         break;
-  //       }
-  //       case 4:{ //user
-  //           User_4(xAngleV,yAngleV);
-  //         break;
-  //       } 
-  //       case 5:{ //used to install new motors
-  //       float bAng = 90;
-  //             Aleg.setAngles(90,bAng,0);
-  //             Bleg.setAngles(90,bAng,0);
-  //             Cleg.setAngles(90,bAng,0);
-  //             Dleg.setAngles(90,bAng,0);
-  //           break;
-  //       }
-          //  case 6:{ //motor offset setup
-          //     if (Serial.available() > 0) {
-          //       // Read the incoming data into a string
-          //       String input = Serial.readStringUntil('\n');
-          //       positions recievedOffsets = parseData(input);
-          //       activeOffsets.setOffsets(recievedOffsets);
-          //       aHipM.setDegree(90);
-          //       aKneeM.setDegree(45);
-          //       aAnkleM.setDegree(0);
-          //       bHipM.setDegree(90);
-          //       bKneeM.setDegree(45);
-          //       bAnkleM.setDegree(0);
-          //       cHipM.setDegree(90);
-          //       cKneeM.setDegree(45);
-          //       cAnkleM.setDegree(0);
-          //       dHipM.setDegree(90);
-          //       dKneeM.setDegree(45);
-          //       dAnkleM.setDegree(0);
-          //     }
-          //  }
-          // case 7:{
-          //   if (Serial.available() > 0) {
-          //     // Read the incoming data into a string
-          //     String input = Serial.readStringUntil('\n');
-          //     positions recievedPositions = parseData(input);
-          //     aHipM.setDegree(90);
-          //     aKneeM.setDegree(45);
-          //     aAnkleM.setDegree(0);
-          //     bHipM.setDegree(90);
-          //     bKneeM.setDegree(45);
-          //     bAnkleM.setDegree(0);
-          //     cHipM.setDegree(90);
-          //     cKneeM.setDegree(45);
-          //     cAnkleM.setDegree(0);
-          //     dHipM.setDegree(90);
-          //     dKneeM.setDegree(45);
-          //     dAnkleM.setDegree(0);
-          //   }
-          //  }
-          // }
-  //       default:
-  //         break;
-  //       }
-  //   }else{
-  //       Default_9(); //turns off motors
-  //   }
-  //   oldState = payload.state;
-  // #endif
+  //------------------------------------------------------------------------------------------------
+  #ifdef CONTROLLERA
+    //switch modes and saftey mode
+    if(payload.eStop != 1){
+      wakeup_9();
+      if(oldState !=payload.state){
+          // aLegR.setCycle(0);
+          // bLegR.setCycle(3);
+          // cLegR.setCycle(3);
+          // dLegR.setCycle(0);
+      }
+      switch (payload.state) {
+        case 0:{ //standing
+            standing_0();
+          break;
+        }
+        case 1:{ //IK mode
+            IK_1(0,yAngle,zAngle);
+          break;
+        }
+        case 2:{//FWalk
+            FWalk_2(xAngleV,yAngleV);
+          break;
+        }
+        case 3:{ //
+            FTurn_3(xAngleV,yAngleV);
+          break;
+        }
+        case 4:{ //user
+            User_4(xAngleV,yAngleV);
+          break;
+        } 
+        case 5:{ //used to install new motors
+        if (Serial.available() > 0) {
+                // Read the incoming data into a string
+                String input = Serial.readStringUntil('\n');
+                positions recievedOffsets = parseData(input);
+                activeOffsets.setOffsets(recievedOffsets);
+                standing_0();
+              }
+              break;
+        }
+        case 6:{ //motor offset setup
+              if (Serial.available() > 0) {
+                // Read the incoming data into a string
+                String input = Serial.readStringUntil('\n');
+                positions recievedOffsets = parseData(input);
+                activeOffsets.setOffsets(recievedOffsets);
+                standing_0();
+              }
+              break;
+           }
+        case 7:{
+            if (Serial.available() > 0) {
+              // Read the incoming data into a string
+              String input = Serial.readStringUntil('\n');
+              positions recievedPositions = parseData(input);
+              aHipM.setDegree(90);
+              aKneeM.setDegree(45);
+              aAnkleM.setDegree(0);
+              bHipM.setDegree(90);
+              bKneeM.setDegree(45);
+              bAnkleM.setDegree(0);
+              cHipM.setDegree(90);
+              cKneeM.setDegree(45);
+              cAnkleM.setDegree(0);
+              dHipM.setDegree(90);
+              dKneeM.setDegree(45);
+              dAnkleM.setDegree(0);
+            }
+            break;
+           }
+      default:
+          break;
+        }
+    }else{
+        Default_9(); //turns off motors
+    }
+    oldState = payload.state;
+  #endif
 }
 
 //gets data from radio, checks if data was recieved

@@ -27,7 +27,7 @@ rampLeg* dLegAdd = &dLegR;
 
 //------------------------------------------------------------------------------------------------
 void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance){
-  float timee = 25;
+  float timee = 45; //45
   timee = timee;
   updateAll();
 

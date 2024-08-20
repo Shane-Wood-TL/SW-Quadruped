@@ -68,7 +68,7 @@ const float testFBW = 0;
 const float timeeW = 50;
 
 //amount to change values by in a cycle
-const float backDistanceW = -20; //(FB)
+const float backDistanceW = -40; //(FB)
 const float upDistanceW = -40; //xH
 const float LRDistanceW =0; //xLR
 

@@ -1,20 +1,20 @@
 void applyBaseOffsets();
 
-#define A_HIP_OFFSET 0
-#define A_KNEE_OFFSET 0
-#define A_ANKLE_OFFSET 0
+#define A_HIP_OFFSET -6
+#define A_KNEE_OFFSET -10
+#define A_ANKLE_OFFSET -25
 
-#define B_HIP_OFFSET 0
-#define B_KNEE_OFFSET 0
-#define B_ANKLE_OFFSET 0
+#define B_HIP_OFFSET 3
+#define B_KNEE_OFFSET -30
+#define B_ANKLE_OFFSET -25
 
-#define C_HIP_OFFSET 0
-#define C_KNEE_OFFSET 0
-#define C_ANKLE_OFFSET 0
+#define C_HIP_OFFSET 5
+#define C_KNEE_OFFSET -3
+#define C_ANKLE_OFFSET -15
 
-#define D_HIP_OFFSET 0
-#define D_KNEE_OFFSET 0
-#define D_ANKLE_OFFSET 0
+#define D_HIP_OFFSET -2
+#define D_KNEE_OFFSET -30
+#define D_ANKLE_OFFSET -25
 
 class positions{
     public:
@@ -71,9 +71,9 @@ class positions{
             cKneeV = newOffsets.cKneeV;
             cAnkleV = newOffsets.cAnkleV;
 
-            dHipV = newOffsets.cHipV;
-            dKneeV = newOffsets.cKneeV;
-            dAnkleV = newOffsets.cAnkleV;
+            dHipV = newOffsets.dHipV;
+            dKneeV = newOffsets.dKneeV;
+            dAnkleV = newOffsets.dAnkleV;
         }
 
 };
