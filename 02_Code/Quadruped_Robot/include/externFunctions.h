@@ -258,6 +258,11 @@ class Cords{
         yRot = yRotv;
         zRot = zRotv;
     }
+    void updatePosition(float xHv, float xFBv, float xLRv){
+        xH = xHv;
+        xFB = xFBv;
+        xLR = xLRv;
+    }
 };
 
 
