@@ -371,3 +371,170 @@ class kinematics{
     
   }
 };
+
+
+
+
+struct singleCycle {
+    float legPositions[12];
+    singleCycle(float AxH, float AxLR, float AxFB,
+                float BxH, float BxLR, float BxFB,
+                float CxH, float CxLR, float CxFB,
+                float DxH, float DxLR, float DxFB) {
+        
+        legPositions[0] = AxH;
+        legPositions[1] = AxLR;
+        legPositions[2] = AxFB;
+
+        legPositions[3] = BxH;
+        legPositions[4] = BxLR;
+        legPositions[5] = BxFB;
+
+        legPositions[6] = CxH;
+        legPositions[7] = CxLR;
+        legPositions[8] = CxFB;
+
+        legPositions[9] = DxH;
+        legPositions[10] = DxLR;
+        legPositions[11] = DxFB;
+    }
+};
+
+class movementCycles{
+    
+    public:
+    int currentCycleIndex;
+    singleCycle* cycle;
+    float totalTime;
+    int cycleCount;
+    bool absolutePositioning;
+    bool direction;
+    movementCycles(int cycleCount, bool absolutePositioning, bool direction, float totalTime, singleCycle* cycle)
+        : cycleCount(cycleCount), absolutePositioning(absolutePositioning), direction(direction), totalTime(totalTime), cycle(cycle) {
+            currentCycleIndex = 0;
+        }
+
+    void nextCycle(){
+        if(currentCycleIndex > cycleCount-1){
+            currentCycleIndex = 0;
+        }else{
+            currentCycleIndex++;
+        }
+    }
+    float *getPositons(){
+        return cycle[currentCycleIndex].legPositions;
+    }
+};
+
+
+class cycleControl{
+  public:
+    movementCycles *activeCycle;
+
+    rampLeg *AlegR;
+    rampLeg *BlegR;
+    rampLeg *ClegR;
+    rampLeg *DlegR;
+
+    kinematics *AlegK;
+    kinematics *BlegK;
+    kinematics *ClegK;
+    kinematics *DlegK;
+
+    Cords *aCords;
+    Cords *bCords;
+    Cords *cCords;
+    Cords *dCords;
+
+    Cords AcurrentPosition;
+    Cords BcurrentPosition;
+    Cords CcurrentPosition;
+    Cords DcurrentPosition;
+
+    int currentStage = 0;
+    
+    cycleControl(movementCycles *activeCycle, 
+    rampLeg *AlegR, rampLeg *BlegR, rampLeg *ClegR, rampLeg *DlegR, 
+    kinematics *AlegK,kinematics *BlegK, kinematics *ClegK, kinematics *DlegK, 
+    Cords *aCords, Cords *bCords, Cords *cCords, Cords *dCords) : 
+    activeCycle(activeCycle),
+    AlegR(AlegR), BlegR(BlegR), ClegR(ClegR), DlegR(DlegR),
+    AlegK(AlegK), BlegK(BlegK), ClegK(ClegK), DlegK(DlegK),
+    aCords(aCords), bCords(bCords), cCords(cCords), dCords(dCords) {
+      AlegR->hGo(0,0);
+            AlegR->lrGo(0,0);
+            AlegR->fbGo(0,0);
+
+            BlegR->hGo(0,0);
+            BlegR->lrGo(0,0);
+            BlegR->fbGo(0,0);
+
+            ClegR->hGo(0,0);
+            ClegR->lrGo(0,0);
+            ClegR->fbGo(0,0);
+
+            DlegR->hGo(0,0);
+            DlegR->lrGo(0,0);
+            DlegR->fbGo(0,0);
+    }
+
+    void updateRampPositions(){
+        //update ramps
+        AlegR->update();
+        BlegR->update();
+        ClegR->update();
+        DlegR->update();
+    }
+
+    void checkCycle(){
+        if(AlegR->allDone() && BlegR->allDone() && ClegR->allDone() && DlegR->allDone()){
+            //go to next cycle if done
+            activeCycle->nextCycle();
+            float cycleTime = activeCycle->totalTime/activeCycle->cycleCount;
+            //set new positons and time
+            float* positions = activeCycle->getPositons();
+            AlegR->hGo(positions[0],cycleTime);
+            AlegR->lrGo(positions[1],cycleTime);
+            AlegR->fbGo(positions[2],cycleTime);
+
+            BlegR->hGo(positions[3],cycleTime);
+            BlegR->lrGo(positions[4],cycleTime);
+            BlegR->fbGo(positions[5],cycleTime);
+
+            ClegR->hGo(positions[6],cycleTime);
+            ClegR->lrGo(positions[7],cycleTime);
+            ClegR->fbGo(positions[8],cycleTime);
+
+            DlegR->hGo(positions[9],cycleTime);
+            DlegR->lrGo(positions[10],cycleTime);
+            DlegR->fbGo(positions[11],cycleTime);
+        }
+    }
+
+    void setLegPositions(){
+        AlegK->mainKinematics(*aCords);
+        BlegK->mainKinematics(*bCords);
+        ClegK->mainKinematics(*cCords);
+        DlegK->mainKinematics(*dCords);
+    }
+
+    void continueCycle(){
+        checkCycle();
+
+        updateRampPositions();
+
+        if(activeCycle->absolutePositioning){
+            aCords->updatePosition(AlegR->heightAt(),AlegR->fbAt(),AlegR->lrAt());
+            bCords->updatePosition(BlegR->heightAt(),BlegR->fbAt(),BlegR->lrAt());
+            cCords->updatePosition(ClegR->heightAt(),ClegR->fbAt(),ClegR->lrAt());
+            dCords->updatePosition(DlegR->heightAt(),DlegR->fbAt(),DlegR->lrAt());
+
+        }else{
+            aCords->updatePosition(AcurrentPosition.xH+AlegR->heightAt(),AcurrentPosition.xFB+AlegR->fbAt(),AcurrentPosition.xLR+AlegR->lrAt());
+            bCords->updatePosition(BcurrentPosition.xH+BlegR->heightAt(),BcurrentPosition.xFB+BlegR->fbAt(),BcurrentPosition.xLR+BlegR->lrAt());
+            cCords->updatePosition(CcurrentPosition.xH+ClegR->heightAt(),CcurrentPosition.xFB+ClegR->fbAt(),CcurrentPosition.xLR+ClegR->lrAt());
+            dCords->updatePosition(DcurrentPosition.xH+DlegR->heightAt(),DcurrentPosition.xFB+DlegR->fbAt(),DcurrentPosition.xLR+DlegR->lrAt());
+        }
+        setLegPositions();
+    }
+};
