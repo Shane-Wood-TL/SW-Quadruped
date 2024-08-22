@@ -13,7 +13,7 @@
 #include <externFunctions.h>
 
 #include <motorOffsets.h>
-
+#include <extraMath.h>
 
 #define CONTROLLER
 #define CONTROLLERA
@@ -224,7 +224,7 @@ void setup() {
 
   // //------------------------------------------------------------------------------------------------
   //where in the walk cycle the robot is at. Way to share state across all movements
-  setCycle();
+  //setCycle();
 
   //set legs to stand in some default form
   basicStand.xH = 100;
@@ -233,11 +233,11 @@ void setup() {
   standing_0();
 
   // Sets all RAMPS to go to 0 in all joints in all legs
-  resetAll();
+  //resetAll();
 
   movementVariables* walkSetP = &walkSet;
   movementVariables* turnSetP = &turnSet;
-  populateStructs(*walkSetP,*turnSetP);
+  //populateStructs(*walkSetP,*turnSetP);
 }
 
 void loop() {

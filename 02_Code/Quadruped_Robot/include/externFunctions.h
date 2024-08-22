@@ -86,11 +86,6 @@ struct movementVariables{
 
 
 //------------------------------------------------------------------------------------------------
-void populateStructs(movementVariables &walkV, movementVariables &turnV);
-//(testHeightW, testHeightBACKW, testLRW, testFBW, upDistanceW, backDistanceW, LRDistanceW)
-
-
-//------------------------------------------------------------------------------------------------
 struct PayloadStruct {
   uint8_t eStop; //sw2
   uint8_t state;
@@ -116,7 +111,6 @@ class rampLeg{
     rampLong  xH;
     rampLong xFB;
     rampLong xLR;
-    int cycle;
   public:
     rampLeg(int mhip){
         hip = mhip;
@@ -146,18 +140,6 @@ class rampLeg{
       xLR.update();
       xFB.update();
     }
-    void incCycle(){
-      cycle++;
-      if (cycle > 6){
-        cycle = 0;
-      }
-    }
-    void decCycle(){
-      cycle--;
-      if (cycle < 0){
-        cycle = 6;
-      }
-    }
     void hGo(float position, float timee){
       xH.go(position,timee);
     }
@@ -175,13 +157,7 @@ class rampLeg{
       return xFB.getValue();
     }
     float lrAt(){
-    return xLR.getValue();
-  }
-    void setCycle(int newCycle){
-      cycle = newCycle;
-    }
-    int cycleAt(){
-      return cycle;
+      return xLR.getValue();
     }
     bool isGrounded(){
       if (xFB.getValue() == 0){
@@ -191,13 +167,6 @@ class rampLeg{
       }
     }
 };
-
-
-//------------------------------------------------------------------------------------------------
-//legCtrls
-void updateAll();
-void resetAll();
-bool allDone();
 
 
 //------------------------------------------------------------------------------------------------
@@ -211,9 +180,9 @@ float decrad(float deg); //degrees to radians
 
 //------------------------------------------------------------------------------------------------
 //Movement
-void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
-void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
-void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
+//void walk(rampLeg &Leg, float timee, float backDistance, float upDistance, float LRDistance, bool d);
+//void WalkF(float yRot, float zRot, bool direction, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
+//void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);
 
 
 //------------------------------------------------------------------------------------------------
@@ -230,7 +199,7 @@ void wakeup_9();
 
 //------------------------------------------------------------------------------------------------
 void getData();
-void setCycle();
+//void setCycle();
 
 
 //------------------------------------------------------------------------------------------------
