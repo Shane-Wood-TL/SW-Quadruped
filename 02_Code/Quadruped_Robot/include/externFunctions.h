@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <Ramp.h>
 #include <Adafruit_PWMServoDriver.h>
-#include <TelnetStream.h>
 
 
 //servo motor pwm limits
@@ -40,37 +39,6 @@
 //CE 16
 //CSN 9
 
-
-//------------------------------------------------------------------------------------------------
-//values for non controlled turn
-//current /default values
-const float testHeightT = 120;
-const float testHeightBACKT = 120;
-const float testLRT = 0;
-const float testFBT = 0;
-
-//time for a cycle (in ms)
-const float timeeT = 750;
-
-//amount to change values by in a cycle
-const float backDistanceT = 0; //(FB)
-const float upDistanceT = -50; //xH
-const float LRDistanceT =100; //xLR
-
-
-//values for non controlled walk
-const float testHeightW = 150;
-const float testHeightBACKW = 150;
-const float testLRW = 0;
-const float testFBW = 0;
-
-//time for a cycle (in ms)
-const float timeeW = 50;
-
-//amount to change values by in a cycle
-const float backDistanceW = -40; //(FB)
-const float upDistanceW = -40; //xH
-const float LRDistanceW =0; //xLR
 
 
 //------------------------------------------------------------------------------------------------
@@ -263,9 +231,9 @@ class motor{
         nDegree = nDegree + *offset;
     }
     if(direction){
-        pwm->writeMicroseconds(motorC, (map(nDegree, 0, 180, USMIN, USMAX)));
+        //pwm->writeMicroseconds(motorC, (map(nDegree, 0, 180, USMIN, USMAX)));
     }else{
-        pwm->writeMicroseconds(motorC, (map(nDegree, 180, 0, USMIN, USMAX)));
+        //pwm->writeMicroseconds(motorC, (map(nDegree, 180, 0, USMIN, USMAX)));
     }
   }
   int getMotor(){
@@ -341,13 +309,6 @@ class kinematics{
     position.xLR += modYd - yHalfDis; 
   }
 
-    TelnetStream.println();
-    TelnetStream.print(position.xH);
-    TelnetStream.print("    ");
-    TelnetStream.print(position.xLR);
-    TelnetStream.print("    ");
-    TelnetStream.println(position.xFB);
-
     if(position.xH > 134){
       position.xH = 134;
     }
@@ -398,6 +359,26 @@ struct singleCycle {
         legPositions[10] = DxLR;
         legPositions[11] = DxFB;
     }
+    void resetPositions(){
+        legPositions[0] = 0;
+        legPositions[1] = 0;
+        legPositions[2] = 0;
+
+        legPositions[3] = 0;
+        legPositions[4] = 0;
+        legPositions[5] = 0;
+
+        legPositions[6] = 0;
+        legPositions[7] = 0;
+        legPositions[8] = 0;
+
+        legPositions[9] = 0;
+        legPositions[10] = 0;
+        legPositions[11] = 0;
+    }
+    void setOffsets(singleCycle newOffsets){
+      
+    }
 };
 
 class movementCycles{
@@ -415,7 +396,8 @@ class movementCycles{
         }
 
     void nextCycle(){
-        if(currentCycleIndex > cycleCount-1){
+    
+        if(currentCycleIndex >= cycleCount-1){
             currentCycleIndex = 0;
         }else{
             currentCycleIndex++;
@@ -425,7 +407,6 @@ class movementCycles{
         return cycle[currentCycleIndex].legPositions;
     }
 };
-
 
 class cycleControl{
   public:
@@ -446,10 +427,7 @@ class cycleControl{
     Cords *cCords;
     Cords *dCords;
 
-    Cords AcurrentPosition;
-    Cords BcurrentPosition;
-    Cords CcurrentPosition;
-    Cords DcurrentPosition;
+
 
     int currentStage = 0;
     
@@ -461,21 +439,10 @@ class cycleControl{
     AlegR(AlegR), BlegR(BlegR), ClegR(ClegR), DlegR(DlegR),
     AlegK(AlegK), BlegK(BlegK), ClegK(ClegK), DlegK(DlegK),
     aCords(aCords), bCords(bCords), cCords(cCords), dCords(dCords) {
-      AlegR->hGo(0,0);
-            AlegR->lrGo(0,0);
-            AlegR->fbGo(0,0);
-
-            BlegR->hGo(0,0);
-            BlegR->lrGo(0,0);
-            BlegR->fbGo(0,0);
-
-            ClegR->hGo(0,0);
-            ClegR->lrGo(0,0);
-            ClegR->fbGo(0,0);
-
-            DlegR->hGo(0,0);
-            DlegR->lrGo(0,0);
-            DlegR->fbGo(0,0);
+      AlegR->reset();
+      BlegR->reset();
+      ClegR->reset();
+      DlegR->reset();
     }
 
     void updateRampPositions(){
@@ -518,7 +485,7 @@ class cycleControl{
         DlegK->mainKinematics(*dCords);
     }
 
-    void continueCycle(){
+    void continueCycle(Cords AcurrentPosition, Cords BcurrentPosition,Cords CcurrentPosition,Cords DcurrentPosition){
         checkCycle();
 
         updateRampPositions();

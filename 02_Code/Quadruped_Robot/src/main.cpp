@@ -12,7 +12,6 @@
 #include <PID_v1.h> 
 #include <externFunctions.h>
 
-#include <motionClasses.h>
 #include <motorOffsets.h>
 #include <extraMath.h>
 
@@ -61,6 +60,12 @@ Cords bCords;
 Cords cCords;
 Cords dCords;
 
+
+
+Cords AcurrentPosition;
+Cords BcurrentPosition;
+Cords CcurrentPosition;
+Cords DcurrentPosition;
 
 //------------------------------------------------------------------------------------------------
 // Motor, Leg, kinematics, interpolation set up
@@ -182,7 +187,7 @@ singleCycle walking5(0,0,0, //back at 0
 
 
 singleCycle walking[] = {walking0,walking1,walking2,walking3,walking4,walking5};
-movementCycles walkForward(5, false,true,300,walking);
+movementCycles walkForward(6, false,true,3000,walking);
 
 
 cycleControl walkForwardCycle(&walkForward, 
@@ -196,7 +201,7 @@ cycleControl walkForwardCycle(&walkForward,
 void setup() {
   //start busses
   //start Serial
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Serial Active");
 
 
@@ -247,10 +252,10 @@ void setup() {
  
   Serial.println("gyro Started");
 
-  if(!bno.begin()){
-    Serial.print("Gyro Error");
-    while(1);
-  }
+  // if(!bno.begin()){
+  //   Serial.print("Gyro Error");
+  //   while(1);
+  // }
   bno.setExtCrystalUse(true);
   delay(1000); 
   Serial.println("Gyro Active");
@@ -276,10 +281,10 @@ void setup() {
   basicStand.xLR = 0;
   basicStand.xFB = 0;
 
-  aCords.xH=100;
-  bCords.xH=100;
-  cCords.xH=100;
-  dCords.xH=100;
+  AcurrentPosition.xH=100;
+  BcurrentPosition.xH=100;
+  CcurrentPosition.xH=100;
+  DcurrentPosition.xH=100;
   standing_0();
 
   // Sets all RAMPS to go to 0 in all joints in all legs
@@ -291,9 +296,7 @@ void setup() {
 }
 
 void loop() {
-  walkForwardCycle.continueCycle();
-  //Serial.println(walkForwardCycle.activeCycle->currentCycleIndex);
-  Serial.println(walkForwardCycle.aCords->xH);
+  walkForwardCycle.continueCycle(AcurrentPosition,BcurrentPosition,CcurrentPosition,DcurrentPosition);
   // //Serial.print(dAnkleM.Degree);
   
   // // //standing_0();
