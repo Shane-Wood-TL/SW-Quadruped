@@ -149,8 +149,8 @@ movementVariables turnSet;
 Cords basicStand;
 
 float cycleTime = 50;
-float moveBackDistance = -40;
-float moveUpDistance =-40;
+float moveBackDistance = -50;
+float moveUpDistance =-30;
 //AxH,AxLR,AxFB,BxH,BxLR,BxFB,CxH,CxLR,CxFB,DxH,DxLR,DxFB
 singleCycle walking0(0,0,moveBackDistance/3, // moving back
                     moveUpDistance,0,2*moveBackDistance/3, //returning to 0
@@ -187,7 +187,7 @@ singleCycle walking5(0,0,0, //back at 0
 
 
 singleCycle walking[] = {walking0,walking1,walking2,walking3,walking4,walking5};
-movementCycles walkForward(6, false,true,3000,walking);
+movementCycles walkForward(6, false,true,1000,walking);
 
 
 cycleControl walkForwardCycle(&walkForward, 
@@ -196,7 +196,7 @@ cycleControl walkForwardCycle(&walkForward,
                               &aCords,&bCords,&cCords,&dCords);
 
 
-
+positions recievedPositions;
 
 void setup() {
   //start busses
@@ -277,14 +277,14 @@ void setup() {
   //setCycle();
 
   //set legs to stand in some default form
-  basicStand.xH = 130;
+  basicStand.xH = 100;
   basicStand.xLR = 0;
   basicStand.xFB = 0;
 
-  AcurrentPosition.xH=100;
-  BcurrentPosition.xH=100;
-  CcurrentPosition.xH=100;
-  DcurrentPosition.xH=100;
+  AcurrentPosition.xH=130;
+  BcurrentPosition.xH=130;
+  CcurrentPosition.xH=130;
+  DcurrentPosition.xH=130;
   standing_0();
 
   // Sets all RAMPS to go to 0 in all joints in all legs
@@ -296,7 +296,39 @@ void setup() {
 }
 
 void loop() {
+  bno.getEvent(&event);
+  aCords.yRot = event.orientation.y;
+  bCords.yRot = event.orientation.y;
+  cCords.yRot = event.orientation.y;
+  dCords.yRot = event.orientation.y;
+
+  aCords.zRot = event.orientation.z;
+  bCords.zRot = event.orientation.z;
+  cCords.zRot = event.orientation.z;
+  dCords.zRot = event.orientation.z;
   walkForwardCycle.continueCycle(AcurrentPosition,BcurrentPosition,CcurrentPosition,DcurrentPosition);
+  // Serial.print("A: ");
+  // Serial.print(aCords.xH);
+  // Serial.print(" D: ");
+  // Serial.print(dCords.xH);
+
+  // Serial.print("B: ");
+  // Serial.print(bCords.xH);
+  // Serial.print(" C: ");
+  // Serial.println(cCords.xH);
+
+
+// if (Serial.available() > 0) {
+//                 // Read the incoming data into a string
+//                 String input = Serial.readStringUntil('\n');
+//                 recievedPositions = parseData(input);
+//                 //activeOffsets.setOffsets(recievedOffsets);
+//                 //standing_0();
+//   }
+// Aleg.setAngles(recievedPositions.aHipV,recievedPositions.aKneeV,recievedPositions.aAnkleV);
+// Bleg.setAngles(recievedPositions.bHipV,recievedPositions.bKneeV,recievedPositions.bAnkleV);
+// Cleg.setAngles(recievedPositions.cHipV,recievedPositions.cKneeV,recievedPositions.cAnkleV);
+// Dleg.setAngles(recievedPositions.dHipV,recievedPositions.dKneeV,recievedPositions.dAnkleV);
   // //Serial.print(dAnkleM.Degree);
   
   // // //standing_0();
@@ -313,6 +345,12 @@ void loop() {
   // // //update gyro
   // bno.getEvent(&event);
 
+  // Serial.print("x: ");
+  // Serial.print(event.orientation.x);
+  // Serial.print(" y: ");
+  // Serial.print(event.orientation.y);
+  // Serial.print(" z: ");
+  // Serial.println(event.orientation.z);
   // //delay(100);
   // if(payload.gyro == 1){
   //   yPreRot = event.orientation.y;
@@ -338,7 +376,7 @@ void loop() {
   // //   Serial.println(zAngleV);
 
 
-  
+
   // //------------------------------------------------------------------------------------------------
   // #ifdef CONTROLLERA
   //   //switch modes and saftey mode

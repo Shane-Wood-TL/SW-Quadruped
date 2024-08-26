@@ -231,9 +231,9 @@ class motor{
         nDegree = nDegree + *offset;
     }
     if(direction){
-        //pwm->writeMicroseconds(motorC, (map(nDegree, 0, 180, USMIN, USMAX)));
+        pwm->writeMicroseconds(motorC, (map(nDegree, 0, 180, USMIN, USMAX)));
     }else{
-        //pwm->writeMicroseconds(motorC, (map(nDegree, 180, 0, USMIN, USMAX)));
+        pwm->writeMicroseconds(motorC, (map(nDegree, 180, 0, USMIN, USMAX)));
     }
   }
   int getMotor(){
