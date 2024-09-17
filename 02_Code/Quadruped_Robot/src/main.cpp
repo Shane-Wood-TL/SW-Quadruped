@@ -1,19 +1,4 @@
-#include <Arduino.h>
-#include <SPI.h>
-#include <nRF24L01.h>
-#include <RF24.h>
-#include <math.h>
-#include <Wire.h>
-#include <Ramp.h>
-#include <Adafruit_PWMServoDriver.h>
-#include <utility/imumaths.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
-#include <PID_v1.h> 
-#include <externFunctions.h>
-
-#include <motorOffsets.h>
-#include <extraMath.h>
+#include <allIncludes.h>
 
 #define CONTROLLER
 #define CONTROLLERA
@@ -21,7 +6,7 @@
 
 
 
-positions parseData(String input);
+singleCycle parseData(String input);
 
 //------------------------------------------------------------------------------------------------
 //angle goal values
@@ -70,31 +55,31 @@ Cords DcurrentPosition;
 //------------------------------------------------------------------------------------------------
 // Motor, Leg, kinematics, interpolation set up
 //float LlimitV, float HlimitV, bool directionV, float offsetV)
-positions activeOffsets;
+singleCycle activeOffsets;
 
-motor aHipM(&pwm, aHip, 45, 135, true, &(activeOffsets.aHipV));
-motor aKneeM(&pwm, aKnee, 0, 180, false, &(activeOffsets.aKneeV));
-motor aAnkleM(&pwm, aAnkle, 0, 180, true, &(activeOffsets.aAnkleV));
+motor aHipM(&pwm, aHip, 45, 135, true, &(activeOffsets.legPositions[0]));
+motor aKneeM(&pwm, aKnee, 0, 180, false, &(activeOffsets.legPositions[1]));
+motor aAnkleM(&pwm, aAnkle, 0, 180, true, &(activeOffsets.legPositions[2]));
 
-motor bHipM(&pwm, bHip, 45, 135, false, &(activeOffsets.bHipV));
-motor bKneeM(&pwm, bKnee, 0, 180, true, &(activeOffsets.bKneeV));
-motor bAnkleM(&pwm, bAnkle, 0, 180, false, &(activeOffsets.bAnkleV));
+motor bHipM(&pwm, bHip, 45, 135, false, &(activeOffsets.legPositions[3]));
+motor bKneeM(&pwm, bKnee, 0, 180, true, &(activeOffsets.legPositions[4]));
+motor bAnkleM(&pwm, bAnkle, 0, 180, false, &(activeOffsets.legPositions[5]));
 
-motor cHipM(&pwm1, cHip, 45, 135, false, &(activeOffsets.cHipV));
-motor cKneeM(&pwm1, cKnee, 0, 180, false, &(activeOffsets.cKneeV));
-motor cAnkleM(&pwm1, cAnkle, 0, 180, true, &(activeOffsets.cAnkleV));
+motor cHipM(&pwm1, cHip, 45, 135, false, &(activeOffsets.legPositions[6]));
+motor cKneeM(&pwm1, cKnee, 0, 180, false, &(activeOffsets.legPositions[7]));
+motor cAnkleM(&pwm1, cAnkle, 0, 180, true, &(activeOffsets.legPositions[8]));
 
-motor dHipM(&pwm1, dHip, 45, 135, true, &(activeOffsets.dHipV));
-motor dKneeM(&pwm1, dKnee, 0, 180, true, &(activeOffsets.dKneeV));
-motor dAnkleM(&pwm1, dAnkle, 0, 180, false, &(activeOffsets.dAnkleV));
+motor dHipM(&pwm1, dHip, 45, 135, true, &(activeOffsets.legPositions[9]));
+motor dKneeM(&pwm1, dKnee, 0, 180, true, &(activeOffsets.legPositions[10]));
+motor dAnkleM(&pwm1, dAnkle, 0, 180, false, &(activeOffsets.legPositions[11]));
 
 
 //------------------------------------------------------------------------------------------------
 //each leg object
-leg Aleg(&aHipM, &aKneeM, &aAnkleM, "A");
-leg Bleg(&bHipM, &bKneeM, &bAnkleM, "B");
-leg Cleg(&cHipM, &cKneeM, &cAnkleM, "C");
-leg Dleg(&dHipM, &dKneeM, &dAnkleM, "D");
+leg Aleg(&aHipM, &aKneeM, &aAnkleM, 'A');
+leg Bleg(&bHipM, &bKneeM, &bAnkleM, 'B');
+leg Cleg(&cHipM, &cKneeM, &cAnkleM, 'C');
+leg Dleg(&dHipM, &dKneeM, &dAnkleM, 'D');
 
 
 //------------------------------------------------------------------------------------------------
@@ -144,8 +129,6 @@ const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
 //MOSI = 8
 //------------------------------------------------------------------------------------------------
 //more (different) location variables
-movementVariables walkSet;
-movementVariables turnSet;
 Cords basicStand;
 
 float cycleTime = 50;
@@ -186,6 +169,9 @@ singleCycle walking5(0,0,0, //back at 0
                     0,0,0); //back at 0
 
 
+
+
+//switch to size of instead of a strict n value
 singleCycle walking[] = {walking0,walking1,walking2,walking3,walking4,walking5};
 movementCycles walkForward(6, false,true,1000,walking);
 
@@ -196,7 +182,7 @@ cycleControl walkForwardCycle(&walkForward,
                               &aCords,&bCords,&cCords,&dCords);
 
 
-positions recievedPositions;
+singleCycle recievedPositions;
 
 void setup() {
   //start busses
@@ -290,9 +276,6 @@ void setup() {
   // Sets all RAMPS to go to 0 in all joints in all legs
   //resetAll();
 
-  movementVariables* walkSetP = &walkSet;
-  movementVariables* turnSetP = &turnSet;
-  //populateStructs(*walkSetP,*turnSetP);
 }
 
 void loop() {
@@ -472,8 +455,8 @@ void getData(){
 
 
 
-positions parseData(String input) {
-  positions receivedVales;
+singleCycle parseData(String input) {
+  singleCycle receivedValues;
   const int numFloats = 12;
   float values[numFloats];
   // Create an index for storing float values
@@ -498,17 +481,17 @@ positions parseData(String input) {
     values[index] = input.substring(startIndex).toFloat();  // This handles the last value in the string
   }
 
-  receivedVales.aHipV = values[0];
-  receivedVales.aKneeV = values[1];
-  receivedVales.aAnkleV = values[2];
-  receivedVales.bHipV = values[3];
-  receivedVales.bKneeV = values[4];
-  receivedVales.bAnkleV = values[5];
-  receivedVales.cHipV = values[6];
-  receivedVales.cKneeV = values[7];
-  receivedVales.cAnkleV = values[8];
-  receivedVales.dHipV = values[9];
-  receivedVales.dKneeV = values[10];
-  receivedVales.dAnkleV = values[11];
-  return receivedVales;
+  receivedValues.legPositions[0] = values[0];
+  receivedValues.legPositions[1] = values[1];
+  receivedValues.legPositions[2] = values[2];
+  receivedValues.legPositions[3] = values[3];
+  receivedValues.legPositions[4] = values[4];
+  receivedValues.legPositions[5] = values[5];
+  receivedValues.legPositions[6] = values[6];
+  receivedValues.legPositions[7] = values[7];
+  receivedValues.legPositions[8] = values[8];
+  receivedValues.legPositions[9] = values[9];
+  receivedValues.legPositions[10] = values[10];
+  receivedValues.legPositions[11] = values[11];
+  return receivedValues;
 }

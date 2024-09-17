@@ -1,4 +1,5 @@
-#include <Arduino.h>
+#include <allIncludes.h>
+
 
 //------------------------------------------------------------------------------------------------
 //finds hypotenuse of triangle
@@ -52,4 +53,3 @@ float decrad(float deg)
   deg = deg * (PI / 180);
   return deg;
 }
-

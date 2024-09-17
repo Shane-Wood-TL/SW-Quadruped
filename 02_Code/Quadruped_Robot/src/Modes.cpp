@@ -1,6 +1,4 @@
-#include <Arduino.h>
-#include <externFunctions.h>
-#include <Adafruit_PWMServoDriver.h>
+#include <allIncludes.h>
 
 //------------------------------------------------------------------------------------------------
 extern Cords aCords;
@@ -24,8 +22,6 @@ extern rampLeg bLegR;
 extern rampLeg cLegR;
 extern rampLeg dLegR;
 
-extern movementVariables walkSet;
-extern movementVariables turnSet;
 extern Cords basicStand;
 
 
