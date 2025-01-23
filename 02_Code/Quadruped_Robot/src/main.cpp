@@ -1,19 +1,4 @@
-#include <Arduino.h>
-#include <SPI.h>
-#include <nRF24L01.h>
-#include <RF24.h>
-#include <math.h>
-#include <Wire.h>
-#include <Ramp.h>
-#include <Adafruit_PWMServoDriver.h>
-#include <utility/imumaths.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
-#include <PID_v1.h> 
-#include <externFunctions.h>
-
-#include <motorOffsets.h>
-
+#include <allIncludes.h>
 
 #define CONTROLLER
 #define CONTROLLERA
@@ -21,7 +6,7 @@
 
 
 
-positions parseData(String input);
+singleCycle parseData(String input);
 
 //------------------------------------------------------------------------------------------------
 //angle goal values
@@ -61,34 +46,40 @@ Cords cCords;
 Cords dCords;
 
 
+
+Cords AcurrentPosition;
+Cords BcurrentPosition;
+Cords CcurrentPosition;
+Cords DcurrentPosition;
+
 //------------------------------------------------------------------------------------------------
 // Motor, Leg, kinematics, interpolation set up
 //float LlimitV, float HlimitV, bool directionV, float offsetV)
-positions activeOffsets;
+singleCycle activeOffsets;
 
-motor aHipM(&pwm, aHip, 45, 135, true, &(activeOffsets.aHipV));
-motor aKneeM(&pwm, aKnee, 0, 180, false, &(activeOffsets.aKneeV));
-motor aAnkleM(&pwm, aAnkle, 0, 180, true, &(activeOffsets.aAnkleV));
+motor aHipM(&pwm, aHip, 45, 135, true, &(activeOffsets.legPositions[0]));
+motor aKneeM(&pwm, aKnee, 0, 180, false, &(activeOffsets.legPositions[1]));
+motor aAnkleM(&pwm, aAnkle, 0, 180, true, &(activeOffsets.legPositions[2]));
 
-motor bHipM(&pwm, bHip, 45, 135, false, &(activeOffsets.bHipV));
-motor bKneeM(&pwm, bKnee, 0, 180, true, &(activeOffsets.bKneeV));
-motor bAnkleM(&pwm, bAnkle, 0, 180, false, &(activeOffsets.bAnkleV));
+motor bHipM(&pwm, bHip, 45, 135, false, &(activeOffsets.legPositions[3]));
+motor bKneeM(&pwm, bKnee, 0, 180, true, &(activeOffsets.legPositions[4]));
+motor bAnkleM(&pwm, bAnkle, 0, 180, false, &(activeOffsets.legPositions[5]));
 
-motor cHipM(&pwm1, cHip, 45, 135, false, &(activeOffsets.cHipV));
-motor cKneeM(&pwm1, cKnee, 0, 180, false, &(activeOffsets.cKneeV));
-motor cAnkleM(&pwm1, cAnkle, 0, 180, true, &(activeOffsets.cAnkleV));
+motor cHipM(&pwm1, cHip, 45, 135, false, &(activeOffsets.legPositions[6]));
+motor cKneeM(&pwm1, cKnee, 0, 180, false, &(activeOffsets.legPositions[7]));
+motor cAnkleM(&pwm1, cAnkle, 0, 180, true, &(activeOffsets.legPositions[8]));
 
-motor dHipM(&pwm1, dHip, 45, 135, true, &(activeOffsets.dHipV));
-motor dKneeM(&pwm1, dKnee, 0, 180, true, &(activeOffsets.dKneeV));
-motor dAnkleM(&pwm1, dAnkle, 0, 180, false, &(activeOffsets.dAnkleV));
+motor dHipM(&pwm1, dHip, 45, 135, true, &(activeOffsets.legPositions[9]));
+motor dKneeM(&pwm1, dKnee, 0, 180, true, &(activeOffsets.legPositions[10]));
+motor dAnkleM(&pwm1, dAnkle, 0, 180, false, &(activeOffsets.legPositions[11]));
 
 
 //------------------------------------------------------------------------------------------------
 //each leg object
-leg Aleg(&aHipM, &aKneeM, &aAnkleM, "A");
-leg Bleg(&bHipM, &bKneeM, &bAnkleM, "B");
-leg Cleg(&cHipM, &cKneeM, &cAnkleM, "C");
-leg Dleg(&dHipM, &dKneeM, &dAnkleM, "D");
+leg Aleg(&aHipM, &aKneeM, &aAnkleM, 'A');
+leg Bleg(&bHipM, &bKneeM, &bAnkleM, 'B');
+leg Cleg(&cHipM, &cKneeM, &cAnkleM, 'C');
+leg Dleg(&dHipM, &dKneeM, &dAnkleM, 'D');
 
 
 //------------------------------------------------------------------------------------------------
@@ -138,20 +129,65 @@ const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
 //MOSI = 8
 //------------------------------------------------------------------------------------------------
 //more (different) location variables
-movementVariables walkSet;
-movementVariables turnSet;
 Cords basicStand;
 
+float cycleTime = 50;
+float moveBackDistance = -50;
+float moveUpDistance =-30;
+//AxH,AxLR,AxFB,BxH,BxLR,BxFB,CxH,CxLR,CxFB,DxH,DxLR,DxFB
+singleCycle walking0(0,0,moveBackDistance/3, // moving back
+                    moveUpDistance,0,2*moveBackDistance/3, //returning to 0
+                    moveUpDistance,0,2*moveBackDistance/3, //returning to 0
+                    0,0,moveBackDistance/3); // moving back
+
+
+singleCycle walking1(0,0,2*moveBackDistance/3, // moving back
+                    moveUpDistance,0,moveBackDistance/3, //returning to 0
+                    moveUpDistance,0,moveBackDistance/3,+//returning to 0
+                    0,0,2*moveBackDistance/3); // moving back
+
+
+singleCycle walking2(0,0,moveBackDistance, //moved back
+                    0,0,0, //back at 0
+                    0,0,0, //back at 0
+                    0,0,moveBackDistance); //moved back
+
+
+singleCycle walking3(moveUpDistance,0,2*moveBackDistance/3, //returning to 0
+                    0,0,moveBackDistance/3, //moving back
+                    0,0,moveBackDistance/3, //moving back
+                    moveUpDistance,0,2*moveBackDistance/3); //returning to 0
+
+singleCycle walking4(moveUpDistance,0,moveBackDistance/3, //returning to 0
+                    0,0,2*moveBackDistance/3, // moving back
+                    0,0,2*moveBackDistance/3, // moving back
+                    moveUpDistance,0,moveBackDistance/3); //returning to 0
+
+singleCycle walking5(0,0,0, //back at 0
+                    0,0,moveBackDistance, //moved back
+                    0,0,moveBackDistance, //moved back
+                    0,0,0); //back at 0
 
 
 
 
+//switch to size of instead of a strict n value
+singleCycle walking[] = {walking0,walking1,walking2,walking3,walking4,walking5};
+movementCycles walkForward(6, false,true,1000,walking);
 
+
+cycleControl walkForwardCycle(&walkForward, 
+                              &aLegR,&bLegR,&cLegR,&dLegR,
+                              &AlegK,&BlegK,&ClegK,&DlegK,
+                              &aCords,&bCords,&cCords,&dCords);
+
+
+singleCycle recievedPositions;
 
 void setup() {
   //start busses
   //start Serial
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Serial Active");
 
 
@@ -202,10 +238,10 @@ void setup() {
  
   Serial.println("gyro Started");
 
-  if(!bno.begin()){
-    Serial.print("Gyro Error");
-    while(1);
-  }
+  // if(!bno.begin()){
+  //   Serial.print("Gyro Error");
+  //   while(1);
+  // }
   bno.setExtCrystalUse(true);
   delay(1000); 
   Serial.println("Gyro Active");
@@ -224,146 +260,186 @@ void setup() {
 
   // //------------------------------------------------------------------------------------------------
   //where in the walk cycle the robot is at. Way to share state across all movements
-  setCycle();
+  //setCycle();
 
   //set legs to stand in some default form
   basicStand.xH = 100;
   basicStand.xLR = 0;
   basicStand.xFB = 0;
+
+  AcurrentPosition.xH=130;
+  BcurrentPosition.xH=130;
+  CcurrentPosition.xH=130;
+  DcurrentPosition.xH=130;
   standing_0();
 
   // Sets all RAMPS to go to 0 in all joints in all legs
-  resetAll();
+  //resetAll();
 
-  movementVariables* walkSetP = &walkSet;
-  movementVariables* turnSetP = &turnSet;
-  populateStructs(*walkSetP,*turnSetP);
 }
 
 void loop() {
-
-  //Serial.print(dAnkleM.Degree);
-  
-  // //standing_0();
-  
-  // //bKneeM.setDegree(0);
-  // //FWalk_2(yAngleV, zAngleV);
-  // //update radio
-
-  getData();
-  //payload.state = 0;
-
-  //payload.state == 0;
-  //------------------------------------------------------------------------------------------------
-  // //update gyro
   bno.getEvent(&event);
+  aCords.yRot = event.orientation.y;
+  bCords.yRot = event.orientation.y;
+  cCords.yRot = event.orientation.y;
+  dCords.yRot = event.orientation.y;
 
-  //delay(100);
-  if(payload.gyro == 1){
-    yPreRot = event.orientation.y;
-    zPreRot = event.orientation.z;
-    if(payload.PID == 1){
-      yPID.Compute();
-      zPID.Compute();
-      //yAngleV = yRot;
-      //zAngleV = zRot;
-    }else{
-      yAngleV =  event.orientation.y;
-      zAngleV =  event.orientation.z;
-    }
+  aCords.zRot = event.orientation.z;
+  bCords.zRot = event.orientation.z;
+  cCords.zRot = event.orientation.z;
+  dCords.zRot = event.orientation.z;
+  walkForwardCycle.continueCycle(AcurrentPosition,BcurrentPosition,CcurrentPosition,DcurrentPosition);
+  // Serial.print("A: ");
+  // Serial.print(aCords.xH);
+  // Serial.print(" D: ");
+  // Serial.print(dCords.xH);
+
+  // Serial.print("B: ");
+  // Serial.print(bCords.xH);
+  // Serial.print(" C: ");
+  // Serial.println(cCords.xH);
+
+
+// if (Serial.available() > 0) {
+//                 // Read the incoming data into a string
+//                 String input = Serial.readStringUntil('\n');
+//                 recievedPositions = parseData(input);
+//                 //activeOffsets.setOffsets(recievedOffsets);
+//                 //standing_0();
+//   }
+// Aleg.setAngles(recievedPositions.aHipV,recievedPositions.aKneeV,recievedPositions.aAnkleV);
+// Bleg.setAngles(recievedPositions.bHipV,recievedPositions.bKneeV,recievedPositions.bAnkleV);
+// Cleg.setAngles(recievedPositions.cHipV,recievedPositions.cKneeV,recievedPositions.cAnkleV);
+// Dleg.setAngles(recievedPositions.dHipV,recievedPositions.dKneeV,recievedPositions.dAnkleV);
+  // //Serial.print(dAnkleM.Degree);
+  
+  // // //standing_0();
+  
+  // // //bKneeM.setDegree(0);
+  // // //FWalk_2(yAngleV, zAngleV);
+  // // //update radio
+
+  // getData();
+  // //payload.state = 0;
+
+  // //payload.state == 0;
+  // //------------------------------------------------------------------------------------------------
+  // // //update gyro
+  // bno.getEvent(&event);
+
+  // Serial.print("x: ");
+  // Serial.print(event.orientation.x);
+  // Serial.print(" y: ");
+  // Serial.print(event.orientation.y);
+  // Serial.print(" z: ");
+  // Serial.println(event.orientation.z);
+  // //delay(100);
+  // if(payload.gyro == 1){
+  //   yPreRot = event.orientation.y;
+  //   zPreRot = event.orientation.z;
+  //   if(payload.PID == 1){
+  //     yPID.Compute();
+  //     zPID.Compute();
+  //     //yAngleV = yRot;
+  //     //zAngleV = zRot;
+  //   }else{
+  //     yAngleV =  event.orientation.y;
+  //     zAngleV =  event.orientation.z;
+  //   }
     
-  }else{
-    yAngleV = 0;
-    zAngleV = 0;
-  }
+  // }else{
+  //   yAngleV = 0;
+  //   zAngleV = 0;
+  // }
   
-  // Serial.print("y: ");
-  //   Serial.print(yAngleV);
-  //   Serial.print("    z: ");
-  //   Serial.println(zAngleV);
+  // // Serial.print("y: ");
+  // //   Serial.print(yAngleV);
+  // //   Serial.print("    z: ");
+  // //   Serial.println(zAngleV);
 
 
-  
-  //------------------------------------------------------------------------------------------------
-  #ifdef CONTROLLERA
-    //switch modes and saftey mode
-    if(payload.eStop != 1){
-      wakeup_9();
-      if(oldState !=payload.state){
-          // aLegR.setCycle(0);
-          // bLegR.setCycle(3);
-          // cLegR.setCycle(3);
-          // dLegR.setCycle(0);
-      }
-      switch (payload.state) {
-        case 0:{ //standing
-            standing_0();
-          break;
-        }
-        case 1:{ //IK mode
-            IK_1(0,yAngle,zAngle);
-          break;
-        }
-        case 2:{//FWalk
-            FWalk_2(xAngleV,yAngleV);
-          break;
-        }
-        case 3:{ //
-            FTurn_3(xAngleV,yAngleV);
-          break;
-        }
-        case 4:{ //user
-            User_4(xAngleV,yAngleV);
-          break;
-        } 
-        case 5:{ //used to install new motors
-        if (Serial.available() > 0) {
-                // Read the incoming data into a string
-                String input = Serial.readStringUntil('\n');
-                positions recievedOffsets = parseData(input);
-                activeOffsets.setOffsets(recievedOffsets);
-                standing_0();
-              }
-              break;
-        }
-        case 6:{ //motor offset setup
-              if (Serial.available() > 0) {
-                // Read the incoming data into a string
-                String input = Serial.readStringUntil('\n');
-                positions recievedOffsets = parseData(input);
-                activeOffsets.setOffsets(recievedOffsets);
-                standing_0();
-              }
-              break;
-           }
-        case 7:{
-            if (Serial.available() > 0) {
-              // Read the incoming data into a string
-              String input = Serial.readStringUntil('\n');
-              positions recievedPositions = parseData(input);
-              aHipM.setDegree(90);
-              aKneeM.setDegree(45);
-              aAnkleM.setDegree(0);
-              bHipM.setDegree(90);
-              bKneeM.setDegree(45);
-              bAnkleM.setDegree(0);
-              cHipM.setDegree(90);
-              cKneeM.setDegree(45);
-              cAnkleM.setDegree(0);
-              dHipM.setDegree(90);
-              dKneeM.setDegree(45);
-              dAnkleM.setDegree(0);
-            }
-            break;
-           }
-      default:
-          break;
-        }
-    }else{
-        Default_9(); //turns off motors
-    }
-    oldState = payload.state;
-  #endif
+
+  // //------------------------------------------------------------------------------------------------
+  // #ifdef CONTROLLERA
+  //   //switch modes and saftey mode
+  //   if(payload.eStop != 1){
+  //     wakeup_9();
+  //     if(oldState !=payload.state){
+  //         // aLegR.setCycle(0);
+  //         // bLegR.setCycle(3);
+  //         // cLegR.setCycle(3);
+  //         // dLegR.setCycle(0);
+  //     }
+  //     switch (payload.state) {
+  //       case 0:{ //standing
+  //           standing_0();
+  //         break;
+  //       }
+  //       case 1:{ //IK mode
+  //           IK_1(0,yAngle,zAngle);
+  //         break;
+  //       }
+  //       case 2:{//FWalk
+  //           FWalk_2(xAngleV,yAngleV);
+  //         break;
+  //       }
+  //       case 3:{ //
+  //           FTurn_3(xAngleV,yAngleV);
+  //         break;
+  //       }
+  //       case 4:{ //user
+  //           User_4(xAngleV,yAngleV);
+  //         break;
+  //       } 
+  //       case 5:{ //used to install new motors
+  //       if (Serial.available() > 0) {
+  //               // Read the incoming data into a string
+  //               String input = Serial.readStringUntil('\n');
+  //               positions recievedOffsets = parseData(input);
+  //               activeOffsets.setOffsets(recievedOffsets);
+  //               standing_0();
+  //             }
+  //             break;
+  //       }
+  //       case 6:{ //motor offset setup
+  //             if (Serial.available() > 0) {
+  //               // Read the incoming data into a string
+  //               String input = Serial.readStringUntil('\n');
+  //               positions recievedOffsets = parseData(input);
+  //               activeOffsets.setOffsets(recievedOffsets);
+  //               standing_0();
+  //             }
+  //             break;
+  //          }
+  //       case 7:{
+  //           if (Serial.available() > 0) {
+  //             // Read the incoming data into a string
+  //             String input = Serial.readStringUntil('\n');
+  //             positions recievedPositions = parseData(input);
+  //             aHipM.setDegree(90);
+  //             aKneeM.setDegree(45);
+  //             aAnkleM.setDegree(0);
+  //             bHipM.setDegree(90);
+  //             bKneeM.setDegree(45);
+  //             bAnkleM.setDegree(0);
+  //             cHipM.setDegree(90);
+  //             cKneeM.setDegree(45);
+  //             cAnkleM.setDegree(0);
+  //             dHipM.setDegree(90);
+  //             dKneeM.setDegree(45);
+  //             dAnkleM.setDegree(0);
+  //           }
+  //           break;
+  //          }
+  //     default:
+  //         break;
+  //       }
+  //   }else{
+  //       Default_9(); //turns off motors
+  //   }
+  //   oldState = payload.state;
+  // #endif
 }
 
 //gets data from radio, checks if data was recieved
@@ -379,8 +455,8 @@ void getData(){
 
 
 
-positions parseData(String input) {
-  positions receivedVales;
+singleCycle parseData(String input) {
+  singleCycle receivedValues;
   const int numFloats = 12;
   float values[numFloats];
   // Create an index for storing float values
@@ -405,17 +481,17 @@ positions parseData(String input) {
     values[index] = input.substring(startIndex).toFloat();  // This handles the last value in the string
   }
 
-  receivedVales.aHipV = values[0];
-  receivedVales.aKneeV = values[1];
-  receivedVales.aAnkleV = values[2];
-  receivedVales.bHipV = values[3];
-  receivedVales.bKneeV = values[4];
-  receivedVales.bAnkleV = values[5];
-  receivedVales.cHipV = values[6];
-  receivedVales.cKneeV = values[7];
-  receivedVales.cAnkleV = values[8];
-  receivedVales.dHipV = values[9];
-  receivedVales.dKneeV = values[10];
-  receivedVales.dAnkleV = values[11];
-  return receivedVales;
+  receivedValues.legPositions[0] = values[0];
+  receivedValues.legPositions[1] = values[1];
+  receivedValues.legPositions[2] = values[2];
+  receivedValues.legPositions[3] = values[3];
+  receivedValues.legPositions[4] = values[4];
+  receivedValues.legPositions[5] = values[5];
+  receivedValues.legPositions[6] = values[6];
+  receivedValues.legPositions[7] = values[7];
+  receivedValues.legPositions[8] = values[8];
+  receivedValues.legPositions[9] = values[9];
+  receivedValues.legPositions[10] = values[10];
+  receivedValues.legPositions[11] = values[11];
+  return receivedValues;
 }

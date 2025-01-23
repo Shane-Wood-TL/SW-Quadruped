@@ -1,6 +1,4 @@
-#include <Arduino.h>
-#include <externFunctions.h>
-#include <Adafruit_PWMServoDriver.h>
+#include <allIncludes.h>
 
 //------------------------------------------------------------------------------------------------
 extern Cords aCords;
@@ -24,8 +22,6 @@ extern rampLeg bLegR;
 extern rampLeg cLegR;
 extern rampLeg dLegR;
 
-extern movementVariables walkSet;
-extern movementVariables turnSet;
 extern Cords basicStand;
 
 
@@ -55,14 +51,14 @@ void IK_1(float xAngleV, float yAngleV, float zAngleV){
 //------------------------------------------------------------------------------------------------
 void FWalk_2(float yAngleV, float zAngleV){
   //Serial.println(yAngleV);
-  WalkF(yAngleV,zAngleV, true, testHeightW, testHeightBACKW, testFBW, testLRW,upDistanceW,backDistanceW,LRDistanceW);
+  //WalkF(yAngleV,zAngleV, true, testHeightW, testHeightBACKW, testFBW, testLRW,upDistanceW,backDistanceW,LRDistanceW);
 }
 
 
 //------------------------------------------------------------------------------------------------
 void FTurn_3(float yAngleV, float zAngleV){
   //void turn(float yRot, float zRot, bool clockwise, float  testHeight, float testHeightBACK, float testFB, float testLR, float upDistance, float backDistance, float LRDistance);Fturn
-  turn(yAngleV,zAngleV, true, testHeightT,testHeightBACKT,testFBT, testLRT,upDistanceT,backDistanceT,LRDistanceT);
+  //turn(yAngleV,zAngleV, true, testHeightT,testHeightBACKT,testFBT, testLRT,upDistanceT,backDistanceT,LRDistanceT);
 }
 
 
@@ -80,13 +76,13 @@ void User_4(float yAngleV, float zAngleV)
 
   if (!payload.bt0_ == 1 && !payload.bt1_ == 1){
     // WalkF( yRot,zRot, direction,testHeight, testHeightBACK,  testFB, testLR,  upDistance,   backDistance, LRDistance)
-    WalkF(yAngleV, zAngleV, direction, testHeightW, testHeightBACKW, testFBW, testLRW, xH, xFB, xLR); // need to make WalkF take in values
+    //WalkF(yAngleV, zAngleV, direction, testHeightW, testHeightBACKW, testFBW, testLRW, xH, xFB, xLR); // need to make WalkF take in values
   }
   else if (payload.bt0_ == 1){
-    turn(yAngleV, zAngleV, true, testHeightT, testHeightBACKT, testFBT, testLRT, xH, xFB, xLR);
+    //turn(yAngleV, zAngleV, true, testHeightT, testHeightBACKT, testFBT, testLRT, xH, xFB, xLR);
   }
   else if (payload.bt1_ == 1){
-    turn(yAngleV, zAngleV, direction, testHeightT, testHeightBACKT, testFBT, testLRT, xH, xFB, xLR);
+    //turn(yAngleV, zAngleV, direction, testHeightT, testHeightBACKT, testFBT, testLRT, xH, xFB, xLR);
   }
 }
 
@@ -102,13 +98,4 @@ void Default_9(){
 void wakeup_9(){
   pwm.wakeup();
   pwm1.wakeup();
-}
-
-
-//------------------------------------------------------------------------------------------------
-void setCycle(){
-  aLegR.setCycle(0);
-  bLegR.setCycle(3);
-  cLegR.setCycle(3);
-  dLegR.setCycle(0);
 }
