@@ -11,7 +11,8 @@
         "compare": "cpp",
         "format": "cpp",
         "atomic": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "cmath": "cpp"
     },
     "idf.flashType": "UART"
 }

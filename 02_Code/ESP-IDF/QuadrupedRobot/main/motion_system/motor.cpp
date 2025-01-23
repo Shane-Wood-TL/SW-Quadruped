@@ -1,4 +1,4 @@
-#include "../include/motion_system/motor.h"
+#include "../../include/motion_system/motor.h"
 motor::motor(pca9685* pwmV, uint8_t motorV, uint16_t LlimitV, uint16_t HlimitV, bool directionV, float* offsetV){
     pwm = pwmV;
     motorC = motorV;

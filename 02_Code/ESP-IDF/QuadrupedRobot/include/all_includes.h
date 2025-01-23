@@ -2,6 +2,7 @@
 #define __allIncludes__
 #define map(a,b,c,w,q) ((w)+(((a) - (b)) * ((q) - (w)))/((c)-(b)))
 #include <string>
+#include <atomic>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
@@ -20,18 +21,7 @@
 #include "driver/twai.h"
 #include "driver/ledc.h"
 
-#include "interpolation.h"
-#include "pid.h"
 
-#include "hardware_setup/pinout.h"
-#include "hardware_setup/i2c_setup.h"
-#include "hardware_setup/robot_constants.h"
-
-#include "drivers/pca9685.h"
-#include "drivers/bno055.h"
-#include "drivers/ssd1306.h"
-
-#include <atomic>
 
 
 

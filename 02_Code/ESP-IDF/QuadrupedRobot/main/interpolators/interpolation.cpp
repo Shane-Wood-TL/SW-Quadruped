@@ -1,4 +1,4 @@
-#include "../include/interpolation.h"
+#include "../../include/interpolators/interpolation.h"
 
 
 interpolation::interpolation(float start){

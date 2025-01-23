@@ -1,5 +1,6 @@
-#include "../include/drivers/ssd1306.h"
-#include "../include/hardware_setup/pinout.h"
+#include "../../include/drivers/ssd1306.h"
+#include "../../include/hardware_setup/pinout.h"
+#include "../../include/hardware_setup/i2c_setup.h"
 
 //display inputs
 

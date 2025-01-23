@@ -1,4 +1,5 @@
-#include "../include/pid.h"
+#include "../../include/interpolators/pid.h"
+
 
 
 pid::pid(float kp, float ki, float kd, float output_min, float output_max){
