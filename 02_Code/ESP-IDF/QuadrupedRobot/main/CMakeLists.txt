@@ -1,0 +1,2 @@
+idf_component_register(SRCS "Modes.cpp" "legCtrls.cpp" "Movement.cpp" "pid.cpp" "interpolation.cpp" "math_functions.cpp" "pca9685.cpp" "font.cpp" "ssd1306.cpp" "main.cpp" "motor.cpp"
+                    INCLUDE_DIRS ".")

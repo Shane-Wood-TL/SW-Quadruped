@@ -1,0 +1,17 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.espIdfPathWin": "c:\\Users\\townl\\OneDrive\\Documents\\esp-idf-v5.3.1\\esp-idf-v5.3.1",
+    "idf.openOcdConfigs": [
+        "board/esp32s3-builtin.cfg"
+    ],
+    "idf.portWin": "COM16",
+    "idf.toolsPathWin": "C:\\Users\\townl\\.espressif",
+    "files.associations": {
+        "cstdint": "cpp",
+        "compare": "cpp",
+        "format": "cpp",
+        "atomic": "cpp",
+        "random": "cpp"
+    },
+    "idf.flashType": "UART"
+}
