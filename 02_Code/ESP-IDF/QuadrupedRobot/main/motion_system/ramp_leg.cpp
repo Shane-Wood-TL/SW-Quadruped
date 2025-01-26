@@ -3,6 +3,9 @@
 rampLeg::rampLeg(uint8_t mhip) : hip(mhip), xH(0), xFB(0), xLR(0)
 {
     hip = mhip;
+    xH.set_target(0, 0);
+    xFB.set_target(0, 0);
+    xLR.set_target(0, 0);
 }
 
 
@@ -49,25 +52,6 @@ void rampLeg::update()
 }
 
 
-void rampLeg::incCycle()
-{
-    cycle++;
-    if (cycle > 6)
-    {
-        cycle = 0;
-    }
-}
-
-
-void rampLeg::decCycle()
-{
-    cycle--;
-    if (cycle < 0)
-    {
-        cycle = 6;
-    }
-}
-
 
 void rampLeg::hGo(float position, float timee)
 {
@@ -102,18 +86,6 @@ float rampLeg::fbAt()
 float rampLeg::lrAt()
 {
     return xLR.get_position();
-}
-
-
-void rampLeg::setCycle(uint8_t newCycle)
-{
-    cycle = newCycle;
-}
-
-
-uint8_t rampLeg::cycleAt()
-{
-    return cycle;
 }
 
 

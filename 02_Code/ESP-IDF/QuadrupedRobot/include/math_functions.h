@@ -2,6 +2,7 @@
 #define __extra_math__
 //------------------------------------------------------------------------------------------------
 //Extra Math
+#define PI 3.14
 float pytherm(float sidea, float sideb); //returns hypotenuse c
 float raddec(float rad); //radians to degress
 float loc(float a, float b, float c); // law of cosines, returns angle c in degress 

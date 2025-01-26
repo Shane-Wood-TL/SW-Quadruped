@@ -6,6 +6,8 @@
 #include "../include/motion_system/structures.h"
 #include "../include/motion_system/kinematics.h"
 #include "../include/motion_system/ramp_leg.h"
+#include "../include/motion_system/ramped_kinematics.h"
+#include "../include/motion_system/robot_movement.h"
 
 void servo_driver(void *pv);
 
@@ -13,12 +15,46 @@ void servo_driver(void *pv);
 controller_to_bot_payload controller_to_bot = {0};
 
 
-single_leg aCords;
-single_leg bCords;
-single_leg cCords;
-single_leg dCords;
 
-all_motor_angles activeOffsets={(float)A_HIP_OFFSET,(float)A_KNEE_OFFSET,(float)A_ANKLE_OFFSET,
+    
+
+void start_I2C(){
+    i2c_config_t i2cConfig = {
+        .mode = I2C_MODE_MASTER,
+        .sda_io_num = sda_pin,
+        .scl_io_num = scl_pin,
+        .sda_pullup_en = GPIO_PULLUP_ENABLE,
+        .scl_pullup_en = GPIO_PULLUP_ENABLE,
+        .master{
+            .clk_speed = i2c_freq
+        }
+    };
+
+    //map the config to the i2c number
+    i2c_param_config(i2c_bus_number, &i2cConfig);
+    i2c_driver_install(i2c_bus_number, i2cConfig.mode, 0, 0, 0);
+}
+
+
+
+extern "C" void app_main(void)
+{
+    start_I2C();
+    xTaskCreate(servo_driver,"servo_driver",20000,NULL,1,NULL);
+    for(;;){
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
+
+
+void servo_driver(void *pv){
+    single_leg aCords;
+    single_leg bCords;
+    single_leg cCords;
+    single_leg dCords;
+
+    all_motor_angles activeOffsets={(float)A_HIP_OFFSET,(float)A_KNEE_OFFSET,(float)A_ANKLE_OFFSET,
                             (float)B_HIP_OFFSET,(float)B_KNEE_OFFSET,(float)B_ANKLE_OFFSET,
                             (float)C_HIP_OFFSET,(float)C_KNEE_OFFSET,(float)C_ANKLE_OFFSET,
                             (float)D_HIP_OFFSET,(float)D_KNEE_OFFSET,(float)D_ANKLE_OFFSET};
@@ -57,57 +93,51 @@ all_motor_angles activeOffsets={(float)A_HIP_OFFSET,(float)A_KNEE_OFFSET,(float)
     rampLeg cLegR(cHip);
     rampLeg dLegR(dHip);
 
+    //ramped_kinematics(kinematics *kinematic_driver, rampLeg *ramped_driver);
+    vTaskDelay(pdMS_TO_TICKS(100));    
+    ramped_kinematics a_leg_rk(&AlegK,&aLegR);
+    ramped_kinematics b_leg_rk(&BlegK,&bLegR);
+    ramped_kinematics c_leg_rk(&ClegK,&cLegR);
+    ramped_kinematics d_leg_rk(&DlegK,&dLegR);
 
-single_leg basicStand;
-    
-
-void start_I2C(){
-    i2c_config_t i2cConfig = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = sda_pin,
-        .scl_io_num = scl_pin,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master{
-            .clk_speed = i2c_freq
-        }
-    };
-
-    //map the config to the i2c number
-    i2c_param_config(i2c_bus_number, &i2cConfig);
-    i2c_driver_install(i2c_bus_number, i2cConfig.mode, 0, 0, 0);
-}
+    single_leg basicStand;
 
 
-
-extern "C" void app_main(void)
-{
-    start_I2C();
-    xTaskCreate(servo_driver,"servo_driver",10000,NULL,1,NULL);
-    for(;;){
-        vTaskDelay(pdMS_TO_TICKS(10));
-    }
-}
-
-
-
-void servo_driver(void *pv){
-    
     basicStand.xH = 130;
     basicStand.xFB = 0;
     basicStand.xLR = 0;
     
-
-    AlegK.mainKinematics(basicStand);
-    BlegK.mainKinematics(basicStand);
-    ClegK.mainKinematics(basicStand);
-    DlegK.mainKinematics(basicStand);
+    a_leg_rk.set_stance(basicStand);
+    b_leg_rk.set_stance(basicStand);
+    c_leg_rk.set_stance(basicStand);
+    d_leg_rk.set_stance(basicStand);
 
     float cycleTime = 50;
     float moveBackDistance = -50;
     float moveUpDistance =-30;
 
+    //float xH float xFB float xLR float rot_x float rot_y float rot_z
+    static single_leg walk_position_0(basicStand.xH,0,0,0,0,0);
+    static single_leg walk_position_1(basicStand.xH,moveBackDistance/3,0,0,0,0);
+    static single_leg walk_position_2(basicStand.xH,2*moveBackDistance/3,0,0,0,0);
+    static single_leg walk_position_3(basicStand.xH+moveUpDistance,moveBackDistance,0,0,0,0);
+    static single_leg walk_position_4(basicStand.xH+moveUpDistance,2*moveBackDistance/3,0,0,0,0);
+    static single_leg walk_position_5(basicStand.xH+moveUpDistance,moveBackDistance/3,0,0,0,0);
+
     
+    static stance walk0(&walk_position_0,&walk_position_3,&walk_position_3,&walk_position_0,1000);
+    static stance walk1(&walk_position_1,&walk_position_4,&walk_position_4,&walk_position_1,1000);
+    static stance walk2(&walk_position_2,&walk_position_5,&walk_position_5,&walk_position_2,1000);
+    static stance walk3(&walk_position_3,&walk_position_0,&walk_position_0,&walk_position_3,1000);
+    static stance walk4(&walk_position_4,&walk_position_1,&walk_position_1,&walk_position_4,1000);
+    static stance walk5(&walk_position_5,&walk_position_2,&walk_position_2,&walk_position_5,1000);
+    static stance *walk_forward_stances[6] = {&walk0,&walk1,&walk2,&walk3,&walk4,&walk5};
+    vTaskDelay(pdMS_TO_TICKS(100));    
+    
+    //cycle(uint8_t cycle_length, stance **stances, bool direction);
+    static cycle walk_forward(6,walk_forward_stances,true);
+
+    static robot_movement robot_movement_test(&a_leg_rk,&b_leg_rk,&c_leg_rk,&d_leg_rk, &walk_forward);
     for(;;){
         float yAngle = 0;
         float xAngle = 0;
@@ -115,17 +145,12 @@ void servo_driver(void *pv){
         float xAngleV = 0;
         float yAngleV = 0;
         static uint8_t oldState = 0;
-        vTaskDelay(pdMS_TO_TICKS(1));
-        // if(cycle == 0 && test.is_complete()){
-        //     test.set_target(-90, 5);
-        //     cycle = 1;
-        // }else if(cycle == 1 && test.is_complete()){
-        //     test.set_target(-180, 5);
-        //     cycle = 0;
-        // }
-        //ESP_LOGI("interpolation","current position: %f",test.get_position());
 
-    
+
+
+        robot_movement_test.update();
+        //walk_forward.next_stance();
+        vTaskDelay(pdMS_TO_TICKS(100));    
 
     }
 }

@@ -1,4 +1,5 @@
 #include "../../include/motion_system/kinematics.h"
+#include "../../include/math_functions.h"
 
 kinematics::kinematics(leg *legV)
 {
