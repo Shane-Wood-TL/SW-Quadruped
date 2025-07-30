@@ -2,8 +2,8 @@
 
 
 interpolation::interpolation(float start){
-    current_position = 0;
-    target_position = 0;
+    current_position = start;
+    target_position = start;
     start_position = start;
     start_time = esp_timer_get_time();
     current_duration = 0;
@@ -19,7 +19,7 @@ void interpolation::set_target(float target, float duration){
 
 float interpolation::get_position(){
     uint64_t currentTime = esp_timer_get_time();
-    float time = (currentTime - start_time)/1000000.0;
+    float time = (currentTime - start_time)/1000000.0f;
     lastTime = time;
     if(time > current_duration){
         current_position = target_position;

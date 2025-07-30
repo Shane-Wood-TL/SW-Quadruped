@@ -15,10 +15,9 @@ void robot_movement::update(){
         current_cycle->next_stance();
         current_stance = current_cycle->get_current_stance();
         stance_time = current_cycle->get_stance_time();
-        printf("%f",current_stance.A_positions->xH);
         a_leg->set_interpolated_stance(*current_stance.A_positions,stance_time);
         b_leg->set_interpolated_stance(*current_stance.B_positions,stance_time);
-        d_leg->set_interpolated_stance(*current_stance.C_positions,stance_time);
+        c_leg->set_interpolated_stance(*current_stance.C_positions,stance_time);
         d_leg->set_interpolated_stance(*current_stance.D_positions,stance_time);
     }
     a_leg->update();

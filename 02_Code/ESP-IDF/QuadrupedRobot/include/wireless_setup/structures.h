@@ -1,18 +1,27 @@
 #include "../all_includes.h"
 
-struct controller_to_bot_payload{
+typedef struct{
+    /*
+    7 = motor disable
+    6 = gyro
+    5 = pid
+    4 =  
+    3 = 
+    2 = 
+    1 = 
+    0 = 
+    */
     uint8_t settings;
-    //0 = estop
-    //1 = gyro_enable
-    //2 = pid_enable
-    uint8_t state;
-    int8_t j1_x;
-    int8_t j1_y;
-    int8_t j2_x;
-    int8_t j2_y;
-};
+    uint8_t mode;
+    int8_t joystick_0_x;
+    int8_t joystick_0_y;
+    int8_t joystick_1_x;
+    int8_t joystick_1_y;
 
-struct bot_to_controller_payload{
-    uint16_t current_usage;
-    uint16_t battery_voltage;
-};
+}controller_to_bot_payload;
+
+typedef struct{
+    float battery_voltage;
+    float battery_current;
+    float motor_current;
+} bot_to_controller_payload;
