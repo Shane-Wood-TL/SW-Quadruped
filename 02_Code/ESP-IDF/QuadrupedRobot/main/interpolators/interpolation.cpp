@@ -8,6 +8,7 @@ interpolation::interpolation(float start){
     start_time = esp_timer_get_time();
     current_duration = 0;
     lastTime = 0;
+    is_paused = true;
 }
 
 void interpolation::set_target(float target, float duration){
@@ -15,6 +16,7 @@ void interpolation::set_target(float target, float duration){
     current_duration = duration;
     start_time = esp_timer_get_time();
     lastTime = start_time;
+    is_paused = false;
 }
 
 float interpolation::get_position(){
@@ -35,6 +37,7 @@ float interpolation::get_position(){
 
 bool interpolation::is_complete(){
     if(current_position == target_position){
+        is_paused = true;
         start_position = current_position;
         return true;
     }else{
@@ -49,4 +52,15 @@ void interpolation::reset(){
     start_time = esp_timer_get_time();
     current_duration = 0;
     lastTime = 0;
+    is_paused = true;
+}
+
+void interpolation::pause(){
+    current_duration = current_duration-(currentTime - start_time)/1000000.0f
+    is_paused = true;
+}
+
+void interpolation::resume(){
+    start_time = esp_timer_get_time();
+    is_paused = false;
 }
