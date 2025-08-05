@@ -10,6 +10,7 @@ class interpolation{
         float start_time;
         float current_duration;
         uint64_t lastTime;
+        bool is_paused;
     public:
         interpolation(float start);
         void set_target(float target, float duration);
