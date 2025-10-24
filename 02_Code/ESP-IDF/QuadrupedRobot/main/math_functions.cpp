@@ -2,55 +2,24 @@
 #include "../include/math_functions.h"
 #include "../include/all_includes.h"
 
-//------------------------------------------------------------------------------------------------
-//finds hypotenuse of triangle
-float pytherm(float sidea, float sideb)
-{ // solves for side c
-  float sidec = 0;
-  sidec = (pow(sidea, 2) + pow(sideb, 2));
-  sidec = sqrt(sidec);
-  return sidec;
+float radians_to_degrees(float radians){
+  return radians * (180.0f / PI);
 }
 
-
-//------------------------------------------------------------------------------------------------
-//finds leg of triangle
-float pythermhypt(float sidea, float sidec)
-{ // solves for side b
-  float sideb = 0;
-  sideb = ((pow(sidec, 2)) - pow(sidea, 2));
-
-  sideb = sqrt(sideb);
-  return sideb;
+float degrees_to_radians(float degrees){
+  return degrees * (PI / 180.0f);
 }
 
-
-//------------------------------------------------------------------------------------------------
-//converts radians to degrees
-float raddec(float rad)
-{
-  rad = rad * (180 / PI);
-  return rad;
+float pythagorean_hypotenuse(float a, float b) {
+    return std::sqrt(std::max(0.0f, a * a + b * b));
 }
 
-
-//------------------------------------------------------------------------------------------------
-//law of consines, returns angle across from c
-float loc(float a, float b, float c)
-{
-  // this finds the angle for c
-  float anglec = ((pow(a, 2) + pow(b, 2)) - pow(c, 2)) / (2 * a * b);
-  anglec = acos(anglec);
-  anglec = raddec(anglec);
-  return anglec;
+float pythagorean_side(float a, float c){
+    return std::sqrt(std::max(0.0f, c * c - a * a));
 }
 
-
-//------------------------------------------------------------------------------------------------
-//converts degrees to radians
-float decrad(float deg)
-
-{
-  deg = deg * (PI / 180);
-  return deg;
+float law_of_cosines(float a, float b, float c){
+    float angle_c = ((a * a + b * b) - (c * c)) / (2.0f * a * b);
+    angle_c = std::acos(angle_c);
+    return angle_c;
 }

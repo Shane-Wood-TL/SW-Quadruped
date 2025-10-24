@@ -11,8 +11,8 @@ class ramped_kinematics{
     bool all_done();
     void update();
     stance get_current_stance();
-    void set_stance(single_leg new_stance);
-    void set_interpolated_stance(single_leg new_stance, float time_to_stance);
+    void set_stance(position new_stance);
+    void set_interpolated_stance(position new_stance, float time_to_stance);
     void stop();
 };
 #endif

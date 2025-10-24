@@ -12,7 +12,8 @@
         "format": "cpp",
         "atomic": "cpp",
         "random": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "complex": "cpp"
     },
     "idf.flashType": "UART",
     "idf.pythonInstallPath": "C:\\Users\\townl\\.espressif\\tools\\idf-python\\3.11.2\\python.exe"

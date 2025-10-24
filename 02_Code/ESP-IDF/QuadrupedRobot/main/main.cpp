@@ -332,10 +332,10 @@ void current_voltage_measurements_task(void *pv){
 
 
 void servo_driver(void *pv){
-    single_leg aCords;
-    single_leg bCords;
-    single_leg cCords;
-    single_leg dCords;
+    position aCords;
+    position bCords;
+    position cCords;
+    position dCords;
 
     all_motor_angles activeOffsets={(float)A_HIP_OFFSET,(float)A_KNEE_OFFSET,(float)A_ANKLE_OFFSET,
                             (float)B_HIP_OFFSET,(float)B_KNEE_OFFSET,(float)B_ANKLE_OFFSET,
@@ -383,12 +383,12 @@ void servo_driver(void *pv){
     ramped_kinematics c_leg_rk(&ClegK,&cLegR);
     ramped_kinematics d_leg_rk(&DlegK,&dLegR);
 
-    single_leg basicStand;
+    position basicStand;
 
 
-    basicStand.xH = 130;
-    basicStand.xFB = 0;
-    basicStand.xLR = 0;
+    basicStand.z = 130;
+    basicStand.x = 0;
+    basicStand.y = 0;
     
     a_leg_rk.set_stance(basicStand);
     b_leg_rk.set_stance(basicStand);
@@ -400,12 +400,12 @@ void servo_driver(void *pv){
     float moveUpDistance =-30;
 
     //float xH float xFB float xLR float rot_x float rot_y float rot_z
-    static single_leg walk_position_0(basicStand.xH,0,0,0,0,0);
-    static single_leg walk_position_1(basicStand.xH,moveBackDistance/3,0,0,0,0);
-    static single_leg walk_position_2(basicStand.xH,2*moveBackDistance/3,0,0,0,0);
-    static single_leg walk_position_3(basicStand.xH+moveUpDistance,moveBackDistance,0,0,0,0);
-    static single_leg walk_position_4(basicStand.xH+moveUpDistance,2*moveBackDistance/3,0,0,0,0);
-    static single_leg walk_position_5(basicStand.xH+moveUpDistance,moveBackDistance/3,0,0,0,0);
+    static position walk_position_0(basicStand.z,0,0,0,0,0);
+    static position walk_position_1(basicStand.z,moveBackDistance/3,0,0,0,0);
+    static position walk_position_2(basicStand.z,2*moveBackDistance/3,0,0,0,0);
+    static position walk_position_3(basicStand.z+moveUpDistance,moveBackDistance,0,0,0,0);
+    static position walk_position_4(basicStand.z+moveUpDistance,2*moveBackDistance/3,0,0,0,0);
+    static position walk_position_5(basicStand.z+moveUpDistance,moveBackDistance/3,0,0,0,0);
 
     
     float stance_time = 0.2f;

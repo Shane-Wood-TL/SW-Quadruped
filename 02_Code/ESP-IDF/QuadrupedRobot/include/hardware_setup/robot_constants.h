@@ -1,12 +1,12 @@
 #ifndef __robot_constants__
 #define __robot_constants__
 //dimensions of the bot
-#define yHalfDis 122
-#define zHalfDis 190
-// constant distances
-#define aLength 95 // upper leg length more red
-#define bLength 95 // lower leg length more purple
-#define Ldis 50
+#define BODY_LENGTH 480.0f
+#define BODY_WIDTH 150.0f
+
+#define A_LENGTH_V 95.0f
+#define B_LENGTH_V 95.0f
+#define H_LENGTH_V 110.0f
 
 
 #define aHip 3  //

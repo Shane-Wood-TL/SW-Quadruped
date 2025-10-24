@@ -16,6 +16,6 @@ class kinematics{
 
   public:
   kinematics(leg* legV);
-  void mainKinematics(single_leg position);
+  void mainKinematics(position current_position);
 };
 #endif
