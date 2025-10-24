@@ -38,6 +38,7 @@ esp_err_t pca9685::send_command(uint8_t register_to_change, uint8_t value)
 
     // this line actually does all of the lines above with a timeout period
     esp_err_t ret = i2c_master_cmd_begin(i2c_bus_number, cmd, 1000 / portTICK_PERIOD_MS);
+    printf("i2c failed: %s\n", esp_err_to_name(ret));
 
     i2c_cmd_link_delete(cmd); // delete the link/event
     return ret;               // return if the writing was sucessful

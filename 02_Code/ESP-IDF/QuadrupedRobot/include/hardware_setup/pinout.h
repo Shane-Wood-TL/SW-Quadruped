@@ -40,6 +40,11 @@
 #define can_TX_pin GPIO_NUM_48
 #define can_RX_pin GPIO_NUM_47
 
+
+#define led_strip_front c0_6_pin
+#define led_strip_back c3_6_pin
+
+
 #endif
 
 

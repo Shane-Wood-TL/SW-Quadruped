@@ -7,18 +7,18 @@ ramped_kinematics::ramped_kinematics(kinematics *kinematic_driver, rampLeg *ramp
 
 void ramped_kinematics::update(){
     ramped_driver->update();
-    single_leg current_postions = {ramped_driver->heightAt(),ramped_driver->fbAt(),ramped_driver->lrAt(),0,0,0};
+    position current_postions = {ramped_driver->heightAt(),ramped_driver->fbAt(),ramped_driver->lrAt(),0,0,0};
     kinematic_driver->mainKinematics(current_postions);
 }
 
 
-void ramped_kinematics::set_stance(single_leg new_stance){
-    ramped_driver->setPositions(new_stance.xH,new_stance.xLR,new_stance.xFB,0);
+void ramped_kinematics::set_stance(position new_stance){
+    ramped_driver->setPositions(new_stance.z,new_stance.x,new_stance.y,0);
     update();
 }
 
-void ramped_kinematics::set_interpolated_stance(single_leg new_stance, float time_to_stance){
-    ramped_driver->setPositions(new_stance.xH,new_stance.xLR,new_stance.xFB,time_to_stance);
+void ramped_kinematics::set_interpolated_stance(position new_stance, float time_to_stance){
+    ramped_driver->setPositions(new_stance.z,new_stance.x,new_stance.y,time_to_stance);
     update();
 }
 

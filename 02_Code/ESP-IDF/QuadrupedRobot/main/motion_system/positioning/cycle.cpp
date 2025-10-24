@@ -13,12 +13,10 @@ cycle::cycle(uint8_t cycle_length, stance **stances, bool direction){
 }
 
 stance cycle::get_current_stance(){
-    printf("Stance getting: %d \n", current_stance_index);
     return (*stances[current_stance_index]);
 }
 
 void cycle::next_stance(){
-    printf("Stance next: %d \n", current_stance_index);
     if (direction) {
         current_stance_index++;
         if (current_stance_index >= cycle_length) { 
@@ -31,7 +29,6 @@ void cycle::next_stance(){
             current_stance_index--;
         }
     }
-    printf("Stance new: %d \n", current_stance_index);
 }
 
 float cycle::get_stance_time(){

@@ -3,10 +3,9 @@
 //------------------------------------------------------------------------------------------------
 //Extra Math
 #define PI 3.14
-float pytherm(float sidea, float sideb); //returns hypotenuse c
-float raddec(float rad); //radians to degress
-float loc(float a, float b, float c); // law of cosines, returns angle c in degress 
-float pythermhypt(float sidea, float sidec); //returns side b
-float decrad(float deg); //degrees to radians
-
+float radians_to_degrees(float radians);
+float degrees_to_radians(float degrees);
+float pythagorean_hypotenuse(float a, float b);
+float pythagorean_side(float a, float c);
+float law_of_cosines(float a, float b, float c);
 #endif

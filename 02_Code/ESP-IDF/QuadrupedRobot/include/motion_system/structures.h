@@ -2,13 +2,13 @@
 #define __motion_system_structures__
 #include "../all_includes.h"
 
-struct single_leg{
-	float xH;
-	float xFB;
-	float xLR;
-	float rot_x;
-	float rot_y;
-	float rot_z;
+struct position{
+    float x;
+    float y;
+    float z;
+    float pitch;
+    float roll;
+    float yaw;
 };
 
 struct all_motor_angles{
