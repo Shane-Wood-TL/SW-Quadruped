@@ -25,20 +25,14 @@
 #define current_sense_pin GPIO_NUM_13
 #define voltage_sense_pin GPIO_NUM_14
 
-#define c2_5_pin GPIO_NUM_1
-#define c2_6_pin GPIO_NUM_2
-#define c2_7_pin GPIO_NUM_42
-#define c2_8_pin GPIO_NUM_41
-#define c2_9_pin GPIO_NUM_40
+#define c2_5_pin GPIO_NUM_42
+#define c2_6_pin GPIO_NUM_41
+#define c2_7_pin GPIO_NUM_40
+#define c2_8_pin GPIO_NUM_39
+#define c2_9_pin GPIO_NUM_38
 
-#define c3_5_pin GPIO_NUM_39
-#define c3_6_pin GPIO_NUM_38
-#define c3_7_pin GPIO_NUM_37
-#define c3_8_pin GPIO_NUM_36
-#define c3_9_pin GPIO_NUM_35
-
-#define can_TX_pin GPIO_NUM_48
-#define can_RX_pin GPIO_NUM_47
+#define can_TX_pin GPIO_NUM_1
+#define can_RX_pin GPIO_NUM_2
 
 
 #define led_strip_front c0_6_pin
